@@ -7,5 +7,6 @@ int main() {
     double x2 = x * x;
     double x3 = x2 * x; 
     double part1 = 23 * x3 +32 * x;
+    double part2 = 69 * x2 + 8;
 
 }
