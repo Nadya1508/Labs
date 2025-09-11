@@ -9,5 +9,6 @@ int main() {
     double part1 = 23 * x3 +32 * x;
     double part2 = 69 * x2 + 8;
     double A = part1 + part2;
+    double B = -part1 + part2;
 
 }
