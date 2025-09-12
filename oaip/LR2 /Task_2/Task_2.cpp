@@ -7,6 +7,14 @@ int main() {
         std::cout << "Ошибка: все числа должны быть положительными!!!";
         return 1;
     }
-    
+    bool is_triangle = true;
+
+    if (y +z <= x) {
+        is_triangle = false;
+    } else if (x +z <= y) {
+        is_triangle = false;
+    } else if (x + y <= z){
+        is_triangle = false;
+    }
     
 }
