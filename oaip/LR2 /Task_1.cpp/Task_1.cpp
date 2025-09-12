@@ -10,5 +10,9 @@ int main() {
     double part2 = 69 * x2 + 8;
     double A = part1 + part2;
     double B = -part1 + part2;
-
+    
+    cout << "23x^3 + 69x^2 + 32x + 8 = " << A << endl;
+    cout << "-23x^3 + 69x^2 - 32x + 8 = " << B << endl;
+    
+    return 0;
 }
