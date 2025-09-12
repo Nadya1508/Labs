@@ -16,5 +16,11 @@ int main() {
     } else if (x + y <= z){
         is_triangle = false;
     }
-    
+    if (is_triangle) {
+        std::cout << "Треугольник со сторонами " << x << " , " << y << " , " << z << "существует." << std::endl;
+    } else if (is_triangle) {
+        std::cout << "Треугольник со сторонами " << x << " , " << y << " , " << z << "НЕ существует." << std::endl;
+    }
+     
+    return 0;
 }
