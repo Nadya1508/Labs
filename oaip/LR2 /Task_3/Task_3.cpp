@@ -11,7 +11,7 @@ int main () {
     cout << " q = " << q << endl;
     return 1;
    }
-   double sum = 1 / ( n + 1 );
+   double sum = b1 / ( n + 1 );
    cout << "/n=== Результаты расчёта ===" << endl;
    cout << "Номер в журнале (n):" << n << endl;
    cout << "Первый член (b1):  " << b1 << endl;
