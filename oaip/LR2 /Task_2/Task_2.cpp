@@ -5,10 +5,10 @@ int main() {
     cout << "Введите три положительных числа (x, y, z): ";
     cin >> x >> y >> z;
     if (x <= 0 || y <= 0 || z <= 0) {
-        cout << "Ошибка: все числа должны быть положительными!!!";
+        cout << "Ошибка: все числа должны быть положительными!!!" << endl;
         return 1;
     }
-    bool is_triangle = true;
+    bool exists = true;
 
     if (y +z <= x) {
         is_triangle = false;
