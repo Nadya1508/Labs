@@ -24,7 +24,7 @@ int main () {
     } else if (C > A && C > B) {
         C -= K;
     }
-    cout << "Результаты :\n " << ;
+    cout << "Результаты :\n ";
     cout << "X = " << X << "\n";
     cout << "Y = " << Y << "\n";
     cout << "A = " << A << "\n";
