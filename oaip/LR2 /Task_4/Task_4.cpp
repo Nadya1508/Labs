@@ -25,5 +25,11 @@ int main () {
     } else {
         C -= K;
     }
-    
+    cout << "\nРезультаты счёта: " << endl;
+    cout << "X = " << X << endl;
+    cout << "Y = " << Y << endl;
+    cout << "A = " << A << endl;
+    cout << "B = " << B << endl;
+    cout << "C = " << C << endl;
+    return 0;
 }
