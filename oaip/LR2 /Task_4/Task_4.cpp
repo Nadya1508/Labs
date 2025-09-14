@@ -17,12 +17,11 @@ int main () {
     } else  {
         Y = 0;
     }
-    if (A != B && B != C && A != C) {
-       if (A > B && A > C )
-       A -= K;
-    } else if (B > A && B > C) {
+       if (A > B && A > C ) {
+        A -= K;
+       } else if (B > A && B > C) {
         B -= K;
-    } else {
+    } else if (C > A && C > B) {
         C -= K;
     }
     cout << "\nРезультаты : " << endl;
