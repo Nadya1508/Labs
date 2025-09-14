@@ -17,10 +17,14 @@ int main() {
     } else if (x + y <= z){
       exists = false;
     }
+    cout << "/n===Результат проверки=== " << endl;
+    cout << "Сторона x = " << x << endl;
+    cout << "Сторона y = " << y << endl;
+    cout << "Сторона z = " << z << endl;
     if (exists) {
-        cout << " Треугольник со сторонами " << x << " , " << y << " , " << z <<  " существует. " << std::endl;
+        cout << " Треугольник существует  " << endl;
     } else if (exists) {
-        cout << " Треугольник со сторонами " << x << " , " << y << " , " << z <<  " НЕ существует. " << std::endl;
+        cout << " Треугольник НЕ существует " << endl;
     }
      
     return 0;
