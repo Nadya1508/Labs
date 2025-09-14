@@ -11,15 +11,15 @@ int main() {
     bool exists = true;
 
     if (y +z <= x) {
-        is_triangle = false;
+        exists = false;
     } else if (x +z <= y) {
-        is_triangle = false;
+       exists = false;
     } else if (x + y <= z){
-        is_triangle = false;
+      exists = false;
     }
-    if (is_triangle) {
+    if (exists) {
         cout << " Треугольник со сторонами " << x << " , " << y << " , " << z <<  " существует. " << std::endl;
-    } else if (is_triangle) {
+    } else if (exists) {
         cout << " Треугольник со сторонами " << x << " , " << y << " , " << z <<  " НЕ существует. " << std::endl;
     }
      
