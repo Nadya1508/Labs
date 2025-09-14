@@ -18,7 +18,7 @@ int main () {
         Y = 0;
     }
     if (A != B && B != C && A != C) {
-       if (A > C && A > B)
+       if (A > B && A > C )
        A -= K;
     } else if (B > A && B > C) {
         B -= K;
