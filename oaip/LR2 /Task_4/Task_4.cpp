@@ -9,6 +9,15 @@ int main () {
     cin >> A >> B >> C >>;
     cout << "Введите значение K:";
     cin >> K;
-    
-
+    if (X == Y) {
+        X = 0;
+        Y = 0;
+    } else if (X < Y) {
+        X = 0;
+    } else  {
+        Y = 0;
+    }
+    if (A != B && B != C && A != C) {
+        
+    }
 }
