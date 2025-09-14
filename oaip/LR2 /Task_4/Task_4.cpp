@@ -2,7 +2,7 @@
 using namespace std;
 int main () {
     int X, Y;
-    double A, B, C;
+    double A, B, C, K;
     cout << "Введите целые числа X и Y: ";
     cin >> X >> Y;
     cout << "Введите вещественные числа A, B, C: ";
@@ -25,7 +25,7 @@ int main () {
     } else {
         C -= K;
     }
-    cout << "\nРезультаты счёта: " << endl;
+    cout << "\nРезультаты : " << endl;
     cout << "X = " << X << endl;
     cout << "Y = " << Y << endl;
     cout << "A = " << A << endl;
