@@ -1,4 +1,4 @@
-#include <iostream> ё
+#include <iostream> 
 using namespace std;
 int main() {
     double x, y, z;
@@ -21,10 +21,11 @@ int main() {
     cout << "Сторона x = " << x << endl;
     cout << "Сторона y = " << y << endl;
     cout << "Сторона z = " << z << endl;
+
     if (exists) {
-        cout << " Треугольник существует  " << endl;
-    } else if (exists) {
-        cout << " Треугольник НЕ существует " << endl;
+        cout << "Треугольник существует" << endl;
+    } else  {
+        cout << "Треугольник НЕ существует" << endl;
     }
      
     return 0;
