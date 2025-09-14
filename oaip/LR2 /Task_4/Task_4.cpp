@@ -24,11 +24,11 @@ int main () {
     } else if (C > A && C > B) {
         C -= K;
     }
-    cout << "\nРезультаты : " << endl;
-    cout << "X = " << X << endl;
-    cout << "Y = " << Y << endl;
-    cout << "A = " << A << endl;
-    cout << "B = " << B << endl;
-    cout << "C = " << C << endl;
+    cout << "Результаты :\n " << ;
+    cout << "X = " << X << "\n";
+    cout << "Y = " << Y << "\n";
+    cout << "A = " << A << "\n";
+    cout << "B = " << B << "\n";
+    cout << "C = " << C << "\n";
     return 0;
 }
