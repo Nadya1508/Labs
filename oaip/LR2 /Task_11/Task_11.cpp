@@ -8,4 +8,6 @@ int main(){
     cin >> h2 >> min2;
     int start_minutes = h1 * 60 + min1;
     int end_minutes = h2 * 60 + min2;
+    int duration;
+    
 }
