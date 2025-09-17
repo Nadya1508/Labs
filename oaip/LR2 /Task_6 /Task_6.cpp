@@ -7,7 +7,7 @@ int main(){
     std::cout << "Введите значение p: ";
     std::cin >> p;
     std::cout << "Введите значение K: ";
-    std::cin >> k;
+    std::cin >> K;
     std::cout << "Введите значение D: ";
     std::cin >> D;
     std::cout << "Введите значение C: ";
@@ -23,12 +23,12 @@ int main(){
         return 1;
     }
     double Y = 1 + (pow(K,2)) / (2 * A * B) - B + (D * C);
-    std::cout << " /nРезультаты вычислений: " << std::endl;
-    std::cout << "A = x + sin(p) = " << " + sin(" << p << ") = "A << std::endl;
-    std::cout << "B = e^k = e^" << k << " = " << B << std::endl;
-    std::cout << "y = 1 + k^2/(2*A*B) - B + D*C = " << y << std::endl;
-    std::cout << "  = 1 + " << pow(k, 2) << "/(" << 2*A*B << ") - " << B << " + " << D*C << std::endl;
-    std::cout << "  = 1 + " << (pow(k, 2) / (2 * A * B)) << " - " << B << " + " << D*C << std::endl;
+    std::cout << " \nРезультаты вычислений: " << std::endl;
+    std::cout << "A = x + sin(p) = " << x << " + sin(" << p << ") = " << A << std::endl;
+    std::cout << "B = e^K = e^" << K << " = " << B << std::endl;
+    std::cout << "Y = 1 + K^2/(2*A*B) - B + D*C = " << Y << std::endl;
+    std::cout << "  = 1 + " << pow(K, 2) << "/(" << 2*A*B << ") - " << B << " + " << D*C << std::endl;
+    std::cout << "  = 1 + " << (pow(K, 2) / (2 * A * B)) << " - " << B << " + " << D*C << std::endl;
     return 0;
 
 }
