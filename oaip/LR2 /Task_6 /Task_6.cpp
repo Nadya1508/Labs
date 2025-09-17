@@ -8,9 +8,13 @@ int main(){
     cout << "Введите значение D: ";
     cin >> D;
     double b = x + D;
+    if (b == 0){
+        cout << "Ошибка: деление на ноль" << endl;
+        return 1;
+    }
     double A = (D * x) / b;
     double denominator = pow(D,3) +(A + D - b);
-    if denominator == 0{
+    if (denominator == 0) {
         cout << "Ошибка: знаменатель равен нулю! Деление на ноль невозможно!"<< endl;
         return 1;
     } 
