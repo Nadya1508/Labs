@@ -20,16 +20,18 @@ int main () {
     }
     if (x <= 0) {
         std::cout << "Ошибка: невозможно вычислить десятичный логарифм из неположительного числа" << std::endl;
-        return1;
+        return 1;
     }
     double A = std::log10(x);
     double B = x + std::exp(d);
     double Y = (A + B) - (std::pow(C,2) / K);
     std::cout << "\nРезультаты вычислений: " << std::endl;
     std::cout << "A = lg(x) = lg(" << x << ") = " << A << std::endl;
-    std::cout << B = x + e^d = " << x << " + e^ " << d << " = " << B << std::endl;
+    std::cout << "B = x + e^d = " << x << "+ e^" << d << " = " << B << std::endl;
     std::cout << "Y = (A + B) - (C^2 / K) = " << Y << std::endl;
     std::cout << " = ( " << A << " + " << B << ") - (" << pow(C,2) << " / " << K << ")" << std::endl;
     std::cout << " = " << (A + B) << " - " << (pow(C,2) / K) << std::endl;
-    return 0;
+return 0;
 }
+    
+      
