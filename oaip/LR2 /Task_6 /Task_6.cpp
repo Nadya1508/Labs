@@ -20,13 +20,13 @@ int main () {
         std::cout << "Ошибка: деление на ноль" << std::endl;
         return 1;
     }
-    double B = cos(x);
+    double B = std::cos(x);
     double C = p - n;
-    double Q = (pow(B,2) / (K * D)) + (B * pow(C,3));
+    double Q = (std::pow(B,2) / (K * D)) + (B * std::pow(C,3));
     std::cout << " \nРезультаты вычислений: " << std::endl;
     std::cout << "B = cos(x) = cos(" << x << ") = " << B << std::endl;
     std::cout << "C = p - n = " << p << " - " << n << " = " << C << std::endl;
     std::cout << "Q = B^2/(K*D) + B*C^3 = " << Q << std::endl;
-    std::cout << " = " << pow(B,2) << "/(" << K*D << ") + " << B << "*" << (B * pow (C,3)) << std::endl;
+    std::cout << " = " << std::pow(B,2) << "/(" << K*D << ") + " << B << "*" << (B * std::pow (C,3)) << std::endl;
     return 0;
 }
