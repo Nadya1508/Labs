@@ -27,12 +27,12 @@ int main () {
         return 1;
     }
     double A = x - y;
-    double B = sqrt(z);
-    double T = cos(x) + (pow(A,2) / (K - C * D)) - B;
+    double B = std::sqrt(z);
+    double T = std::cos(x) + (std::pow(A,2) / (K - C * D)) - B;
     std::cout << "\nРезультаты вычислений: " << std::endl;
     std::cout << "A = x - y = " << x << " - " << y << " = " << A << std::endl;
     std::cout << "B = √z = √" << z << " = " << B << std::endl;
-    std::cout << "T = cos(x) + A^2/(K -C*D) - B = " << T << std::endl;
-    std::cout << " = cos( " << x << ") + " << pow(A,2) << "/(" << K << " - " << C * D << ") - " << B << std::endl;
+    std::cout << "T = cos(x) + A^2/(K -C * D) - B = " << T << std::endl;
+    std::cout << " = cos( " << x << ") + " << std::pow(A,2) << "/(" << K << " - " << C * D << ") - " << B << std::endl;
     return 0;
 }
