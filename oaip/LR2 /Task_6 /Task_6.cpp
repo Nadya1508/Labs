@@ -23,7 +23,7 @@ int main() {
     double Y = std::pow(A + B, 2) - (K / (C * D));
     std::cout << "\nРезультаты вычислений: " << std::endl;
     std::cout << "A = sin (" << x << ") - " << z << " = " << A << std::endl;
-    std::cout << " B = | " << p << " - " << x << " | = " << B << std::endl;
+    std::cout << " B = |" << p << " - " << x << "| = " << B << std::endl;
     std::cout << "C * D = " << C << " * " << D << " = " << C * D << std::endl;
     std::cout << "Y = (" << A << " + " << B << ")^2 - " << K << " / (" << C << " * " << D << " ) = " <<  Y << std::endl;
     return 0;
