@@ -79,9 +79,9 @@ int main () {
     cout << "Биссектриса lb (к стороне b) = " << lb << endl;
     cout << "Биссектриса lc (к стороне c) = " << lc << endl;
 
-    double cosA = (b * b + c * c - a * a) / (2 * b * c);
-    double cosB = (a * a + c * c - b * b) / (2 * a * c);
-    double cosC = (a * a + b * b - c * c) / (2 * a * b);
+    double cosA = (square(b) + square(c) - square(a)) / (2 * b * c);
+    double cosB = (square(a) + square(c) - square(b)) / (2 * a * c);
+    double cosC = (square(a) + square(b) - square(c)) / (2 * a * b);
 
     double angleA_rad = acos_taylor(cosA);
     double angleB_rad = acos_taylor(cosB);
@@ -112,7 +112,7 @@ int main () {
 
     double perimeter = a + b + c;
     double S_heron = S1;
-    double S_base_height;
+    double S_base_height = 0.5 * ha * a;
     double S_coordinates = 0.5 * ((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
     if (S_coordinates < 0) S_coordinates = -S_coordinates;
     cout << "\n8. Площадь и периметр треугольника:" << endl;
@@ -120,6 +120,6 @@ int main () {
     cout << "Площадь(формула Герона) = " << S_heron << endl;
     cout << "Площадь треугольника (основание и высота) = " << S_base_height << endl;
     cout << "Площадь треугольника (через координаты) = " << S_coordinates << endl;
-    
+
     return 0;
 }
