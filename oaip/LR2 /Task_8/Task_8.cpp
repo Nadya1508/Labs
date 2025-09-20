@@ -15,8 +15,8 @@ double sqrt_newton(double x) {
     return guess;
 }
 
-// Функция для вычисления арксинуса (ряд Тейлора)
-double asin_taylor(double x) {
+// Функция для вычисления арктангенса (ряд Тейлора)
+double atan_taylor(double x) {
     if (x < -1.0) x = -1.0;
     if (x > 1.0) x = 1.0;
     
@@ -25,33 +25,22 @@ double asin_taylor(double x) {
     double x_sq = x * x;
     
     for (int n = 1; n < 30; n++) {
-        term = term * x_sq * (2*n - 1) * (2*n - 1) / (4 * n * n);
-        result = result + term / (2*n + 1);
+        term = term * x_sq;
+        result = result + (n % 2 == 0 ? -term/(2*n+1) : term/(2*n+1));
     }
     return result;
 }
 
-// Функция для вычисления арккосинуса (ряд Тейлора)
-double acos_taylor(double x) {
+// Функция для вычисления арккосинуса через арктангенс
+double acos_via_atan(double x) {
     if (x < -1.0) x = -1.0;
     if (x > 1.0) x = 1.0;
     
-    if (x > 0.9) {
-        return 2 * asin_taylor(sqrt_newton((1-x)/2));
-    }
-    if (x < -0.9) {
-        return 3.141592653589793 - 2 * asin_taylor(sqrt_newton((1+x)/2));
-    }
+    // acos(x) = 2 * atan(sqrt((1-x)/(1+x)))
+    if (x == 1.0) return 0.0;
+    if (x == -1.0) return 3.141592653589793;
     
-    double result = 1.5707963267948966;
-    double term = x;
-    double x_sq = x * x;
-    
-    for (int n = 1; n < 30; n++) {
-        term = term * x_sq * (2*n - 1) * (2*n - 1) / (4 * n * n);
-        result = result - term / (2*n + 1);
-    }
-    return result;
+    return 2 * atan_taylor(sqrt_newton((1-x)/(1+x)));
 }
 
 // Функция для вычисления расстояния между двумя точками
@@ -61,7 +50,6 @@ double distance(double x1, double y1, double x2, double y2) {
 
 // Константы
 const double PI = 3.141592653589793;
-const double PI_2 = 1.5707963267948966;
 
 // Функция для перевода радиан в градусы
 double radiansToDegrees(double radians) {
@@ -128,15 +116,10 @@ int main() {
     double cosB = (a * a + c * c - b * b) / (2 * a * c);
     double cosC = (a * a + b * b - c * c) / (2 * a * b);
     
-    double angleA_rad = acos_taylor(cosA);
-    double angleB_rad = acos_taylor(cosB);
-    double angleC_rad = acos_taylor(cosC);
-    
-    // Корректировка суммы углов
-    double sum_angles = angleA_rad + angleB_rad + angleC_rad;
-    if (sum_angles < 3.13159 || sum_angles > 3.15159) {
-        angleC_rad = PI - angleA_rad - angleB_rad;
-    }
+    // Используем более стабильный метод вычисления углов
+    double angleA_rad = acos_via_atan(cosA);
+    double angleB_rad = acos_via_atan(cosB);
+    double angleC_rad = PI - angleA_rad - angleB_rad; // Гарантируем сумму 180°
     
     double angleA_deg = radiansToDegrees(angleA_rad);
     double angleB_deg = radiansToDegrees(angleB_rad);
@@ -146,6 +129,7 @@ int main() {
     cout << "Угол A: " << angleA_rad << " радиан, " << angleA_deg << " градусов" << endl;
     cout << "Угол B: " << angleB_rad << " радиан, " << angleB_deg << " градусов" << endl;
     cout << "Угол C: " << angleC_rad << " радиан, " << angleC_deg << " градусов" << endl;
+    cout << "Сумма углов: " << angleA_deg + angleB_deg + angleC_deg << " градусов" << endl;
     
     // 6. Радиусы окружностей
     double R = (a * b * c) / (4 * S_heron); // радиус описанной окружности
