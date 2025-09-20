@@ -26,7 +26,12 @@ double atan_taylor(double x) {
     
     for (int n = 1; n < 30; n++) {
         term = term * x_sq;
-        result = result + (n % 2 == 0 ? -term/(2*n+1) : term/(2*n+1));
+        double denominator = 2 * n + 1;
+        if (n % 2 == 0) {
+            result = result + term / denominator;
+        } else {
+            result = result - term / denominator;
+        }
     }
     return result;
 }
@@ -36,10 +41,10 @@ double acos_via_atan(double x) {
     if (x < -1.0) x = -1.0;
     if (x > 1.0) x = 1.0;
     
-    // acos(x) = 2 * atan(sqrt((1-x)/(1+x)))
     if (x == 1.0) return 0.0;
     if (x == -1.0) return 3.141592653589793;
     
+    // acos(x) = 2 * atan(sqrt((1-x)/(1+x)))
     return 2 * atan_taylor(sqrt_newton((1-x)/(1+x)));
 }
 
@@ -116,10 +121,17 @@ int main() {
     double cosB = (a * a + c * c - b * b) / (2 * a * c);
     double cosC = (a * a + b * b - c * c) / (2 * a * b);
     
-    // Используем более стабильный метод вычисления углов
+    // Вычисляем углы через арктангенс
     double angleA_rad = acos_via_atan(cosA);
     double angleB_rad = acos_via_atan(cosB);
-    double angleC_rad = PI - angleA_rad - angleB_rad; // Гарантируем сумму 180°
+    double angleC_rad = acos_via_atan(cosC);
+    
+    // Корректируем сумму углов
+    double sum_rad = angleA_rad + angleB_rad + angleC_rad;
+    if (sum_rad < PI - 0.01 || sum_rad > PI + 0.01) {
+        // Пересчитываем третий угол для гарантии суммы 180°
+        angleC_rad = PI - angleA_rad - angleB_rad;
+    }
     
     double angleA_deg = radiansToDegrees(angleA_rad);
     double angleB_deg = radiansToDegrees(angleB_rad);
