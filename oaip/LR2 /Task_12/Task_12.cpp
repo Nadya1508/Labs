@@ -90,7 +90,7 @@ void solveBiquadratic(double a, double b, double c) {
             cout << "x = " << x1 << " , x = " << x2;
             hasRealRoots = true;
             first = false;
-        } else if (yRoots == 0) {
+        } else if (yRoots [i] == 0) {
             if (!first) cout << " , ";
             cout << "x = 0";
             hasRealRoots = true;
