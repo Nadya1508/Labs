@@ -43,16 +43,22 @@ void solveBiquadratic(double a, double b, double c) {
         }
         return;
     }
-
+    if(a == 0) {
+        double xSquared = -c / b;
+        if (xSquared > 0) {
+            double x1 = sqrt_newton(xSquared);
+            double x2 = -x1;
+            cout << "x = " << x1 << ", = " << x2 << "\n";
+        } else if (xSquared == 0) {
+            cout << "x = 0\n";
+        } else {
+            cout << "Нет действительных корней\n";
+        }
+        return;
+    }
     double yRoots[2];
     int numYRoots;
-
-    if (a == 0) {
-        numYRoots = solveQuadratic(b, 0, c, yRoots);
-    } else {
-        numYRoots = solveQuadratic(a, b, c, yRoots);
-    }
-
+    
     bool hasRealRoots = false;
     for (int i = 0; i < numYRoots; ++i) {
         if (yRoots[i] > 0) {
