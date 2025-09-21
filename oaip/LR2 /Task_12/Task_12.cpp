@@ -1,12 +1,10 @@
 #include <iostream>
 using namespace std;
 
-// Функция для вычисления модуля числа
 double my_abs(double x) {
     return x < 0 ? -x : x;
 }
 
-// Функция для вычисления кубического корня
 double cubeRoot(double x) {
     if (x == 0.0) return 0.0;
     
@@ -23,11 +21,9 @@ double cubeRoot(double x) {
     return guess;
 }
 
-// Функция решения кубического уравнения
 void solveCubic(double p, double q) {
     cout << "Решение уравнения: x^3 + " << p << "x + " << q << " = 0\n";
     
-    // Проверка особых случаев
     if (p == 0 && q == 0) {
         cout << "Три одинаковых корня:\n";
         cout << "x1 = x2 = x3 = 0\n";
@@ -37,7 +33,7 @@ void solveCubic(double p, double q) {
     double discriminant = (q * q) / 4.0 + (p * p * p) / 27.0;
     
     if (discriminant > 1e-10) {
-        // Один вещественный корень
+       
         double sqrtD = cubeRoot(discriminant);
         double u = cubeRoot(-q/2.0 + sqrtD);
         double v = cubeRoot(-q/2.0 - sqrtD);
@@ -47,7 +43,7 @@ void solveCubic(double p, double q) {
         cout << "x1 = " << realRoot << "\n";
     }
     else if (my_abs(discriminant) < 1e-10) {
-        // Кратные корни
+        
         double root1 = 3.0 * q / p;
         double root2 = -3.0 * q / (2.0 * p);
         
@@ -56,7 +52,7 @@ void solveCubic(double p, double q) {
         cout << "x2 = x3 = " << root2 << "\n";
     }
     else {
-        // Три различных вещественных корня - используем численный метод
+       
         cout << "Три различных вещественных корня (найдены численным методом):\n";
         
         const double step = 0.001;
@@ -67,9 +63,7 @@ void solveCubic(double p, double q) {
         for (double x = -range; x <= range && rootsFound < 3; x += step) {
             double fx = x*x*x + p*x + q;
             
-            // Проверяем близость к нулю
             if (fx > -0.001 && fx < 0.001) {
-                // Проверяем, что это новый корень
                 double diff = x - lastRoot;
                 if (diff > 0.01 || diff < -0.01) {
                     cout << "x" << ++rootsFound << " = " << x << "\n";
