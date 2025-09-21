@@ -1,60 +1,86 @@
 #include <iostream>
 using namespace std;
 
-int sign(double x) {
-    if (x > 0) return 1;
-    if (x < 0) return -1;
-    return 0;
+// Функция для вычисления модуля числа
+double my_abs(double x) {
+    return x < 0 ? -x : x;
 }
 
+// Функция для вычисления кубического корня
 double cubeRoot(double x) {
     if (x == 0.0) return 0.0;
     
     double guess = x;
-    double precision = 1e-10; 
-    double difference;
+    double precision = 1e-10;
     
-    do {
-        double guessCubed = guess * guess * guess;
-        double newGuess = guess - (guessCubed - x) / (3.0 * guess * guess);
-        difference = newGuess - guess;
+    for (int i = 0; i < 50; i++) {
+        double newGuess = (2.0 * guess + x / (guess * guess)) / 3.0;
+        if (my_abs(newGuess - guess) < precision) {
+            return newGuess;
+        }
         guess = newGuess;
-    } while (difference > precision || difference < -precision);
-    
+    }
     return guess;
 }
 
+// Функция решения кубического уравнения
 void solveCubic(double p, double q) {
     cout << "Решение уравнения: x^3 + " << p << "x + " << q << " = 0\n";
     
+    // Проверка особых случаев
+    if (p == 0 && q == 0) {
+        cout << "Три одинаковых корня:\n";
+        cout << "x1 = x2 = x3 = 0\n";
+        return;
+    }
+    
     double discriminant = (q * q) / 4.0 + (p * p * p) / 27.0;
     
-    if (discriminant > 0) {
-        double sqrtD = cubeRoot(-q/2.0 + cubeRoot(discriminant));
-        double sqrtD2 = cubeRoot(-q/2.0 - cubeRoot(discriminant));
-        double realRoot = sqrtD + sqrtD2;
+    if (discriminant > 1e-10) {
+        // Один вещественный корень
+        double sqrtD = cubeRoot(discriminant);
+        double u = cubeRoot(-q/2.0 + sqrtD);
+        double v = cubeRoot(-q/2.0 - sqrtD);
+        double realRoot = u + v;
         
         cout << "Один вещественный корень:\n";
         cout << "x1 = " << realRoot << "\n";
-        cout << "x2 = " << -realRoot/2.0 << " + i*" << (cubeRoot(3.0)*fabs(realRoot)/2.0) << "\n";
-        cout << "x3 = " << -realRoot/2.0 << " - i*" << (cubeRoot(3.0)*fabs(realRoot)/2.0) << "\n";
     }
-    else if (discriminant == 0) {
+    else if (my_abs(discriminant) < 1e-10) {
+        // Кратные корни
         double root1 = 3.0 * q / p;
         double root2 = -3.0 * q / (2.0 * p);
         
-        cout << "Три вещественных корня (два совпадают):\n";
+        cout << "Два вещественных корня:\n";
         cout << "x1 = " << root1 << "\n";
         cout << "x2 = x3 = " << root2 << "\n";
     }
     else {
-        double r = cubeRoot(sqrt(-(p*p*p)/27.0));
-        double phi = acos(-q/(2.0*r));
+        // Три различных вещественных корня - используем численный метод
+        cout << "Три различных вещественных корня (найдены численным методом):\n";
         
-        cout << "Три различных вещественных корня:\n";
-        cout << "x1 = " << 2.0*r*cos(phi/3.0) << "\n";
-        cout << "x2 = " << 2.0*r*cos((phi + 2.0*M_PI)/3.0) << "\n";
-        cout << "x3 = " << 2.0*r*cos((phi + 4.0*M_PI)/3.0) << "\n";
+        const double step = 0.001;
+        const double range = 10.0;
+        int rootsFound = 0;
+        double lastRoot = -range - 1;
+        
+        for (double x = -range; x <= range && rootsFound < 3; x += step) {
+            double fx = x*x*x + p*x + q;
+            
+            // Проверяем близость к нулю
+            if (fx > -0.001 && fx < 0.001) {
+                // Проверяем, что это новый корень
+                double diff = x - lastRoot;
+                if (diff > 0.01 || diff < -0.01) {
+                    cout << "x" << ++rootsFound << " = " << x << "\n";
+                    lastRoot = x;
+                }
+            }
+        }
+        
+        if (rootsFound == 0) {
+            cout << "Корни не найдены в диапазоне [-10, 10]\n";
+        }
     }
 }
 
