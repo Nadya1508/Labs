@@ -34,7 +34,7 @@ void solveCubic(double p, double q) {
     
     if (discriminant > 1e-10) {
        
-        double sqrtD = cubeRoot(discriminant);
+        double sqrtD = sqrt(discriminant);
         double u = cubeRoot(-q/2.0 + sqrtD);
         double v = cubeRoot(-q/2.0 - sqrtD);
         double realRoot = u + v;
