@@ -1,6 +1,20 @@
 #include <iostream>
 using namespace std;
 
+double sinApprox(double x) {
+    double term = x;
+    double sum = x;
+    double x2 = x * x;
+    int sign = -1;
+
+    for ( int i = 3; i <= 13; i +=2){
+        term *= x2 / ((i - 1) * i);
+        sum += sign * term;
+        sign *= -1;
+    }
+    return sum;
+}
+
 double f(double x, int choise) {
     switch(choise) {
         case 1:
@@ -38,7 +52,10 @@ int main () {
     double phi = f(x, choise);
     double theta = phi + d * d + x * x;
     cout << "Аргумент синуса θ = f(x) + d^2 + x^2 =  " << theta << endl;
-    cout << "Результат: y = sin³(" << theta << ") - вычисляется вручную или с калькулятором." << endl;
-    return 0;
+
+    double sinValue = sinApprox(theta);
+    double y = sinValue * sinValue * sinValue;
+    cout << "Результат: y = sin³(" << theta << ") ≈ " << y << endl;
+    return 0;  
 }
 
