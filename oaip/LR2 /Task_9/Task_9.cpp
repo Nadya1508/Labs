@@ -2,6 +2,16 @@
 using namespace std;
 
 double sinApprox(double x) {
+
+    const double PI = 3.141592653589793;
+
+    x = x - (2 * PI) * static_cast<int>(x / (2 * PI));
+
+    if (x > PI) {
+        x -= 2 * PI;
+    } else if (x < -PI) {
+        x += 2 * PI;
+    }
     double term = x;
     double sum = x;
     double x2 = x * x;
