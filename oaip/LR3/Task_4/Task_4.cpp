@@ -154,7 +154,7 @@ int main() {
                 show_context_menu();
                 break;
             case 3:
-                cout << "Выход из программы. До свидания!" << endl;
+                cout << "Выход из программы." << endl;
                 break;
             default:
                 cout << "Ошибка! Выберите действие от 1 до 3." << endl;
