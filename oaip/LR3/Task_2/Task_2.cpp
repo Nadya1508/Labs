@@ -32,14 +32,14 @@ void clear_input_buffer() {
 int main() {
     setlocale(LC_ALL,"Russian");
 
-    int choise;
+    int choice;
     bool running = true;
 
     show_context_menu();
 
     while(running) {
         show_main_menu();
-        if(!(cin >> choise)) {
+        if(!(cin >> choice)) {
             cout << "Ошибка! Пожалуйста, введи числа от 1 до 3.\n\n";
             cin.clear();
              cin.ignore(numeric_limits<streamsize>::max(),'\n');
@@ -47,7 +47,7 @@ int main() {
         }
         cin.ignore(numeric_limits<streamsize>::max(),'\n');
 
-        switch(choise) {
+        switch(choice) {
             case 1: {
                 const double epsilon = 0.001;
                 double sum = 0.0;
