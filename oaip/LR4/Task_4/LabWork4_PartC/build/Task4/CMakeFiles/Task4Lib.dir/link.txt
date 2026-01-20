@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTask4Lib.a CMakeFiles/Task4Lib.dir/array_utils.cpp.o
+/usr/bin/ranlib libTask4Lib.a

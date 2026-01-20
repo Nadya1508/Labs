@@ -3,26 +3,20 @@
 
 using namespace std;
 
-void showContextMenu() {
-    cout << "\n=== Контекстное меню ===" << endl;
-    cout << "Задание: Удалить минимальный и максимальный элементы массива" << endl;
-    cout << "Выполнил: Седельник Надежда" << endl;
-    cout << "Вариант: 8" << endl;
-    cout << "Суть: Найти и удалить все вхождения минимального" << endl;
-    cout << "      и максимального элементов из массива" << endl;
-    cout << "========================\n" << endl;
-}
-
 int main() {
-    int* arr = nullptr;
+    int arr[MAX_SIZE];  
     int size = 0;
     int choice;
     
+    cout << "ПРОГРАММА ОБРАБОТКИ МАССИВОВ" << endl;
+    cout << "=============================" << endl;
+    
     do {
-        cout << "=== Программа обработки массива ===" << endl;
-        cout << "1 - Ввести новый массив" << endl;
-        cout << "2 - Показать текущий массив" << endl;
-        cout << "3 - Удалить min и max элементы" << endl;
+        cout << "\n=== ГЛАВНОЕ МЕНЮ ===" << endl;
+        cout << "1 - Ввести массив" << endl;
+        cout << "2 - Показать массив" << endl;
+        cout << "3 - Показать задание" << endl;
+        cout << "4 - Выполнить обработку" << endl;
         cout << "0 - Выход" << endl;
         cout << "Выберите действие: ";
         
@@ -30,55 +24,55 @@ int main() {
         
         switch(choice) {
             case 0:
-                cout << "Выход из программы..." << endl;
+                cout << "Завершение работы программы. До свидания!" << endl;
                 break;
                 
             case 1:
-                if (arr != nullptr) {
-                    delete[] arr;
-                }
-                arr = inputArray(size);
-                cout << "Массив успешно введен!" << endl;
+                inputArray(arr, size);
+                cout << "✓ Массив успешно сохранен!" << endl;
                 break;
                 
             case 2:
-                if (arr == nullptr) {
-                    cout << "Массив не введен! Сначала введите массив." << endl;
+                if (size == 0) {
+                    cout << "✗ Массив не введен! Сначала введите массив." << endl;
                 } else {
-                    cout << "Текущий массив: ";
+                    cout << "Текущий массив:" << endl;
                     printArray(arr, size);
+                    cout << "Размер: " << size << " элементов" << endl;
                 }
                 break;
                 
             case 3:
-                if (arr == nullptr) {
-                    cout << "Массив не введен! Сначала введите массив." << endl;
+                showContextMenu();
+                showInstructions();
+                break;
+                
+            case 4:
+                if (size == 0) {
+                    cout << "✗ Массив не введен! Сначала введите массив." << endl;
                 } else {
                     showContextMenu();
+                    cout << "\n--- ВЫПОЛНЕНИЕ ОБРАБОТКИ ---" << endl;
                     cout << "Исходный массив: ";
                     printArray(arr, size);
-                    cout << "Размер: " << size << endl;
+                    cout << "Исходный размер: " << size << endl;
                     
                     removeMinMax(arr, size);
                     
-                    cout << "Результат: ";
+                    cout << "\n--- РЕЗУЛЬТАТ ---" << endl;
+                    cout << "Результирующий массив: ";
                     printArray(arr, size);
                     cout << "Новый размер: " << size << endl;
+                    cout << "✓ Обработка завершена успешно!" << endl;
                 }
                 break;
                 
             default:
-                cout << "Неверный выбор! Попробуйте снова." << endl;
+                cout << "✗ Неверный выбор! Введите число от 0 до 4." << endl;
                 break;
         }
         
-        cout << endl;
-        
     } while (choice != 0);
-    
-    if (arr != nullptr) {
-        delete[] arr;
-    }
     
     return 0;
 }

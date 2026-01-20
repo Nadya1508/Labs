@@ -6,36 +6,60 @@ using namespace std;
 
 int safeInput() {
     int value;
-    while (!(cin >> value)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Ошибка ввода! Введите целое число: ";
+    while (true) {
+        if (cin >> value) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return value;
+        } else {
+            cout << "Ошибка: введите целое число: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
     }
-    return value;
 }
 
-int* inputArray(int& size) {
-    cout << "Введите размер массива: ";
-    size = safeInput();
+void showContextMenu() {
+    cout << "\n==========================================" << endl;
+    cout << "           КОНТЕКСТНОЕ МЕНЮ             " << endl;
+    cout << "==========================================" << endl;
+    cout << " Задание: Удалить минимальный и          " << endl;
+    cout << "          максимальный элементы массива  " << endl;
+    cout << " Выполнил: Седельник Надежда            " << endl;
+    cout << " Группа: 553503                         " << endl;
+    cout << " Вариант: 8                             " << endl;
+    cout << "==========================================" << endl;
+}
+
+void showInstructions() {
+    cout << "\nИНСТРУКЦИЯ:" << endl;
+    cout << "-----------" << endl;
+    cout << "1. Введите массив чисел" << endl;
+    cout << "2. Программа найдет минимальный и максимальный элементы" << endl;
+    cout << "3. Удалит все вхождения этих элементов" << endl;
+    cout << "4. Покажет исходный и результирующий массивы" << endl;
+    cout << "Максимальный размер массива: " << MAX_SIZE << " элементов" << endl;
+}
+
+void inputArray(int arr[], int& size) {
+    cout << "Введите размер массива (1-" << MAX_SIZE << "): ";
     
-    while (size <= 0) {
-        cout << "Размер должен быть положительным! Введите снова: ";
+    while (true) {
         size = safeInput();
+        if (size >= 1 && size <= MAX_SIZE) {
+            break;
+        }
+        cout << "Ошибка: размер должен быть от 1 до " << MAX_SIZE << ": ";
     }
     
-    int* arr = new int[size];
     cout << "Введите " << size << " элементов массива:" << endl;
-    
     for (int i = 0; i < size; i++) {
         cout << "Элемент " << i + 1 << ": ";
         arr[i] = safeInput();
     }
-    
-    return arr;
 }
 
-void printArray(int* arr, int size) {
-    if (size == 0 || arr == nullptr) {
+void printArray(const int arr[], int size) {
+    if (size == 0) {
         cout << "Массив пуст" << endl;
         return;
     }
@@ -50,77 +74,55 @@ void printArray(int* arr, int size) {
     cout << "]" << endl;
 }
 
-int findMin(int* arr, int size) {
-    if (size == 0) return 0;
-    
-    int minVal = arr[0];
+int findMin(const int arr[], int size) {
+    int min_val = arr[0];
     for (int i = 1; i < size; i++) {
-        if (arr[i] < minVal) {
-            minVal = arr[i];
+        if (arr[i] < min_val) {
+            min_val = arr[i];
         }
     }
-    return minVal;
+    return min_val;
 }
 
-int findMax(int* arr, int size) {
-    if (size == 0) return 0;
-    
-    int maxVal = arr[0];
+int findMax(const int arr[], int size) {
+    int max_val = arr[0];
     for (int i = 1; i < size; i++) {
-        if (arr[i] > maxVal) {
-            maxVal = arr[i];
+        if (arr[i] > max_val) {
+            max_val = arr[i];
         }
     }
-    return maxVal;
+    return max_val;
 }
 
-void removeMinMax(int*& arr, int& size) {
-    if (size == 0 || arr == nullptr) {
-        cout << "Массив пуст!" << endl;
+void removeMinMax(int arr[], int& size) {
+    if (size == 0) {
+        cout << "Массив пуст - нечего удалять!" << endl;
         return;
     }
     
-    int minVal = findMin(arr, size);
-    int maxVal = findMax(arr, size);
+    int min_val = findMin(arr, size);
+    int max_val = findMax(arr, size);
     
-    cout << "Найденные значения: min=" << minVal << ", max=" << maxVal << endl;
+    cout << "Минимальный элемент: " << min_val << endl;
+    cout << "Максимальный элемент: " << max_val << endl;
     
-    if (minVal == maxVal) {
-        cout << "Все элементы массива одинаковы" << endl;
-        delete[] arr;
-        arr = nullptr;
+    if (min_val == max_val) {
+        cout << "Все элементы массива одинаковы!" << endl;
         size = 0;
         return;
     }
     
-    int countToRemove = 0;
+    int new_size = 0;
+    
     for (int i = 0; i < size; i++) {
-        if (arr[i] == minVal || arr[i] == maxVal) {
-            countToRemove++;
+        if (arr[i] != min_val && arr[i] != max_val) {
+            arr[new_size] = arr[i];
+            new_size++;
         }
     }
     
-    if (countToRemove >= size) {
-        cout << "Удаляются все элементы массива" << endl;
-        delete[] arr;
-        arr = nullptr;
-        size = 0;
-        return;
-    }
+    int removed_count = size - new_size;
+    size = new_size;
     
-    int newSize = size - countToRemove;
-    int* newArr = new int[newSize];
-    
-    int newIndex = 0;
-    for (int i = 0; i < size; i++) {
-        if (arr[i] != minVal && arr[i] != maxVal) {
-            newArr[newIndex++] = arr[i];
-        }
-    }
-    
-    delete[] arr;
-    arr = newArr;
-    size = newSize;
-    
-    cout << "Удалено " << countToRemove << " элементов. Новый размер: " << size << endl;
+    cout << "Удалено элементов: " << removed_count << endl;
 }

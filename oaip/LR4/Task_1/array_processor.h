@@ -1,12 +1,18 @@
 #ifndef ARRAY_PROCESSOR_H
 #define ARRAY_PROCESSOR_H
 
-// Прототипы функций
-int* inputArray(int& size);
-void printArray(int* arr, int size);
-int findMin(int* arr, int size);
-int findMax(int* arr, int size);
-void removeMinMax(int*& arr, int& size);
+const int MAX_SIZE = 100; 
+
+
+void inputArray(int arr[], int& size);
+void printArray(const int arr[], int size);
+void removeMinMax(int arr[], int& size);
+int findMin(const int arr[], int size);
+int findMax(const int arr[], int size);
+
+
 int safeInput();
+void showContextMenu();
+void showInstructions();
 
 #endif

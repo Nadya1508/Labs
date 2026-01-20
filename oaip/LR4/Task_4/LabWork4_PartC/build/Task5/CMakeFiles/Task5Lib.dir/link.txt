@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTask5Lib.a CMakeFiles/Task5Lib.dir/minesweeper.cpp.o
+/usr/bin/ranlib libTask5Lib.a

@@ -1,0 +1,9 @@
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/CMakeFiles/Task5Lib.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/CMakeFiles/Task5.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/CMakeFiles/test.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/CMakeFiles/edit_cache.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/CMakeFiles/rebuild_cache.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/tests/CMakeFiles/Task5Tests.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/tests/CMakeFiles/test.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/tests/CMakeFiles/edit_cache.dir
+/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/tests/CMakeFiles/rebuild_cache.dir

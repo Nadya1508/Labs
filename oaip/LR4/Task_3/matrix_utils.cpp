@@ -38,10 +38,8 @@ double dotProduct(double** matrix, int row1, int row2, int n) {
 }
 
 double** createMatrix(int n) {
-    double** matrix = new double*[n];
-    for (int i = 0; i < n; i++) {
-        matrix[i] = new double[n];
-    }
+    double* array = new double[n];
+
     return matrix;
 }
 
@@ -50,7 +48,7 @@ void inputMatrix(double** matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             cout << "Элемент [" << i << "][" << j << "]: ";
-            while (!(cin >> matrix[i][j])) {
+            while (!(cin >> matrix[i])) {
                 cout << "Ошибка! Введите число: ";
                 cin.clear();
                 cin.ignore(10000, '\n');

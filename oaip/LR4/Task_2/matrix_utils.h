@@ -4,7 +4,6 @@
 const int M = 5;
 const int N = 5;
 
-// Объявления функций
 void showContextMenu();
 int safeInputInt(const char* prompt);
 void initializeArray(int arr[M][N]);

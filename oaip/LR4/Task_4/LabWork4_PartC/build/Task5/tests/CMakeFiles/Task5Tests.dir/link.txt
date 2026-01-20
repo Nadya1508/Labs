@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/Task5Tests.dir/tests.cpp.o -o Task5Tests  ../libTask5Lib.a ../../lib/libgtest_main.a ../../lib/libgtest.a

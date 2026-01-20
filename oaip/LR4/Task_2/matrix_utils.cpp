@@ -63,11 +63,11 @@ int findMinAboveDiagonal(int arr[M][N]) {
     bool found = false;
     int min_val = 0;
     
-    // Проходим только по элементам ВЫШЕ главной диагонали
+    
     for (int i = 0; i < M; i++) {
         for (int j = i + 1; j < N; j++) {  
             if (!found) {
-                // Первый найденный элемент выше диагонали
+               
                 min_val = arr[i][j];
                 found = true;
             } else if (arr[i][j] < min_val) {
