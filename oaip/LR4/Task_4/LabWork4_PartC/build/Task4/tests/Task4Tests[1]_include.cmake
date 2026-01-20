@@ -1,5 +1,0 @@
-if(EXISTS "/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/build/Task4/tests/Task4Tests[1]_tests.cmake")
-  include("/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/build/Task4/tests/Task4Tests[1]_tests.cmake")
-else()
-  add_test(Task4Tests_NOT_BUILT Task4Tests_NOT_BUILT)
-endif()

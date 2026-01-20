@@ -1,3 +1,0 @@
-/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/_deps/googletest-subbuild/CMakeFiles/googletest-populate.dir
-/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/_deps/googletest-subbuild/CMakeFiles/edit_cache.dir
-/Users/nadezdasedelnik/Documents/553503/oaip/LR4/Task_4/LabWork4_PartC/Task5/build/_deps/googletest-subbuild/CMakeFiles/rebuild_cache.dir

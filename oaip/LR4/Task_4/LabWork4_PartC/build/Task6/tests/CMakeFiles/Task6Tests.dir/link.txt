@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/Task6Tests.dir/tests.cpp.o -o Task6Tests  ../libTask6Lib.a ../../lib/libgtest_main.a ../../lib/libgtest.a

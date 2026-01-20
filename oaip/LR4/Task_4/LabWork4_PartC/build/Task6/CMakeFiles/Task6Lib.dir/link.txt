@@ -1,2 +1,0 @@
-/usr/bin/ar qc libTask6Lib.a CMakeFiles/Task6Lib.dir/magic_square.cpp.o
-/usr/bin/ranlib libTask6Lib.a
