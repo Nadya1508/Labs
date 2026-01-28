@@ -173,6 +173,8 @@ void Car::startEngine()
     try {
         if (m_carState.state == CAR_STOPPED) {
             m_carState.state = CAR_MOVING;
+            // Устанавливаем небольшую скорость для демонстрации
+            setSpeed(2, 0);
             emit engineStateChanged(true);
             emit carStateChanged(CAR_MOVING);
             emit stateChanged();
@@ -207,6 +209,11 @@ void Car::park()
         m_carState.state = CAR_PARKED;
         setSpeed(0, 0);
         closeAllDoors();
+        // Выключаем фары при парковке
+        if (m_carState.headlightsOn) {
+            m_carState.headlightsOn = false;
+            emit headlightsStateChanged(false);
+        }
         emit carStateChanged(CAR_PARKED);
         emit stateChanged();
         
@@ -290,6 +297,7 @@ bool Car::loadFromFile(const QString &filename)
         QDataStream stream(&file);
         m_carState.deserialize(stream);
         
+        // ВАЖНО: обновляем состояние родительского класса
         setState(m_carState.rectState);
         
         validateCarState();
@@ -394,6 +402,7 @@ void Car::drawDoors(QPainter &painter)
     
     painter.setBrush(QBrush(m_carState.bodyColor.darker(120)));
     painter.setPen(QPen(Qt::black, 1));
+    // Дверь БЕЗ окна - простой прямоугольник
     painter.drawRect(pos.x() + w * 0.3, pos.y() + h * 0.3, w * 0.2, h * 0.4);
     
     painter.setBrush(QBrush(Qt::lightGray));
@@ -411,6 +420,7 @@ void Car::drawDoors(QPainter &painter)
     
     painter.setBrush(QBrush(m_carState.bodyColor.darker(120)));
     painter.setPen(QPen(Qt::black, 1));
+    // Дверь БЕЗ окна - простой прямоугольник
     painter.drawRect(pos.x() + w * 0.5, pos.y() + h * 0.3, w * 0.2, h * 0.4);
     
     painter.setBrush(QBrush(Qt::lightGray));
