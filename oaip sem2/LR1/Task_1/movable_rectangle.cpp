@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QFile>
 #include <QMessageBox>
+#include <cmath>
 
 MovableRectangle::MovableRectangle(QObject *parent)
     : QObject(parent)
@@ -51,42 +52,67 @@ void MovableRectangle::draw(QPainter &painter)
     try {
         painter.save();
         
+        // Рисуем прямоугольник
         painter.setBrush(QBrush(m_state.color));
         painter.setPen(QPen(Qt::black, 2));
-        
         painter.drawRoundedRect(m_state.position.x(), m_state.position.y(),
                                m_state.width, m_state.height, 10, 10);
         
+        // Информация
         painter.setPen(QPen(Qt::white, 1));
         QFont font = painter.font();
         font.setPointSize(8);
         painter.setFont(font);
         
-        QString info = QString("W: %1\nH: %2\nX: %3\nY: %4")
+        QString info = QString("W: %1\nH: %2\nX: %3\nY: %4\nSpeed: (%5, %6)")
             .arg(m_state.width)
             .arg(m_state.height)
             .arg(m_state.position.x())
-            .arg(m_state.position.y());
+            .arg(m_state.position.y())
+            .arg(m_state.speedX, 0, 'f', 1)
+            .arg(m_state.speedY, 0, 'f', 1);
         
         painter.drawText(m_state.position.x() + 5, 
                         m_state.position.y() + 20, 
                         info);
         
+        // Рисуем стрелку направления движения
         if (m_state.speedX != 0 || m_state.speedY != 0) {
-            painter.setPen(QPen(Qt::yellow, 2, Qt::SolidLine));
+            painter.setPen(QPen(Qt::red, 3, Qt::SolidLine));
+            
+            // Центр прямоугольника
             QPoint center(m_state.position.x() + m_state.width / 2,
                          m_state.position.y() + m_state.height / 2);
-            QPoint end(center.x() + static_cast<int>(m_state.speedX * 15),
-                      center.y() + static_cast<int>(m_state.speedY * 15));
             
+            // Длина стрелки пропорциональна скорости
+            float speed = sqrt(m_state.speedX * m_state.speedX + m_state.speedY * m_state.speedY);
+            int arrowLength = qMin(50, static_cast<int>(speed * 10 + 20));
+            
+            // Конец стрелки
+            QPoint end(center.x() + static_cast<int>(m_state.speedX * arrowLength / speed),
+                      center.y() + static_cast<int>(m_state.speedY * arrowLength / speed));
+            
+            // Рисуем линию
             painter.drawLine(center, end);
             
-            painter.setBrush(Qt::yellow);
-            QPolygon arrow;
-            arrow << end 
-                  << QPoint(end.x() - 5, end.y() - 5)
-                  << QPoint(end.x() - 5, end.y() + 5);
-            painter.drawPolygon(arrow);
+            // Рисуем наконечник стрелки
+            painter.setBrush(Qt::red);
+            painter.setPen(Qt::NoPen);
+            
+            // Вычисляем угол
+            double angle = atan2(m_state.speedY, m_state.speedX);
+            int arrowSize = 8;
+            
+            // Точки треугольника
+            QPoint p1 = end;
+            QPoint p2(end.x() - arrowSize * cos(angle - M_PI/6),
+                     end.y() - arrowSize * sin(angle - M_PI/6));
+            QPoint p3(end.x() - arrowSize * cos(angle + M_PI/6),
+                     end.y() - arrowSize * sin(angle + M_PI/6));
+            
+            QPolygon arrowHead;
+            arrowHead << p1 << p2 << p3;
+            painter.drawPolygon(arrowHead);
         }
         
         painter.restore();

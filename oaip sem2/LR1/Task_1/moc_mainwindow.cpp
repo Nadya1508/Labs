@@ -44,11 +44,11 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "",
         "updateStatus",
         "onCreateRectangle",
+        "onCreateCar",
         "onMoveRectangle",
         "onChangeRectangleColor",
         "onSaveRectangle",
         "onLoadRectangle",
-        "onCreateCar",
         "onToggleLeftDoor",
         "onToggleRightDoor",
         "onToggleHeadlights",
@@ -70,7 +70,12 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "onErrorOccurred",
         "message",
         "onAbout",
-        "onHelp"
+        "onHelp",
+        "onEngineStateChanged",
+        "running",
+        "onCarStateChanged",
+        "CarState",
+        "newState"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -80,15 +85,15 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onCreateRectangle'
         QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onMoveRectangle'
-        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onChangeRectangleColor'
-        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onSaveRectangle'
-        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onLoadRectangle'
-        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onCreateCar'
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onMoveRectangle'
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onChangeRectangleColor'
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onSaveRectangle'
+        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onLoadRectangle'
         QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onToggleLeftDoor'
         QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
@@ -134,6 +139,14 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(30, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onHelp'
         QtMocHelpers::SlotData<void()>(31, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onEngineStateChanged'
+        QtMocHelpers::SlotData<void(bool)>(32, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 33 },
+        }}),
+        // Slot 'onCarStateChanged'
+        QtMocHelpers::SlotData<void(CarState)>(34, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 35, 36 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -160,11 +173,11 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 0: _t->onAnimationTimer(); break;
         case 1: _t->updateStatus(); break;
         case 2: _t->onCreateRectangle(); break;
-        case 3: _t->onMoveRectangle(); break;
-        case 4: _t->onChangeRectangleColor(); break;
-        case 5: _t->onSaveRectangle(); break;
-        case 6: _t->onLoadRectangle(); break;
-        case 7: _t->onCreateCar(); break;
+        case 3: _t->onCreateCar(); break;
+        case 4: _t->onMoveRectangle(); break;
+        case 5: _t->onChangeRectangleColor(); break;
+        case 6: _t->onSaveRectangle(); break;
+        case 7: _t->onLoadRectangle(); break;
         case 8: _t->onToggleLeftDoor(); break;
         case 9: _t->onToggleRightDoor(); break;
         case 10: _t->onToggleHeadlights(); break;
@@ -186,6 +199,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 26: _t->onErrorOccurred((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         case 27: _t->onAbout(); break;
         case 28: _t->onHelp(); break;
+        case 29: _t->onEngineStateChanged((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 30: _t->onCarStateChanged((*reinterpret_cast<std::add_pointer_t<CarState>>(_a[1]))); break;
         default: ;
         }
     }
@@ -210,14 +225,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 29)
+        if (_id < 31)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 29;
+        _id -= 31;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 29)
+        if (_id < 31)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 29;
+        _id -= 31;
     }
     return _id;
 }

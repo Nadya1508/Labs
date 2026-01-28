@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QDataStream>
+#include <QFont>
 
 Car::Car(QObject *parent)
     : MovableRectangle(parent)
@@ -74,6 +75,7 @@ void Car::move()
     try {
         MovableRectangle::move();
         
+        // Автоматическое включение фар при движении
         if (getSpeedX() != 0 && !m_carState.headlightsOn) {
             static int counter = 0;
             if (counter++ % 50 == 0) {
@@ -81,17 +83,56 @@ void Car::move()
             }
         }
         
+        // Обновляем состояние на основе скорости
         if (getSpeedX() == 0 && getSpeedY() == 0) {
-            m_carState.state = CAR_STOPPED;
+            if (m_carState.state != CAR_PARKED) {
+                m_carState.state = CAR_STOPPED;
+                emit carStateChanged(CAR_STOPPED);
+            }
         } else {
-            m_carState.state = CAR_MOVING;
+            if (m_carState.state != CAR_MOVING) {
+                m_carState.state = CAR_MOVING;
+                emit carStateChanged(CAR_MOVING);
+            }
         }
         
-        emit carStateChanged(m_carState.state);
         emit stateChanged();
         
     } catch (const std::exception &e) {
         emitError(QString("Car move error: %1").arg(e.what()));
+    }
+}
+
+void Car::setSpeed(float dx, float dy)
+{
+    try {
+        // Вызываем родительский метод
+        MovableRectangle::setSpeed(dx, dy);
+        
+        // Обновляем состояние на основе скорости
+        if (dx == 0 && dy == 0) {
+            if (m_carState.state != CAR_PARKED) {
+                m_carState.state = CAR_STOPPED;
+                emit carStateChanged(CAR_STOPPED);
+            }
+        } else {
+            if (m_carState.state != CAR_MOVING) {
+                m_carState.state = CAR_MOVING;
+                emit carStateChanged(CAR_MOVING);
+            }
+        }
+        
+    } catch (const std::exception &e) {
+        emitError(QString("Set speed error: %1").arg(e.what()));
+    }
+}
+
+void Car::setPosition(const QPoint &pos)
+{
+    try {
+        MovableRectangle::setPosition(pos);
+    } catch (const std::exception &e) {
+        emitError(QString("Set position error: %1").arg(e.what()));
     }
 }
 
@@ -171,15 +212,22 @@ void Car::closeAllDoors()
 void Car::startEngine()
 {
     try {
+        qDebug() << "=== START ENGINE CALLED ===";
+        qDebug() << "Current state:" << m_carState.state;
+        
         if (m_carState.state == CAR_STOPPED) {
             m_carState.state = CAR_MOVING;
             // Устанавливаем небольшую скорость для демонстрации
             setSpeed(2, 0);
+            
+            qDebug() << "Engine started. New state: CAR_MOVING";
+            qDebug() << "Speed set to: (2, 0)";
+            
             emit engineStateChanged(true);
             emit carStateChanged(CAR_MOVING);
             emit stateChanged();
-            
-            qDebug() << "Engine started";
+        } else {
+            qDebug() << "Engine already running or car is parked";
         }
     } catch (const std::exception &e) {
         emitError(QString("Start engine error: %1").arg(e.what()));
@@ -189,14 +237,20 @@ void Car::startEngine()
 void Car::stopEngine()
 {
     try {
+        qDebug() << "=== STOP ENGINE CALLED ===";
+        qDebug() << "Current state:" << m_carState.state;
+        
         if (m_carState.state == CAR_MOVING) {
             m_carState.state = CAR_STOPPED;
             setSpeed(0, 0);
+            
+            qDebug() << "Engine stopped. New state: CAR_STOPPED";
+            
             emit engineStateChanged(false);
             emit carStateChanged(CAR_STOPPED);
             emit stateChanged();
-            
-            qDebug() << "Engine stopped";
+        } else {
+            qDebug() << "Engine already stopped";
         }
     } catch (const std::exception &e) {
         emitError(QString("Stop engine error: %1").arg(e.what()));
@@ -206,18 +260,24 @@ void Car::stopEngine()
 void Car::park()
 {
     try {
+        qDebug() << "=== PARK CALLED ===";
+        qDebug() << "Current state:" << m_carState.state;
+        
         m_carState.state = CAR_PARKED;
         setSpeed(0, 0);
         closeAllDoors();
+        
         // Выключаем фары при парковке
         if (m_carState.headlightsOn) {
             m_carState.headlightsOn = false;
             emit headlightsStateChanged(false);
         }
+        
+        qDebug() << "Car parked. New state: CAR_PARKED";
+        
         emit carStateChanged(CAR_PARKED);
         emit stateChanged();
         
-        qDebug() << "Car parked";
     } catch (const std::exception &e) {
         emitError(QString("Park car error: %1").arg(e.what()));
     }
@@ -257,6 +317,8 @@ void Car::setWheelColor(const QColor &color)
 void Car::setCarState(CarState newState)
 {
     try {
+        qDebug() << "Setting car state from" << m_carState.state << "to" << newState;
+        
         m_carState.state = newState;
         validateCarState();
         emit carStateChanged(newState);
@@ -297,7 +359,6 @@ bool Car::loadFromFile(const QString &filename)
         QDataStream stream(&file);
         m_carState.deserialize(stream);
         
-        // ВАЖНО: обновляем состояние родительского класса
         setState(m_carState.rectState);
         
         validateCarState();
@@ -330,6 +391,7 @@ bool Car::saveToFile(const QString &filename) const
     }
 }
 
+// Методы рисования (исправленные)
 void Car::drawCarBody(QPainter &painter)
 {
     QPoint pos = getPosition();
@@ -392,8 +454,8 @@ void Car::drawDoors(QPainter &painter)
     int w = getWidth();
     int h = getHeight();
     
+    // Левая дверь
     painter.save();
-    
     if (m_carState.leftDoorOpen) {
         painter.translate(pos.x() + w * 0.3, pos.y() + h * 0.5);
         painter.rotate(-m_carState.doorAngle);
@@ -402,7 +464,6 @@ void Car::drawDoors(QPainter &painter)
     
     painter.setBrush(QBrush(m_carState.bodyColor.darker(120)));
     painter.setPen(QPen(Qt::black, 1));
-    // Дверь БЕЗ окна - простой прямоугольник
     painter.drawRect(pos.x() + w * 0.3, pos.y() + h * 0.3, w * 0.2, h * 0.4);
     
     painter.setBrush(QBrush(Qt::lightGray));
@@ -410,17 +471,16 @@ void Car::drawDoors(QPainter &painter)
     
     painter.restore();
     
+    // Правая дверь
     painter.save();
-    
     if (m_carState.rightDoorOpen) {
         painter.translate(pos.x() + w * 0.7, pos.y() + h * 0.5);
         painter.rotate(m_carState.doorAngle);
         painter.translate(-(pos.x() + w * 0.7), -(pos.y() + h * 0.5));
     }
     
-    painter.setBrush(QBrush(m_carState.bodyColor.darker(120)));
+    painter.setBrush(QBrush(m_carState.bodyColor.darker(120))); // ВАЖНО: добавлена кисть!
     painter.setPen(QPen(Qt::black, 1));
-    // Дверь БЕЗ окна - простой прямоугольник
     painter.drawRect(pos.x() + w * 0.5, pos.y() + h * 0.3, w * 0.2, h * 0.4);
     
     painter.setBrush(QBrush(Qt::lightGray));
