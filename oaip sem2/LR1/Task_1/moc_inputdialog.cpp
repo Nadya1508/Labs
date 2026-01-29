@@ -1,10 +1,3 @@
-/****************************************************************************
-** Meta object code from reading C++ file 'inputdialog.h'
-**
-** Created by: The Qt Meta Object Compiler version 69 (Qt 6.10.1)
-**
-** WARNING! All changes made in this file will be lost!
-*****************************************************************************/
 
 #include "inputdialog.h"
 #include <QtGui/qtextcursor.h>

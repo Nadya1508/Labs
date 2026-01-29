@@ -43,4 +43,4 @@ private:
     bool validateField(QLineEdit *edit, const QString &fieldName, int &value);
 };
 
-#endif // INPUTDIALOG_H
+#endif 

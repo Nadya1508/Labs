@@ -5,11 +5,10 @@
 #include <QPainter>
 #include <QTransform>
 
-// Состояния автомобиля - ИСПРАВЛЕНО: используем простые состояния как в рабочем коде
 enum CarState {
-    CAR_STOPPED,    // Автомобиль остановлен
-    CAR_MOVING,     // Автомобиль движется
-    CAR_PARKED      // Автомобиль припаркован
+    CAR_STOPPED,    
+    CAR_MOVING,     
+    CAR_PARKED      
 };
 
 // Структура состояния автомобиля
@@ -63,24 +62,20 @@ public:
     Car(const QPoint &pos, int w, int h, const QColor &bodyColor, QObject *parent = nullptr);
     virtual ~Car() = default;
     
-    // Переопределенные методы
     virtual void draw(QPainter &painter) override;
     virtual void move() override;
     virtual bool loadFromFile(const QString &filename) override;
     virtual bool saveToFile(const QString &filename) const override;
     
-    // Переопределенные методы управления
     virtual void setSpeed(float dx, float dy) override;
     virtual void setPosition(const QPoint &pos) override;
     
-    // Новые методы для автомобиля
     void toggleLeftDoor();
     void toggleRightDoor();
     void toggleHeadlights();
     void openAllDoors();
     void closeAllDoors();
     
-    // Функции работы с двигателем
     void startEngine();
     void stopEngine();
     void park();
@@ -89,7 +84,6 @@ public:
     void setWheelColor(const QColor &color);
     void setCarState(CarState newState);
     
-    // Геттеры
     bool isLeftDoorOpen() const { return m_carState.leftDoorOpen; }
     bool isRightDoorOpen() const { return m_carState.rightDoorOpen; }
     bool areHeadlightsOn() const { return m_carState.headlightsOn; }
@@ -98,7 +92,6 @@ public:
     QColor getWheelColor() const { return m_carState.wheelColor; }
     CarStateRecord getCarStateRecord() const { return m_carState; }
     
-    // Дополнительные методы
     bool isEngineRunning() const { 
         return m_carState.state == CAR_MOVING; 
     }
@@ -108,7 +101,6 @@ public:
                !m_carState.rightDoorOpen; 
     }
     
-    // Анимация
     void updateAnimation();
 
 signals:
@@ -130,4 +122,4 @@ private:
     void validateCarState() const;
 };
 
-#endif // CAR_H
+#endif 

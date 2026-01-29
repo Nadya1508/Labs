@@ -39,5 +39,5 @@ else:unix:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
-# Предкомпилированные заголовки (опционально)
+# Предкомпилированные заголовки 
 # PRECOMPILED_HEADER = stdafx.h

@@ -83,7 +83,6 @@ void Car::move()
             }
         }
         
-        // Обновляем состояние на основе скорости
         if (getSpeedX() == 0 && getSpeedY() == 0) {
             if (m_carState.state != CAR_PARKED) {
                 m_carState.state = CAR_STOPPED;
@@ -217,7 +216,6 @@ void Car::startEngine()
         
         if (m_carState.state == CAR_STOPPED) {
             m_carState.state = CAR_MOVING;
-            // Устанавливаем небольшую скорость для демонстрации
             setSpeed(2, 0);
             
             qDebug() << "Engine started. New state: CAR_MOVING";
@@ -391,7 +389,7 @@ bool Car::saveToFile(const QString &filename) const
     }
 }
 
-// Методы рисования (исправленные)
+// Методы рисования 
 void Car::drawCarBody(QPainter &painter)
 {
     QPoint pos = getPosition();

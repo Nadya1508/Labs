@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "name": "macOS-Qt6",
+            "defines": [
+                "QT_CORE_LIB",
+                "QT_GUI_LIB",
+                "QT_WIDGETS_LIB",
+                "QT_NO_DEBUG"
+            ],
+            "compilerPath": "/opt/homebrew/opt/llvm/bin/clang++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64",
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/opt/homebrew/Cellar/qtbase/6.10.1/include",
+                    "/opt/homebrew/Cellar/qtbase/6.10.1/lib"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db"
+            },
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtCore.framework/Versions/A/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtGui.framework/Versions/A/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtWidgets.framework/Versions/A/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtCore.framework/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtGui.framework/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtWidgets.framework/Headers",
+                "/opt/homebrew/include"
+            ]
+        }
+    ],
+    "version": 4
+}

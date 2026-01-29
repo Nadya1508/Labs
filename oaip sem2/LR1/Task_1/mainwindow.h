@@ -36,17 +36,14 @@ private slots:
     void onAnimationTimer();
     void updateStatus();
     
-    // Слоты для управления прямоугольником
     void onCreateRectangle();
     void onCreateCar();
     
-    // Дополнительные методы для прямоугольника
     void onMoveRectangle();
     void onChangeRectangleColor();
     void onSaveRectangle();
     void onLoadRectangle();
     
-    // Слоты для управления автомобилем
     void onToggleLeftDoor();
     void onToggleRightDoor();
     void onToggleHeadlights();
@@ -60,7 +57,6 @@ private slots:
     void onSaveCar();
     void onLoadCar();
     
-    // Слоты для управления движением
     void onMoveLeft();
     void onMoveRight();
     void onMoveUp();
@@ -68,25 +64,21 @@ private slots:
     void onStopMovement();
     void onResetPosition();
     
-    // Слоты для обработки ошибок
     void onErrorOccurred(const QString &message);
     
-    // Слоты меню
     void onAbout();
     void onHelp();
     
-    // Дополнительные слоты
     void onEngineStateChanged(bool running);
     void onCarStateChanged(CarState newState);
 
 private:
-    MovableRectangle *m_currentObject;  // Текущий объект (прямоугольник или автомобиль)
-    Car *m_car;                         // Указатель на автомобиль (если создан)
+    MovableRectangle *m_currentObject;  
+    Car *m_car;                         
     QTimer *m_animationTimer;
     QLabel *m_canvas;
     QLabel *m_statusLabel;
     
-    // UI элементы
     QPushButton *createButton(const QString &text, const QString &tooltip = "");
     
     void setupUI();
@@ -97,10 +89,8 @@ private:
     void saveSettings();
     void loadSettings();
     
-    // Вспомогательные методы
     void showMessage(const QString &message, bool isError = false);
-    void updateObjectInfo();  // Обновление информации об объекте
-    void forceUpdate();       // Принудительное обновление интерфейса
-};
+    void updateObjectInfo();  
+    void forceUpdate();       
 
-#endif // MAINWINDOW_H
+#endif 

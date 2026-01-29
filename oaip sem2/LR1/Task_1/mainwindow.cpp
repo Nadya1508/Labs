@@ -112,7 +112,6 @@ void MainWindow::setupMenu()
     fileMenu->addAction(exitAction);
     connect(exitAction, &QAction::triggered, this, &QMainWindow::close);
     
-    // Edit menu
     QMenu *editMenu = menuBar()->addMenu("&Edit");
     
     QAction *changeRectColorAction = new QAction("Change Rectangle &Color", this);
@@ -127,7 +126,6 @@ void MainWindow::setupMenu()
     editMenu->addAction(changeWheelColorAction);
     connect(changeWheelColorAction, &QAction::triggered, this, &MainWindow::onChangeWheelColor);
     
-    // Control menu
     QMenu *controlMenu = menuBar()->addMenu("&Control");
     
     QAction *moveLeftAction = new QAction("Move &Left", this);
@@ -162,7 +160,6 @@ void MainWindow::setupMenu()
     controlMenu->addAction(resetAction);
     connect(resetAction, &QAction::triggered, this, &MainWindow::onResetPosition);
     
-    // Car menu
     QMenu *carMenu = menuBar()->addMenu("&Car");
     
     QAction *leftDoorAction = new QAction("Left &Door", this);
@@ -206,7 +203,6 @@ void MainWindow::setupMenu()
     carMenu->addAction(parkAction);
     connect(parkAction, &QAction::triggered, this, &MainWindow::onParkCar);
     
-    // Help menu
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     
     QAction *aboutAction = new QAction("&About", this);
@@ -225,7 +221,6 @@ void MainWindow::setupToolbar()
     toolbar->setMovable(false);
     toolbar->setIconSize(QSize(24, 24));
     
-    // Добавляем кнопки на тулбар
     QAction *createRectAction = toolbar->addAction("Create Rectangle");
     connect(createRectAction, &QAction::triggered, this, &MainWindow::onCreateRectangle);
     
@@ -264,7 +259,6 @@ void MainWindow::setupControlPanel()
     QWidget *dockWidget = new QWidget(dock);
     QVBoxLayout *dockLayout = new QVBoxLayout(dockWidget);
     
-    // Object Creation Group
     QGroupBox *creationGroup = new QGroupBox("Object Creation", dockWidget);
     creationGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
     QGridLayout *creationLayout = new QGridLayout(creationGroup);
@@ -277,7 +271,6 @@ void MainWindow::setupControlPanel()
     creationLayout->addWidget(btnCreateRect, 0, 0);
     creationLayout->addWidget(btnCreateCar, 0, 1);
     
-    // Rectangle Control Group
     QGroupBox *rectGroup = new QGroupBox("Rectangle Control", dockWidget);
     rectGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
     QGridLayout *rectLayout = new QGridLayout(rectGroup);
@@ -292,7 +285,6 @@ void MainWindow::setupControlPanel()
     rectLayout->addWidget(btnSaveRect, 1, 0);
     rectLayout->addWidget(btnLoadRect, 1, 1);
     
-    // Car Control Group
     QGroupBox *carGroup = new QGroupBox("Car Control", dockWidget);
     carGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
     QGridLayout *carLayout = new QGridLayout(carGroup);
@@ -323,7 +315,6 @@ void MainWindow::setupControlPanel()
     carLayout->addWidget(btnSaveCar, 5, 0);
     carLayout->addWidget(btnLoadCar, 5, 1);
     
-    // Movement Control Group
     QGroupBox *moveGroup = new QGroupBox("Movement Control", dockWidget);
     moveGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
     QGridLayout *moveLayout = new QGridLayout(moveGroup);
@@ -352,7 +343,6 @@ void MainWindow::setupControlPanel()
     dock->setWidget(dockWidget);
     addDockWidget(Qt::RightDockWidgetArea, dock);
     
-    // Connect signals
     connect(btnCreateRect, &QPushButton::clicked, this, &MainWindow::onCreateRectangle);
     connect(btnCreateCar, &QPushButton::clicked, this, &MainWindow::onCreateCar);
     connect(btnMoveRect, &QPushButton::clicked, this, &MainWindow::onMoveRectangle);
@@ -383,7 +373,7 @@ void MainWindow::setupControlPanel()
 
 void MainWindow::setupConnections()
 {
-    // Connections are set up when objects are created
+    
 }
 
 void MainWindow::onAnimationTimer()
@@ -475,27 +465,22 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
     
-    // Draw sky
     QLinearGradient skyGradient(0, 0, 0, pixmap.height()/2);
     skyGradient.setColorAt(0, QColor(135, 206, 250));
     skyGradient.setColorAt(1, QColor(240, 248, 255));
     painter.fillRect(0, 0, pixmap.width(), pixmap.height()/2, skyGradient);
     
-    // Draw ground
     painter.fillRect(0, pixmap.height()/2, pixmap.width(), pixmap.height()/2, 
                     QColor(34, 139, 34));
     
-    // Draw road
     painter.fillRect(0, pixmap.height()/2 - 25, pixmap.width(), 50, 
                     QColor(105, 105, 105));
     
-    // Draw road markings
     painter.setPen(QPen(Qt::yellow, 3));
     for (int i = 0; i < pixmap.width(); i += 40) {
         painter.drawLine(i, pixmap.height()/2, i + 20, pixmap.height()/2);
     }
     
-    // Draw object
     m_currentObject->draw(painter);
     
     m_canvas->setPixmap(pixmap);
@@ -627,7 +612,6 @@ void MainWindow::onCreateCar()
             m_car = new Car(QPoint(x, y), width, height, color, this);
             m_currentObject = m_car;
             
-            // Соединяем сигналы
             connect(m_car, &Car::errorOccurred, 
                    this, &MainWindow::onErrorOccurred);
             connect(m_car, &Car::stateChanged,
@@ -803,7 +787,6 @@ void MainWindow::onStartEngine()
     qDebug() << "  Current state:" << m_car->getCarState();
     qDebug() << "  Current speed:" << m_car->getSpeedX() << "," << m_car->getSpeedY();
     
-    // Вызываем метод startEngine
     m_car->startEngine();
     
     qDebug() << "After startEngine() call:";
@@ -912,7 +895,6 @@ void MainWindow::onLoadCar()
         if (m_car->loadFromFile(filename)) {
             m_currentObject = m_car;
             
-            // Соединяем сигналы
             connect(m_car, &Car::errorOccurred, 
                    this, &MainWindow::onErrorOccurred);
             connect(m_car, &Car::stateChanged,
@@ -946,13 +928,12 @@ void MainWindow::onMoveLeft()
     }
     
     if (m_car) {
-        // Для автомобиля проверяем состояние
+        
         if (m_car->getCarState() == CAR_STOPPED) {
             showMessage("Starting engine automatically...", false);
             m_car->startEngine();
         }
         
-        // Закрываем двери если они открыты
         if (m_car->isLeftDoorOpen() || m_car->isRightDoorOpen()) {
             showMessage("Closing doors automatically...", false);
             m_car->closeAllDoors();
@@ -1118,7 +1099,7 @@ void MainWindow::onAbout()
                       "<li><b>Car</b> - Child class with additional features (doors, headlights, engine)</li>"
                       "</ul>"
                       "<p><b>Version:</b> 1.0.0</p>"
-                      "<p><b>Author:</b> Student</p>");
+                      "<p><b>Author:</b> Sedelnik Nadya</p>");
 }
 
 void MainWindow::onHelp()
@@ -1239,7 +1220,6 @@ void MainWindow::loadSettings()
         m_car->setWheelColor(wheelColor);
         m_currentObject = m_car;
         
-        // Соединяем сигналы
         connect(m_car, &Car::errorOccurred, this, &MainWindow::onErrorOccurred);
         connect(m_car, &Car::stateChanged, this, &MainWindow::updateStatus);
         connect(m_car, &Car::carStateChanged, this, &MainWindow::onCarStateChanged);
@@ -1280,6 +1260,5 @@ void MainWindow::loadSettings()
 
 void MainWindow::updateObjectInfo()
 {
-    // This method is kept for compatibility
     updateStatus();
 }
