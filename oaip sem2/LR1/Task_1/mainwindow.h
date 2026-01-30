@@ -92,5 +92,5 @@ private:
     void showMessage(const QString &message, bool isError = false);
     void updateObjectInfo();  
     void forceUpdate();       
-
+};
 #endif 

@@ -27,7 +27,6 @@ QMAKE_CXXFLAGS += -Wall -Wextra
 
 # Для отладки
 CONFIG += debug
-CONFIG += console
 
 # Параметры сборки
 macx {

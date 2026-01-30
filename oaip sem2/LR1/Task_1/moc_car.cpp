@@ -1,3 +1,11 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'car.h'
+**
+** Created by: The Qt Meta Object Compiler version 69 (Qt 6.10.1)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
 #include "car.h"
 #include <QtCore/qmetatype.h>
 
