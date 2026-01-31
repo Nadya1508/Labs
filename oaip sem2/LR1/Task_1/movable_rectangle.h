@@ -99,4 +99,4 @@ private:
     void validateState() const;
 };
 
-#endif // MOVABLE_RECTANGLE_H
+#endif 
