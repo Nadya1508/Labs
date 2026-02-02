@@ -1,5 +1,6 @@
 #include "Circle.h"
 #include <QPainter>
+#include <QTransform>
 #include <cmath>
 
 Circle::Circle(QObject *parent) 
@@ -14,6 +15,11 @@ Circle::Circle(const QPointF &center, double radius, QObject *parent)
     , m_center(center)
     , m_radius(radius)
 {
+}
+
+QString Circle::type() const 
+{ 
+    return "Circle"; 
 }
 
 double Circle::area() const
@@ -40,15 +46,14 @@ QRectF Circle::boundingRect() const
 void Circle::draw(QPainter *painter) const
 {
     painter->save();
-    painter->setPen(QPen(m_color, 2));
-    painter->setBrush(QBrush(m_color.lighter(150)));
+    painter->setPen(QPen(m_color, m_lineWidth));
+    painter->setBrush(QBrush(m_fillColor));
     painter->drawEllipse(m_center, m_radius, m_radius);
     
     // Рисуем центр масс
-    painter->setBrush(Qt::red);
-    painter->setPen(Qt::red);
-    painter->drawEllipse(m_center, 3, 3);
-    
+    painter->setBrush(Qt::green);
+    painter->setPen(Qt::green);
+    painter->drawEllipse(m_center, 4, 4);
     painter->restore();
 }
 
@@ -73,9 +78,8 @@ void Circle::setRadius(double radius)
 void Circle::transform(const QTransform &transform)
 {
     m_center = transform.map(m_center);
-    
-    // Для масштабирования радиуса
     QPointF radiusPoint = m_center + QPointF(m_radius, 0);
     radiusPoint = transform.map(radiusPoint);
     m_radius = QLineF(m_center, radiusPoint).length();
+    emit figureChanged();
 }

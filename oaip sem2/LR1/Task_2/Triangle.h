@@ -11,7 +11,7 @@ public:
     explicit Triangle(QObject *parent = nullptr);
     Triangle(const QPointF &p1, const QPointF &p2, const QPointF &p3, QObject *parent = nullptr);
     
-    QString type() const override { return "Triangle"; }
+    QString type() const override;
     
     void setPoints(const QPointF &p1, const QPointF &p2, const QPointF &p3);
     QVector<QPointF> getPoints() const;

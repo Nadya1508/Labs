@@ -12,6 +12,11 @@ Rectangle::Rectangle(const QPointF &topLeft, double width, double height, QObjec
     setRectangle(topLeft, width, height);
 }
 
+QString Rectangle::type() const 
+{ 
+    return "Rectangle"; 
+}
+
 void Rectangle::setRectangle(const QPointF &topLeft, double width, double height)
 {
     QPointF p1 = topLeft;

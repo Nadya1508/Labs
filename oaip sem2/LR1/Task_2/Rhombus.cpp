@@ -13,6 +13,11 @@ Rhombus::Rhombus(const QPointF &center, double diagonal1, double diagonal2, QObj
     setRhombus(center, diagonal1, diagonal2);
 }
 
+QString Rhombus::type() const 
+{ 
+    return "Rhombus"; 
+}
+
 void Rhombus::setRhombus(const QPointF &center, double diagonal1, double diagonal2)
 {
     QPointF p1 = center + QPointF(0, -diagonal2 / 2);

@@ -1,7 +1,10 @@
-QT       += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core gui widgets
 
 CONFIG += c++17
+CONFIG += debug_and_release
+
+TARGET = GeometryApp
+TEMPLATE = app
 
 SOURCES += \
     main.cpp \
@@ -34,4 +37,5 @@ HEADERS += \
     Circle.h \
     CustomFigure.h
 
-FORMS +=
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+macx: QMAKE_APPLE_DEVICE_ARCH = arm64

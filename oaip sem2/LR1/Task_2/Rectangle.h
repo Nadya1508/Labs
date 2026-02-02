@@ -11,7 +11,7 @@ public:
     explicit Rectangle(QObject *parent = nullptr);
     Rectangle(const QPointF &topLeft, double width, double height, QObject *parent = nullptr);
     
-    QString type() const override { return "Rectangle"; }
+    QString type() const override;
     
     void setRectangle(const QPointF &topLeft, double width, double height);
     double width() const;

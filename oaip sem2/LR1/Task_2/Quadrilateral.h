@@ -10,7 +10,7 @@ class Quadrilateral : public PolygonFigure
 public:
     explicit Quadrilateral(QObject *parent = nullptr);
     
-    QString type() const override { return "Quadrilateral"; }
+    QString type() const override;
     
     virtual void setPoints(const QPointF &p1, const QPointF &p2, 
                           const QPointF &p3, const QPointF &p4);

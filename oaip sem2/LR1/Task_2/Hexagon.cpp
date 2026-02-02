@@ -13,6 +13,11 @@ Hexagon::Hexagon(const QPointF &center, double radius, QObject *parent)
     setHexagon(center, radius);
 }
 
+QString Hexagon::type() const 
+{ 
+    return "Hexagon"; 
+}
+
 void Hexagon::setHexagon(const QPointF &center, double radius)
 {
     m_vertices.clear();

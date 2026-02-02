@@ -11,7 +11,7 @@ public:
     explicit Rhombus(QObject *parent = nullptr);
     Rhombus(const QPointF &center, double diagonal1, double diagonal2, QObject *parent = nullptr);
     
-    QString type() const override { return "Rhombus"; }
+    QString type() const override;
     
     void setRhombus(const QPointF &center, double diagonal1, double diagonal2);
     double diagonal1() const;

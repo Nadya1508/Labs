@@ -3,7 +3,6 @@
 Triangle::Triangle(QObject *parent) 
     : PolygonFigure(parent)
 {
-    // Треугольник по умолчанию
     setPoints(QPointF(0, 0), QPointF(50, 100), QPointF(100, 0));
 }
 
@@ -11,6 +10,11 @@ Triangle::Triangle(const QPointF &p1, const QPointF &p2, const QPointF &p3, QObj
     : PolygonFigure(parent)
 {
     setPoints(p1, p2, p3);
+}
+
+QString Triangle::type() const 
+{ 
+    return "Triangle"; 
 }
 
 void Triangle::setPoints(const QPointF &p1, const QPointF &p2, const QPointF &p3)

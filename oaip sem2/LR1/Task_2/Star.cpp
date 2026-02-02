@@ -15,6 +15,11 @@ Star::Star(const QPointF &center, double outerRadius, double innerRadius, StarTy
     setStar(center, outerRadius, innerRadius, type);
 }
 
+QString Star::type() const 
+{ 
+    return "Star"; 
+}
+
 void Star::setStar(const QPointF &center, double outerRadius, double innerRadius, StarType type)
 {
     m_type = type;
@@ -25,7 +30,7 @@ void Star::setStar(const QPointF &center, double outerRadius, double innerRadius
     for (int i = 0; i < points * 2; i++)
     {
         double radius = (i % 2 == 0) ? outerRadius : innerRadius;
-        double angle = 2 * M_PI * i / (points * 2);
+        double angle = 2 * M_PI * i / (points * 2) - M_PI/2; // Поворачиваем на 90 градусов
         double x = center.x() + radius * cos(angle);
         double y = center.y() + radius * sin(angle);
         m_vertices.append(QPointF(x, y));

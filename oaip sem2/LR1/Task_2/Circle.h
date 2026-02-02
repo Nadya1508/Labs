@@ -11,15 +11,13 @@ public:
     explicit Circle(QObject *parent = nullptr);
     Circle(const QPointF &center, double radius, QObject *parent = nullptr);
     
-    // Реализация абстрактных методов
     double area() const override;
     double perimeter() const override;
     QPointF centerOfMass() const override;
     QRectF boundingRect() const override;
     void draw(QPainter *painter) const override;
-    QString type() const override { return "Circle"; }
+    QString type() const override;
     
-    // Специфичные методы
     void setCircle(const QPointF &center, double radius);
     double radius() const;
     void setRadius(double radius);

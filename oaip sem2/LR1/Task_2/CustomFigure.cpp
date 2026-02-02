@@ -15,6 +15,11 @@ CustomFigure::CustomFigure(const QPointF &center, double radius, int sides, QObj
     setPolygon(center, radius, sides);
 }
 
+QString CustomFigure::type() const 
+{ 
+    return "CustomFigure"; 
+}
+
 void CustomFigure::setPolygon(const QPointF &center, double radius, int sides)
 {
     m_sides = qMax(3, sides);

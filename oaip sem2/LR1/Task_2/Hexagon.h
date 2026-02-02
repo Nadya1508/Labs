@@ -11,7 +11,7 @@ public:
     explicit Hexagon(QObject *parent = nullptr);
     Hexagon(const QPointF &center, double radius, QObject *parent = nullptr);
     
-    QString type() const override { return "Hexagon"; }
+    QString type() const override;
     
     void setHexagon(const QPointF &center, double radius);
     double radius() const;

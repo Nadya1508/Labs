@@ -11,7 +11,7 @@ public:
     explicit CustomFigure(QObject *parent = nullptr);
     CustomFigure(const QPointF &center, double radius, int sides = 7, QObject *parent = nullptr);
     
-    QString type() const override { return "CustomFigure"; }
+    QString type() const override;
     
     void setPolygon(const QPointF &center, double radius, int sides);
     double radius() const;

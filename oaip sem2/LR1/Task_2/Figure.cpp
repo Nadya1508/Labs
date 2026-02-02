@@ -4,9 +4,11 @@
 Figure::Figure(QObject *parent) 
     : QObject(parent)
     , m_color(Qt::blue)
+    , m_fillColor(Qt::lightGray)
+    , m_lineWidth(2)
 {
     m_timer = new QTimer(this);
-    m_timer->setInterval(16); // ~60 FPS
+    m_timer->setInterval(16);
     connect(m_timer, &QTimer::timeout, this, &Figure::updateAnimation);
 }
 
@@ -73,16 +75,11 @@ void Figure::animateScale(double factor, const QPointF &center, int duration)
     m_timer->start();
 }
 
-void Figure::setCenter(const QPointF &center)
+void Figure::moveCenterTo(const QPointF &newCenter)
 {
     QPointF currentCenter = getCenter();
-    QPointF offset = center - currentCenter;
+    QPointF offset = newCenter - currentCenter;
     move(offset);
-}
-
-QPointF Figure::getCenter() const
-{
-    return centerOfMass();
 }
 
 void Figure::setColor(const QColor &color)
@@ -94,6 +91,28 @@ void Figure::setColor(const QColor &color)
 QColor Figure::getColor() const
 {
     return m_color;
+}
+
+void Figure::setLineWidth(int width)
+{
+    m_lineWidth = width;
+    emit figureChanged();
+}
+
+int Figure::lineWidth() const
+{
+    return m_lineWidth;
+}
+
+void Figure::setFillColor(const QColor &color)
+{
+    m_fillColor = color;
+    emit figureChanged();
+}
+
+QColor Figure::fillColor() const
+{
+    return m_fillColor;
 }
 
 void Figure::updateAnimation()
@@ -115,14 +134,14 @@ void Figure::updateAnimation()
     {
         double angle = m_currentAnimation.startValue + 
                       (m_currentAnimation.targetValue - m_currentAnimation.startValue) * progress;
-        rotate(angle - (progress > 0 ? angle - 1 : 0), m_currentAnimation.animationCenter);
+        rotate(angle, m_currentAnimation.animationCenter);
         break;
     }
     case Animation::Scale:
     {
         double factor = m_currentAnimation.startValue + 
                        (m_currentAnimation.targetValue - m_currentAnimation.startValue) * progress;
-        scale(factor / (progress > 0 ? factor - 0.1 : 1), m_currentAnimation.animationCenter);
+        scale(factor, m_currentAnimation.animationCenter);
         break;
     }
     }

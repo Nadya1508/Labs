@@ -14,7 +14,7 @@ public:
     Star(const QPointF &center, double outerRadius, double innerRadius, 
          StarType type = FivePointed, QObject *parent = nullptr);
     
-    QString type() const override { return "Star"; }
+    QString type() const override;
     
     void setStar(const QPointF &center, double outerRadius, double innerRadius, StarType type);
     double outerRadius() const;

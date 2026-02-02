@@ -11,7 +11,7 @@ public:
     explicit Square(QObject *parent = nullptr);
     Square(const QPointF &topLeft, double side, QObject *parent = nullptr);
     
-    QString type() const override { return "Square"; }
+    QString type() const override;
     
     void setSquare(const QPointF &topLeft, double side);
     double side() const;

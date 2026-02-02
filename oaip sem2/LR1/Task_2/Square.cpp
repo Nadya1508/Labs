@@ -12,6 +12,11 @@ Square::Square(const QPointF &topLeft, double side, QObject *parent)
     setSquare(topLeft, side);
 }
 
+QString Square::type() const 
+{ 
+    return "Square"; 
+}
+
 void Square::setSquare(const QPointF &topLeft, double side)
 {
     setRectangle(topLeft, side, side);
