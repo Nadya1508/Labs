@@ -95,7 +95,7 @@ private slots:
     void chooseFillColor();
     void updateLineWidth();
     void updateSpecificParameter();
-    void updateVertex();  // Добавлен этот слот!
+    void updateVertex();
     
     // Center management
     void moveCenterToPoint();
@@ -119,14 +119,12 @@ private slots:
     // Calculations
     void calculateTotalArea();
     void calculateTotalPerimeter();
+    void showFigureStatistics();
     
     // Help
     void about();
     void showHelp();
     void showShortcuts();
-
-    // Drawing button handler - добавлен этот слот!
-    void handleDrawingButtonClicked(QAbstractButton *button);
 
 private:
     void setupUI();
@@ -141,7 +139,6 @@ private:
     void updateTransformationControls();
     void updateDrawingControls();
     void uncheckDrawingActions();
-    void showFigureStatistics();
     
     // UI Elements
     FigureCanvas *m_canvas;

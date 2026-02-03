@@ -1,15 +1,13 @@
 QT += core gui widgets
 
-CONFIG += c++17
-CONFIG += debug_and_release
-
 TARGET = GeometryApp
 TEMPLATE = app
+
+CONFIG += c++17
 
 SOURCES += \
     main.cpp \
     MainWindow.cpp \
-    FigureCanvas.cpp \
     Figure.cpp \
     PolygonFigure.cpp \
     Triangle.cpp \
@@ -21,11 +19,11 @@ SOURCES += \
     Star.cpp \
     Circle.cpp \
     CustomFigure.cpp \
-    DrawingTool.cpp
+    DrawingTool.cpp \
+    FigureCanvas.cpp
 
 HEADERS += \
     MainWindow.h \
-    FigureCanvas.h \
     Figure.h \
     PolygonFigure.h \
     Triangle.h \
@@ -37,22 +35,12 @@ HEADERS += \
     Star.h \
     Circle.h \
     CustomFigure.h \
-    DrawingTool.h
+    DrawingTool.h \
+    FigureCanvas.h
 
-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
-macx: QMAKE_APPLE_DEVICE_ARCH = arm64
+# Добавьте, если используете иконки
+RESOURCES += \
+    icons.qrc
 
-# Для отладки
-CONFIG(debug, debug|release) {
-    DEFINES += DEBUG
-    QMAKE_CXXFLAGS += -g
-}
-
-# Для релиза
-CONFIG(release, debug|release) {
-    DEFINES += NDEBUG
-    QMAKE_CXXFLAGS += -O2
-}
-
-# Включить автоматическую генерацию MOC
-CONFIG += automoc
+# Настройки компилятора
+QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic

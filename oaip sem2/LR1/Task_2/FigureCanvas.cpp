@@ -3,7 +3,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QPainter>
-#include <QPainterPath>  // Добавьте этот include
+#include <QPainterPath>
 #include <cmath>
 
 FigureCanvas::FigureCanvas(QWidget *parent)
@@ -137,23 +137,29 @@ void FigureCanvas::removeFigure(Figure *figure)
 {
     if (figure)
     {
-        m_figures.removeAll(figure);
+        // Отключаем все соединения
         disconnect(figure, nullptr, this, nullptr);
+        
+        m_figures.removeAll(figure);
+        
         if (m_selectedFigure == figure)
         {
             m_selectedFigure = nullptr;
             emit figureSelected(nullptr);
         }
+        
         update();
     }
 }
 
 void FigureCanvas::clearFigures()
 {
+    // Отключаем все соединения
     for (Figure *figure : m_figures)
     {
         disconnect(figure, nullptr, this, nullptr);
     }
+    
     m_figures.clear();
     m_selectedFigure = nullptr;
     emit figureSelected(nullptr);

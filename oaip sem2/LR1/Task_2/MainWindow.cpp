@@ -361,29 +361,14 @@ void MainWindow::setupMenuBar()
 
 void MainWindow::setupToolBar()
 {
-    // Main toolbar
+    // Main toolbar - только базовые инструменты (без кнопок создания фигур)
     m_mainToolBar = addToolBar("Main Toolbar");
     m_mainToolBar->setMovable(false);
     
-    // Create figure buttons
-    QStringList figureTypes = {"Triangle", "Rectangle", "Square", "Rhombus", 
-                              "Hexagon", "Star", "Circle", "Polygon"};
-    
-    for (const QString &type : figureTypes)
-    {
-        QAction *action = new QAction(type, this);
-        action->setToolTip("Create " + type);
-        connect(action, &QAction::triggered, this, [this, type]() {
-            createFigureFromType(type);
-        });
-        m_mainToolBar->addAction(action);
-    }
-    
-    m_mainToolBar->addSeparator();
-    
-    // Transformation buttons
+    // Кнопки трансформации
     QAction *moveAction = new QAction("Move", this);
     moveAction->setToolTip("Move selected figure");
+    moveAction->setIcon(QIcon::fromTheme("transform-move"));
     connect(moveAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -395,6 +380,7 @@ void MainWindow::setupToolBar()
     
     QAction *rotateAction = new QAction("Rotate", this);
     rotateAction->setToolTip("Rotate selected figure");
+    rotateAction->setIcon(QIcon::fromTheme("object-rotate-right"));
     connect(rotateAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -407,6 +393,7 @@ void MainWindow::setupToolBar()
     
     QAction *scaleAction = new QAction("Scale", this);
     scaleAction->setToolTip("Scale selected figure");
+    scaleAction->setIcon(QIcon::fromTheme("transform-scale"));
     connect(scaleAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -417,37 +404,64 @@ void MainWindow::setupToolBar()
     });
     m_mainToolBar->addAction(scaleAction);
     
+    m_mainToolBar->addSeparator();
+    
+    // Кнопки управления
+    QAction *zoomInAction = new QAction("Zoom In", this);
+    zoomInAction->setIcon(QIcon::fromTheme("zoom-in"));
+    connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn);
+    m_mainToolBar->addAction(zoomInAction);
+    
+    QAction *zoomOutAction = new QAction("Zoom Out", this);
+    zoomOutAction->setIcon(QIcon::fromTheme("zoom-out"));
+    connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut);
+    m_mainToolBar->addAction(zoomOutAction);
+    
+    QAction *resetViewAction = new QAction("Reset View", this);
+    resetViewAction->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(resetViewAction, &QAction::triggered, this, &MainWindow::resetView);
+    m_mainToolBar->addAction(resetViewAction);
+    
     // Drawing toolbar
     m_drawingToolBar = addToolBar("Drawing Tools");
     m_drawingToolBar->setMovable(false);
     
     // Drawing mode buttons
+    m_drawTriangleAction->setIcon(QIcon::fromTheme("draw-triangle"));
     m_drawTriangleAction->setToolTip("Draw Triangle (Alt+T)");
     m_drawingToolBar->addAction(m_drawTriangleAction);
     
+    m_drawRectangleAction->setIcon(QIcon::fromTheme("draw-rectangle"));
     m_drawRectangleAction->setToolTip("Draw Rectangle (Alt+R)");
     m_drawingToolBar->addAction(m_drawRectangleAction);
     
+    m_drawSquareAction->setIcon(QIcon::fromTheme("draw-square"));
     m_drawSquareAction->setToolTip("Draw Square (Alt+Q)");
     m_drawingToolBar->addAction(m_drawSquareAction);
     
+    m_drawCircleAction->setIcon(QIcon::fromTheme("draw-circle"));
     m_drawCircleAction->setToolTip("Draw Circle (Alt+C)");
     m_drawingToolBar->addAction(m_drawCircleAction);
     
+    m_drawRhombusAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawRhombusAction->setToolTip("Draw Rhombus (Alt+O)");
     m_drawingToolBar->addAction(m_drawRhombusAction);
     
+    m_drawHexagonAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawHexagonAction->setToolTip("Draw Hexagon (Alt+H)");
     m_drawingToolBar->addAction(m_drawHexagonAction);
     
+    m_drawStarAction->setIcon(QIcon::fromTheme("draw-star"));
     m_drawStarAction->setToolTip("Draw Star (Alt+S)");
     m_drawingToolBar->addAction(m_drawStarAction);
     
+    m_drawPolygonAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawPolygonAction->setToolTip("Draw Polygon (Alt+P)");
     m_drawingToolBar->addAction(m_drawPolygonAction);
     
     m_drawingToolBar->addSeparator();
     
+    m_stopDrawingAction->setIcon(QIcon::fromTheme("process-stop"));
     m_stopDrawingAction->setToolTip("Stop Drawing (Esc)");
     m_drawingToolBar->addAction(m_stopDrawingAction);
     
@@ -562,8 +576,9 @@ void MainWindow::setupDockWidgets()
     m_drawingButtonGroup->addButton(m_drawPolygonRadio, 8);
     drawingLayout->addWidget(m_drawPolygonRadio);
     
-    // Исправим подключение сигнала - используем старый синтаксис
-        connect(m_drawingButtonGroup, &QButtonGroup::buttonClicked, this, [this](QAbstractButton *button) {
+    // Исправим подключение сигнала
+    connect(m_drawingButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
+            this, [this](QAbstractButton *button) {
         int id = m_drawingButtonGroup->id(button);
         switch(id) {
             case 0: m_canvas->setDrawingMode(DrawingTool::NoDrawing); break;
@@ -751,13 +766,11 @@ void MainWindow::setupDockWidgets()
     // Hexagon parameters
     m_hexagonParams = new QWidget();
     QFormLayout *hexagonLayout = new QFormLayout(m_hexagonParams);
-    // Создаем отдельный спинбокс для радиуса шестиугольника
     QDoubleSpinBox *hexagonRadiusSpinBox = new QDoubleSpinBox();
     hexagonRadiusSpinBox->setRange(10, 500);
     hexagonRadiusSpinBox->setValue(70);
     hexagonRadiusSpinBox->setSuffix(" px");
     hexagonLayout->addRow("Radius:", hexagonRadiusSpinBox);
-    
     m_paramTabs->addTab(m_hexagonParams, "Hexagon");
     
     paramsLayout->addWidget(m_paramTabs);
@@ -790,7 +803,7 @@ void MainWindow::setupDockWidgets()
     vertexLayout->addRow("Vertex Y:", m_vertexYSpinBox);
     
     QPushButton *updateVertexButton = new QPushButton("Update Vertex");
-        connect(updateVertexButton, &QPushButton::clicked, this, [this]() {
+    connect(updateVertexButton, &QPushButton::clicked, this, [this]() {
         if (m_currentFigure) {
             if (PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure)) {
                 int index = m_vertexIndexSpinBox->value();
@@ -966,24 +979,6 @@ void MainWindow::setupDockWidgets()
     
     // Tabify docks
     tabifyDockWidget(m_propertiesDock, m_transformationsDock);
-}
-
-// Добавим слот для обработки кликов на кнопках рисования
-void MainWindow::handleDrawingButtonClicked(QAbstractButton *button)
-{
-    int id = m_drawingButtonGroup->id(button);
-    switch(id) {
-        case 0: m_canvas->setDrawingMode(DrawingTool::NoDrawing); break;
-        case 1: m_canvas->setDrawingMode(DrawingTool::DrawTriangle); break;
-        case 2: m_canvas->setDrawingMode(DrawingTool::DrawRectangle); break;
-        case 3: m_canvas->setDrawingMode(DrawingTool::DrawSquare); break;
-        case 4: m_canvas->setDrawingMode(DrawingTool::DrawCircle); break;
-        case 5: m_canvas->setDrawingMode(DrawingTool::DrawRhombus); break;
-        case 6: m_canvas->setDrawingMode(DrawingTool::DrawHexagon); break;
-        case 7: m_canvas->setDrawingMode(DrawingTool::DrawStar); break;
-        case 8: m_canvas->setDrawingMode(DrawingTool::DrawPolygon); break;
-    }
-    updateDrawingControls();
 }
 
 void MainWindow::createConnections()
@@ -1277,21 +1272,45 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
     return figure;
 }
 
+// ИСПРАВЛЕННЫЙ МЕТОД УДАЛЕНИЯ ФИГУРЫ
 void MainWindow::removeSelectedFigure()
 {
     if (m_currentFigure)
     {
+        // Отключаем все соединения перед удалением
+        m_currentFigure->disconnect();
+        
+        // Удаляем из canvas
         m_canvas->removeFigure(m_currentFigure);
+        
+        // Находим индекс удаляемой фигуры
+        int index = m_canvas->getFigures().indexOf(m_currentFigure);
+        
+        // Удаляем объект
         m_currentFigure->deleteLater();
         m_currentFigure = nullptr;
         
+        // Обновляем интерфейс
         updateFigureInfo();
         updateFigureList();
         
+        // Выбираем следующую фигуру, если есть
         if (m_figureList->count() > 0)
-            m_figureList->setCurrentRow(0);
+        {
+            int newIndex = qMin(index, m_figureList->count() - 1);
+            m_figureList->setCurrentRow(newIndex);
+        }
+        else
+        {
+            // Если фигур не осталось, очищаем параметры
+            updateParameterControls();
+        }
         
         statusBar()->showMessage("Figure removed", 2000);
+    }
+    else
+    {
+        QMessageBox::information(this, "Info", "No figure selected");
     }
 }
 
@@ -1302,10 +1321,17 @@ void MainWindow::clearAllFigures()
                                       QMessageBox::Yes | QMessageBox::No);
     if (result == QMessageBox::Yes)
     {
+        // Отключаем все соединения
+        for (Figure *figure : m_canvas->getFigures())
+        {
+            figure->disconnect();
+        }
+        
         m_canvas->clearFigures();
         updateFigureInfo();
         updateFigureList();
         m_currentFigure = nullptr;
+        updateParameterControls();
         statusBar()->showMessage("All figures cleared", 2000);
     }
 }
@@ -1313,13 +1339,16 @@ void MainWindow::clearAllFigures()
 void MainWindow::updateFigureList()
 {
     m_figureList->clear();
+    int counter = 1;
     for (Figure *figure : m_canvas->getFigures())
     {
-        m_figureList->addItem(QString("%1 - Area: %2, Center: (%3, %4)")
+        QPointF center = figure->centerOfMass();
+        m_figureList->addItem(QString("%1. %2 - Area: %3, Center: (%4, %5)")
+            .arg(counter++)
             .arg(figure->type())
             .arg(figure->area(), 0, 'f', 1)
-            .arg(figure->centerOfMass().x(), 0, 'f', 0)
-            .arg(figure->centerOfMass().y(), 0, 'f', 0));
+            .arg(center.x(), 0, 'f', 0)
+            .arg(center.y(), 0, 'f', 0));
     }
 }
 
@@ -1338,6 +1367,8 @@ void MainWindow::updateSelectedFigure()
     {
         m_currentFigure = nullptr;
         m_canvas->setSelectedFigure(nullptr);
+        updateFigureInfo();
+        updateParameterControls();
     }
 }
 
@@ -1439,7 +1470,6 @@ void MainWindow::updateParameterControls()
     if (hexagon)
     {
         m_paramTabs->setCurrentWidget(m_hexagonParams);
-        // Для hexagon получим первый спинбокс (радиус)
         QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
         if (radiusSpinBox)
         {
@@ -1460,7 +1490,6 @@ void MainWindow::updateParameterControls()
     if (triangle)
     {
         m_paramTabs->setCurrentWidget(m_triangleParams);
-        // For triangle, calculate approximate base and height
         QList<QPointF> points = triangle->getPoints();
         if (points.size() == 3)
         {
@@ -1811,7 +1840,6 @@ void MainWindow::updateSpecificParameter()
     Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure);
     if (hexagon)
     {
-        // Для hexagon получим спинбокс радиуса
         QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
         if (radiusSpinBox)
         {
@@ -1833,8 +1861,6 @@ void MainWindow::updateSpecificParameter()
     Triangle *triangle = dynamic_cast<Triangle*>(m_currentFigure);
     if (triangle)
     {
-        // For triangle, we can't easily change base/height directly
-        // We'll just update the vertices based on new dimensions
         QList<QPointF> points = triangle->getPoints();
         if (points.size() == 3)
         {
@@ -2093,7 +2119,7 @@ void MainWindow::showHelp()
     QMessageBox::information(this, "Help", 
         "<h3>Geometry Figures Application Help</h3>"
         "<p><b>Creating Figures:</b><br>"
-        "1. Use the Figure menu or toolbar to create figures at random positions<br>"
+        "1. Use the Figure menu or sidebar to create figures<br>"
         "2. Use the Drawing tools to draw figures with the mouse</p>"
         "<p><b>Drawing Modes:</b><br>"
         "- Triangle: Click and drag to draw<br>"
@@ -2102,21 +2128,11 @@ void MainWindow::showHelp()
         "- Circle: Click and drag to draw<br>"
         "- Polygon: Click to add vertices, right-click to finish</p>"
         "<p><b>Selecting Figures:</b><br>"
-        "Click on a figure to select it. Selected figures show a bounding box "
-        "and can be manipulated.</p>"
+        "Click on a figure to select it or select from the list.</p>"
         "<p><b>Transforming Figures:</b><br>"
-        "Use the Transformations dock to move, rotate, or scale figures. "
-        "Transformations can be applied immediately or animated over 2 seconds.</p>"
+        "Use the Transformations dock to move, rotate, or scale figures.</p>"
         "<p><b>Modifying Properties:</b><br>"
-        "Use the Properties dock to change colors, line width, and figure-specific "
-        "parameters like radius, width, height, etc.</p>"
-        "<p><b>View Controls:</b><br>"
-        "- Zoom: Use mouse wheel or View menu<br>"
-        "- Pan: Click and drag empty space<br>"
-        "- Reset View: View → Reset View or Ctrl+R<br>"
-        "- Toggle grid, centers, vertices, etc. from View menu</p>"
-        "<p><b>Figure Information:</b><br>"
-        "The bottom dock shows detailed information about the selected figure.</p>");
+        "Use the Properties dock to change colors, line width, and parameters.</p>");
 }
 
 void MainWindow::showShortcuts()
@@ -2140,22 +2156,11 @@ void MainWindow::showShortcuts()
         "Ctrl+- - Zoom Out<br>"
         "Ctrl+R - Reset View<br>"
         "Ctrl+F - Fit to View<br>"
-        "Ctrl+G - Toggle Grid<br>"
-        "Ctrl+C - Toggle Centers<br>"
-        "Ctrl+V - Toggle Vertices<br>"
-        "Ctrl+B - Toggle Bounding Boxes<br>"
-        "Ctrl+T - Toggle Triangulation</p>"
+        "Ctrl+G - Toggle Grid</p>"
         "<p><b>Drawing:</b><br>"
         "Alt+T - Draw Triangle<br>"
         "Alt+R - Draw Rectangle<br>"
         "Alt+Q - Draw Square<br>"
         "Alt+C - Draw Circle<br>"
-        "Alt+O - Draw Rhombus<br>"
-        "Alt+H - Draw Hexagon<br>"
-        "Alt+S - Draw Star<br>"
-        "Alt+P - Draw Polygon<br>"
-        "Esc - Stop Drawing</p>"
-        "<p><b>Transform:</b><br>"
-        "Ctrl+T - Apply Transformations<br>"
-        "Ctrl+Shift+T - Animate Transformations</p>");
+        "Esc - Stop Drawing</p>");
 }
