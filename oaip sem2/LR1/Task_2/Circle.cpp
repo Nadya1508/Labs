@@ -49,11 +49,6 @@ void Circle::draw(QPainter *painter) const
     painter->setPen(QPen(m_color, m_lineWidth));
     painter->setBrush(QBrush(m_fillColor));
     painter->drawEllipse(m_center, m_radius, m_radius);
-    
-    // Рисуем центр масс
-    painter->setBrush(Qt::green);
-    painter->setPen(Qt::green);
-    painter->drawEllipse(m_center, 4, 4);
     painter->restore();
 }
 
@@ -78,8 +73,11 @@ void Circle::setRadius(double radius)
 void Circle::transform(const QTransform &transform)
 {
     m_center = transform.map(m_center);
-    QPointF radiusPoint = m_center + QPointF(m_radius, 0);
-    radiusPoint = transform.map(radiusPoint);
-    m_radius = QLineF(m_center, radiusPoint).length();
+    // Для масштабирования радиуса
+    if (m_radius > 0) {
+        QPointF radiusPoint = m_center + QPointF(m_radius, 0);
+        radiusPoint = transform.map(radiusPoint);
+        m_radius = QLineF(m_center, radiusPoint).length();
+    }
     emit figureChanged();
 }

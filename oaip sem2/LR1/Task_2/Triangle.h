@@ -14,7 +14,7 @@ public:
     QString type() const override;
     
     void setPoints(const QPointF &p1, const QPointF &p2, const QPointF &p3);
-    QVector<QPointF> getPoints() const;
+    QList<QPointF> getPoints() const;
 };
 
 #endif // TRIANGLE_H

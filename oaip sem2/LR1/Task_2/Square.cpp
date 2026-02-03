@@ -29,5 +29,6 @@ double Square::side() const
 
 void Square::setSide(double side)
 {
-    setRectangle(m_vertices[0], side, side);
+    QPointF topLeft = m_vertices[0];
+    setSquare(topLeft, side);
 }

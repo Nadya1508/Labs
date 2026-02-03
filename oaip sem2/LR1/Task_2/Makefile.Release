@@ -592,6 +592,8 @@ compiler_moc_header_clean:
 release/moc_MainWindow.cpp: MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QMainWindow \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QDockWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qdockwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QListWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlistwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpinBox \
@@ -615,11 +617,25 @@ release/moc_MainWindow.cpp: MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qprogressbar.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qformlayout.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QScrollArea \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qscrollarea.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTabWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtabwidget.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTextEdit \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtextedit.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QAction \
+		/opt/homebrew/lib/QtGui.framework/Headers/qaction.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QMenu \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qmenu.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QToolBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QStatusBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qstatusbar.h \
 		FigureCanvas.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		Figure.h \
@@ -650,8 +666,8 @@ release/moc_MainWindow.cpp: MainWindow.h \
 release/moc_FigureCanvas.cpp: FigureCanvas.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		Figure.h \
@@ -678,8 +694,8 @@ release/moc_Figure.cpp: Figure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -700,8 +716,8 @@ release/moc_PolygonFigure.cpp: PolygonFigure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -723,8 +739,8 @@ release/moc_Triangle.cpp: Triangle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -746,8 +762,8 @@ release/moc_Quadrilateral.cpp: Quadrilateral.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -770,8 +786,8 @@ release/moc_Rectangle.cpp: Rectangle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -795,8 +811,8 @@ release/moc_Square.cpp: Square.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -819,8 +835,8 @@ release/moc_Rhombus.cpp: Rhombus.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -842,8 +858,8 @@ release/moc_Hexagon.cpp: Hexagon.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -865,8 +881,8 @@ release/moc_Star.cpp: Star.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -887,8 +903,8 @@ release/moc_Circle.cpp: Circle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -910,8 +926,8 @@ release/moc_CustomFigure.cpp: CustomFigure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -945,6 +961,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 release/main.o: main.cpp MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QMainWindow \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QDockWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qdockwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QListWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlistwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpinBox \
@@ -968,11 +986,25 @@ release/main.o: main.cpp MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qprogressbar.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qformlayout.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QScrollArea \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qscrollarea.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTabWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtabwidget.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTextEdit \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtextedit.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QAction \
+		/opt/homebrew/lib/QtGui.framework/Headers/qaction.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QMenu \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qmenu.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QToolBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QStatusBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qstatusbar.h \
 		FigureCanvas.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		Figure.h \
@@ -1003,6 +1035,8 @@ release/main.o: main.cpp MainWindow.h \
 release/MainWindow.o: MainWindow.cpp MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QMainWindow \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QDockWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qdockwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QListWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlistwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpinBox \
@@ -1026,11 +1060,25 @@ release/MainWindow.o: MainWindow.cpp MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qprogressbar.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qformlayout.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QScrollArea \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qscrollarea.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTabWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtabwidget.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTextEdit \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtextedit.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QAction \
+		/opt/homebrew/lib/QtGui.framework/Headers/qaction.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QMenu \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qmenu.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QToolBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QStatusBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qstatusbar.h \
 		FigureCanvas.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		Figure.h \
@@ -1066,14 +1114,20 @@ release/MainWindow.o: MainWindow.cpp MainWindow.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRandomGenerator \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrandom.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QDebug \
-		/opt/homebrew/lib/QtCore.framework/Headers/qdebug.h
+		/opt/homebrew/lib/QtCore.framework/Headers/qdebug.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QMenuBar \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qmenubar.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QSplitter \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qsplitter.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/MainWindow.o MainWindow.cpp
 
 release/FigureCanvas.o: FigureCanvas.cpp FigureCanvas.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		Figure.h \
@@ -1101,8 +1155,8 @@ release/Figure.o: Figure.cpp Figure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1121,8 +1175,8 @@ release/PolygonFigure.o: PolygonFigure.cpp PolygonFigure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1144,8 +1198,8 @@ release/Triangle.o: Triangle.cpp Triangle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1165,8 +1219,8 @@ release/Quadrilateral.o: Quadrilateral.cpp Quadrilateral.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1187,8 +1241,8 @@ release/Rectangle.o: Rectangle.cpp Rectangle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1210,8 +1264,8 @@ release/Square.o: Square.cpp Square.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1232,8 +1286,8 @@ release/Rhombus.o: Rhombus.cpp Rhombus.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1253,8 +1307,8 @@ release/Hexagon.o: Hexagon.cpp Hexagon.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1274,8 +1328,8 @@ release/Star.o: Star.cpp Star.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1294,8 +1348,8 @@ release/Circle.o: Circle.cpp Circle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
@@ -1315,8 +1369,8 @@ release/CustomFigure.o: CustomFigure.cpp CustomFigure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
-		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \

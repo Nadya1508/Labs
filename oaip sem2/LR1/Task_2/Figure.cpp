@@ -8,7 +8,7 @@ Figure::Figure(QObject *parent)
     , m_lineWidth(2)
 {
     m_timer = new QTimer(this);
-    m_timer->setInterval(16);
+    m_timer->setInterval(16); // ~60 FPS
     connect(m_timer, &QTimer::timeout, this, &Figure::updateAnimation);
 }
 
@@ -49,6 +49,7 @@ void Figure::animateMove(const QPointF &target, int duration)
     m_currentAnimation.elapsed = 0;
     
     m_timer->start();
+    emit animationProgress(0);
 }
 
 void Figure::animateRotate(double angle, const QPointF &center, int duration)
@@ -61,6 +62,7 @@ void Figure::animateRotate(double angle, const QPointF &center, int duration)
     m_currentAnimation.elapsed = 0;
     
     m_timer->start();
+    emit animationProgress(0);
 }
 
 void Figure::animateScale(double factor, const QPointF &center, int duration)
@@ -73,6 +75,17 @@ void Figure::animateScale(double factor, const QPointF &center, int duration)
     m_currentAnimation.elapsed = 0;
     
     m_timer->start();
+    emit animationProgress(0);
+}
+
+void Figure::stopAnimation()
+{
+    if (m_timer->isActive())
+    {
+        m_timer->stop();
+        m_currentAnimation.type = Animation::None;
+        emit animationFinished();
+    }
 }
 
 void Figure::moveCenterTo(const QPointF &newCenter)
@@ -118,7 +131,9 @@ QColor Figure::fillColor() const
 void Figure::updateAnimation()
 {
     m_currentAnimation.elapsed += m_timer->interval();
-    double progress = qMin(1.0, (double)m_currentAnimation.elapsed / m_currentAnimation.duration);
+    double progress = qMin(1.0, static_cast<double>(m_currentAnimation.elapsed) / m_currentAnimation.duration);
+    
+    emit animationProgress(progress);
     
     switch (m_currentAnimation.type)
     {
@@ -127,30 +142,40 @@ void Figure::updateAnimation()
         QPointF newCenter = m_currentAnimation.startCenter + 
                            (m_currentAnimation.targetCenter - m_currentAnimation.startCenter) * progress;
         QPointF offset = newCenter - getCenter();
-        move(offset);
+        if (!offset.isNull()) {
+            move(offset);
+        }
         break;
     }
     case Animation::Rotate:
     {
         double angle = m_currentAnimation.startValue + 
                       (m_currentAnimation.targetValue - m_currentAnimation.startValue) * progress;
-        rotate(angle, m_currentAnimation.animationCenter);
+        double angleToApply = angle - (progress > 0 ? (m_currentAnimation.startValue + 
+                      (m_currentAnimation.targetValue - m_currentAnimation.startValue) * 
+                      ((progress - m_timer->interval()/static_cast<double>(m_currentAnimation.duration)))) : 0);
+        rotate(angleToApply, m_currentAnimation.animationCenter);
         break;
     }
     case Animation::Scale:
     {
         double factor = m_currentAnimation.startValue + 
                        (m_currentAnimation.targetValue - m_currentAnimation.startValue) * progress;
-        scale(factor, m_currentAnimation.animationCenter);
+        double lastFactor = progress > 0 ? (m_currentAnimation.startValue + 
+                       (m_currentAnimation.targetValue - m_currentAnimation.startValue) * 
+                       ((progress - m_timer->interval()/static_cast<double>(m_currentAnimation.duration)))) : 1.0;
+        double scaleToApply = factor / lastFactor;
+        scale(scaleToApply, m_currentAnimation.animationCenter);
         break;
     }
+    case Animation::None:
+        break;
     }
-    
-    emit animationProgress(progress);
     
     if (progress >= 1.0)
     {
         m_timer->stop();
+        m_currentAnimation.type = Animation::None;
         emit animationFinished();
     }
 }

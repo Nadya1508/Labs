@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QWheelEvent> 
+#include <QDockWidget>
 #include <QListWidget>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -14,6 +16,13 @@
 #include <QGroupBox>
 #include <QProgressBar>
 #include <QFormLayout>
+#include <QScrollArea>
+#include <QTabWidget>
+#include <QTextEdit>
+#include <QAction>
+#include <QMenu>
+#include <QToolBar>
+#include <QStatusBar>
 #include "FigureCanvas.h"
 #include "Triangle.h"
 #include "Rectangle.h"
@@ -33,57 +42,105 @@ public:
     ~MainWindow();
 
 private slots:
-    // Управление фигурами
+    // File operations
+    void newFile();
+    void openFile();
+    void saveFile();
+    void saveAsFile();
+    void exportImage();
+    
+    // Edit operations
+    void copyFigure();
+    void pasteFigure();
+    void deleteFigure();
+    
+    // Figure management
     void createFigure();
-    void removeFigure();
+    void createFigureFromType(const QString &type);
+    void removeSelectedFigure();
+    void clearAllFigures();
     void updateFigureInfo();
     void updateSelectedFigure();
-    void updateFigureList();  // Добавлена эта строка!
+    void updateFigureList();
     
-    // Преобразования
+    // Transformations
     void applyTransformation();
     void animateTransformation();
+    void stopAnimation();
     void updateAnimationProgress(double progress);
     
-    // Управление параметрами
+    // Parameter management
     void chooseLineColor();
     void chooseFillColor();
     void updateLineWidth();
-    void updateRadius();
-    void updateWidth();
-    void updateHeight();
+    void updateSpecificParameter();
     
-    // Файловые операции
-    void saveFigure();
-    void loadFigure();
-    
-    // Обновление канваса
-    void updateCanvas();
-    
-    // Управление центром
+    // Center management
     void moveCenterToPoint();
+    void showCenterInfo();
     
-    // Сброс вида
+    // Canvas settings
+    void toggleGrid(bool enabled);
+    void toggleCenters(bool enabled);
+    void toggleTriangulation(bool enabled);
+    void toggleVertices(bool enabled);
+    void toggleBoundingBox(bool enabled);
+    
+    // View operations
+    void zoomIn();
+    void zoomOut();
     void resetView();
+    void fitToView();
+    
+    // Help
+    void about();
+    void showHelp();
 
 private:
     void setupUI();
-    Figure* createFigureByType(const QString &type);
-    void updateParameterControls();
+    void setupMenuBar();
+    void setupToolBar();
+    void setupStatusBar();
+    void setupDockWidgets();
     
-    // Основные элементы UI
+    Figure* createFigureByType(const QString &type, const QPointF &center = QPointF(300, 300));
+    void updateParameterControls();
+    void updateTransformationControls();
+    void showFigureProperties(Figure *figure);
+    
+    // UI Elements
     FigureCanvas *m_canvas;
+    
+    // Menu bar
+    QMenu *m_fileMenu;
+    QMenu *m_editMenu;
+    QMenu *m_viewMenu;
+    QMenu *m_figureMenu;
+    QMenu *m_helpMenu;
+    
+    // Toolbar
+    QToolBar *m_mainToolBar;
+    
+    // Dock widgets
+    QDockWidget *m_figuresDock;
+    QDockWidget *m_propertiesDock;
+    QDockWidget *m_transformationsDock;
+    QDockWidget *m_infoDock;
+    
+    // Figure list
     QListWidget *m_figureList;
     
-    // Панель создания фигур
+    // Figure creation
     QComboBox *m_figureTypeCombo;
     
-    // Панель информации
+    // Figure info
     QLabel *m_areaLabel;
     QLabel *m_perimeterLabel;
     QLabel *m_centerLabel;
+    QLabel *m_verticesLabel;
+    QLabel *m_trianglesLabel;
     
-    // Панель преобразований
+    // Transformations
     QDoubleSpinBox *m_moveXSpinBox;
     QDoubleSpinBox *m_moveYSpinBox;
     
@@ -95,33 +152,47 @@ private:
     QDoubleSpinBox *m_scaleCenterXSpinBox;
     QDoubleSpinBox *m_scaleCenterYSpinBox;
     
-    // Панель параметров
+    // Parameters
     QPushButton *m_lineColorButton;
     QPushButton *m_fillColorButton;
     QSpinBox *m_lineWidthSpinBox;
     
+    // Specific parameters
+    QTabWidget *m_paramTabs;
+    QWidget *m_circleParams;
+    QWidget *m_rectangleParams;
+    QWidget *m_squareParams;
+    QWidget *m_rhombusParams;
+    QWidget *m_polygonParams;
+    QWidget *m_starParams;
+    
     QDoubleSpinBox *m_radiusSpinBox;
     QDoubleSpinBox *m_widthSpinBox;
     QDoubleSpinBox *m_heightSpinBox;
+    QDoubleSpinBox *m_sideSpinBox;
+    QDoubleSpinBox *m_diag1SpinBox;
+    QDoubleSpinBox *m_diag2SpinBox;
+    QSpinBox *m_sidesSpinBox;
+    QComboBox *m_starTypeCombo;
+    QDoubleSpinBox *m_outerRadiusSpinBox;
+    QDoubleSpinBox *m_innerRadiusSpinBox;
     
     QDoubleSpinBox *m_newCenterXSpinBox;
     QDoubleSpinBox *m_newCenterYSpinBox;
     
-    // Настройки канваса
-    QCheckBox *m_gridCheckBox;
-    QCheckBox *m_centersCheckBox;
-    QCheckBox *m_triangulationCheckBox;
-    
-    // Анимация
-    QTimer *m_updateTimer;
+    // Animation
     QProgressBar *m_animationProgressBar;
+    QPushButton *m_stopAnimationButton;
     
-    // Текущая фигура
+    // Current figure
     Figure *m_currentFigure;
     
-    // Цвета
+    // Colors
     QColor m_currentLineColor;
     QColor m_currentFillColor;
+    
+    // Status bar
+    QLabel *m_statusLabel;
 };
 
 #endif // MAINWINDOW_H

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QPointF>
-#include <QVector>
+#include <QList>
 #include <QRectF>
 #include <QTimer>
 #include <QColor>
@@ -26,7 +26,7 @@ public:
     virtual void draw(QPainter *painter) const = 0;
     virtual QString type() const = 0;
     
-    virtual QVector<QVector<QPointF>> triangulate() const { return {}; }
+    virtual QList<QList<QPointF>> triangulate() const { return {}; }
 
     void move(const QPointF &offset);
     void rotate(double angle, const QPointF &center);
@@ -49,6 +49,9 @@ public:
     void setFillColor(const QColor &color);
     QColor fillColor() const;
 
+    bool isAnimating() const { return m_timer->isActive(); }
+    void stopAnimation();
+
 signals:
     void figureChanged();
     void animationProgress(double progress);
@@ -68,15 +71,15 @@ protected:
     
     struct Animation
     {
-        enum Type { Move, Rotate, Scale };
-        Type type;
+        enum Type { None, Move, Rotate, Scale };
+        Type type = None;
         QPointF startCenter;
         QPointF targetCenter;
-        double startValue;
-        double targetValue;
+        double startValue = 0;
+        double targetValue = 0;
         QPointF animationCenter;
-        int duration;
-        int elapsed;
+        int duration = 1000;
+        int elapsed = 0;
     } m_currentAnimation;
 };
 

@@ -18,7 +18,7 @@ void Quadrilateral::setPoints(const QPointF &p1, const QPointF &p2,
     emit figureChanged();
 }
 
-QVector<QPointF> Quadrilateral::getPoints() const
+QList<QPointF> Quadrilateral::getPoints() const
 {
     return m_vertices;
 }

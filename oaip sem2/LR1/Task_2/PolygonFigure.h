@@ -2,7 +2,7 @@
 #define POLYGONFIGURE_H
 
 #include "Figure.h"
-#include <QVector>
+#include <QList>
 #include <QPointF>
 
 class PolygonFigure : public Figure
@@ -18,11 +18,11 @@ public:
     QRectF boundingRect() const override;
     void draw(QPainter *painter) const override;
     
-    QVector<QVector<QPointF>> triangulate() const override;
+    QList<QList<QPointF>> triangulate() const override;
     
-    virtual void setVertices(const QVector<QPointF> &vertices);
+    virtual void setVertices(const QList<QPointF> &vertices);
     virtual void setVertex(int index, const QPointF &point);
-    QVector<QPointF> getVertices() const;
+    QList<QPointF> getVertices() const;
     int vertexCount() const;
     
     virtual void updateFromVertices() {}
@@ -31,7 +31,7 @@ protected:
     void transform(const QTransform &transform) override;
     
 protected:
-    QVector<QPointF> m_vertices;
+    QList<QPointF> m_vertices;
     
 private:
     double triangleArea(const QPointF &a, const QPointF &b, const QPointF &c) const;

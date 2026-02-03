@@ -23,7 +23,7 @@ void Triangle::setPoints(const QPointF &p1, const QPointF &p2, const QPointF &p3
     emit figureChanged();
 }
 
-QVector<QPointF> Triangle::getPoints() const
+QList<QPointF> Triangle::getPoints() const
 {
     return m_vertices;
 }

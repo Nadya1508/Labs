@@ -28,8 +28,8 @@ void CustomFigure::setPolygon(const QPointF &center, double radius, int sides)
     for (int i = 0; i < m_sides; i++)
     {
         double angle = 2 * M_PI * i / m_sides;
-        double x = center.x() + radius * cos(angle);
-        double y = center.y() + radius * sin(angle);
+        double x = center.x() + radius * std::cos(angle);
+        double y = center.y() + radius * std::sin(angle);
         m_vertices.append(QPointF(x, y));
     }
     

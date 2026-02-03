@@ -1,4 +1,5 @@
 #include "FigureCanvas.h"
+#include "PolygonFigure.h"  // Добавьте этот include
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QPainter>
@@ -9,14 +10,84 @@ FigureCanvas::FigureCanvas(QWidget *parent)
     , m_gridEnabled(true)
     , m_showCenters(true)
     , m_showTriangulation(false)
+    , m_showVertices(true)
+    , m_showBoundingBox(false)
     , m_selectedFigure(nullptr)
     , m_isDragging(false)
+    , m_isPanning(false)
     , m_scale(1.0)
     , m_offset(0, 0)
 {
-    setMinimumSize(800, 600);
+    setMinimumSize(600, 400);
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
+    
+    // Set background
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, QColor(250, 250, 250));
+    setPalette(palette);
+    setAutoFillBackground(true);
+    
+    updateViewport();
+}
+
+void FigureCanvas::zoomIn()
+{
+    zoom(1.1, QPointF(width()/2.0, height()/2.0));
+}
+
+void FigureCanvas::zoomOut()
+{
+    zoom(1.0/1.1, QPointF(width()/2.0, height()/2.0));
+}
+
+void FigureCanvas::zoom(double factor, const QPointF &center)
+{
+    QPointF mousePos = center.isNull() ? mapFromGlobal(QCursor::pos()) : center;
+    QPointF scenePos = (mousePos - m_offset) / m_scale;
+    
+    m_scale *= factor;
+    m_scale = qMax(0.1, qMin(20.0, m_scale));
+    
+    // Adjust offset so that the point under the mouse stays in the same place
+    QPointF newScenePos = (mousePos - m_offset) / m_scale;
+    QPointF delta = scenePos - newScenePos;
+    m_offset -= delta * m_scale;
+    
+    updateViewport();
+    update();
+    emit viewChanged();
+}
+
+void FigureCanvas::pan(const QPointF &delta)
+{
+    m_offset += delta;
+    updateViewport();
+    update();
+    emit viewChanged();
+}
+
+void FigureCanvas::setScale(double scale)
+{
+    scale = qMax(0.1, qMin(20.0, scale));
+    if (qFuzzyCompare(m_scale, scale))
+        return;
+    
+    m_scale = scale;
+    updateViewport();
+    update();
+    emit viewChanged();
+}
+
+void FigureCanvas::setOffset(const QPointF &offset)
+{
+    if (qFuzzyCompare(m_offset.x(), offset.x()) && qFuzzyCompare(m_offset.y(), offset.y()))
+        return;
+    
+    m_offset = offset;
+    updateViewport();
+    update();
+    emit viewChanged();
 }
 
 void FigureCanvas::addFigure(Figure *figure)
@@ -35,6 +106,11 @@ void FigureCanvas::removeFigure(Figure *figure)
     {
         m_figures.removeAll(figure);
         disconnect(figure, nullptr, this, nullptr);
+        if (m_selectedFigure == figure)
+        {
+            m_selectedFigure = nullptr;
+            emit figureSelected(nullptr);
+        }
         update();
     }
 }
@@ -46,10 +122,12 @@ void FigureCanvas::clearFigures()
         disconnect(figure, nullptr, this, nullptr);
     }
     m_figures.clear();
+    m_selectedFigure = nullptr;
+    emit figureSelected(nullptr);
     update();
 }
 
-QVector<Figure*> FigureCanvas::getFigures() const
+QList<Figure*> FigureCanvas::getFigures() const
 {
     return m_figures;
 }
@@ -87,6 +165,55 @@ bool FigureCanvas::isShowTriangulation() const
     return m_showTriangulation;
 }
 
+void FigureCanvas::setShowVertices(bool show)
+{
+    m_showVertices = show;
+    update();
+}
+
+bool FigureCanvas::isShowVertices() const
+{
+    return m_showVertices;
+}
+
+void FigureCanvas::setShowBoundingBox(bool show)
+{
+    m_showBoundingBox = show;
+    update();
+}
+
+bool FigureCanvas::isShowBoundingBox() const
+{
+    return m_showBoundingBox;
+}
+
+void FigureCanvas::resetView()
+{
+    m_scale = 1.0;
+    m_offset = QPointF(0, 0);
+    updateViewport();
+    update();
+    emit viewChanged();
+}
+
+void FigureCanvas::setSelectedFigure(Figure *figure)
+{
+    if (m_selectedFigure != figure)
+    {
+        m_selectedFigure = figure;
+        update();
+        emit figureSelected(figure);
+    }
+}
+
+void FigureCanvas::updateViewport()
+{
+    m_viewport = QRectF(-m_offset.x() / m_scale, 
+                       -m_offset.y() / m_scale,
+                       width() / m_scale,
+                       height() / m_scale);
+}
+
 void FigureCanvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -94,91 +221,167 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     
-    // Применяем масштаб и смещение
+    // Draw background
+    painter.fillRect(rect(), QColor(245, 245, 245));
+    
+    // Apply transformation
     painter.save();
     painter.translate(m_offset);
     painter.scale(m_scale, m_scale);
     
-    // Очистка фона
-    painter.fillRect(rect(), QColor(240, 240, 240));
-    
-    // Рисуем сетку
+    // Draw grid if enabled
     if (m_gridEnabled)
     {
         drawGrid(painter);
     }
     
-    // Рисуем все фигуры
+    // Draw all figures
     for (Figure *figure : m_figures)
     {
         figure->draw(&painter);
         
-        // Рисуем триангуляцию, если включено
+        // Draw triangulation if enabled
         if (m_showTriangulation)
         {
             drawTriangulation(painter, figure);
         }
         
-        // Рисуем центр масс, если включено
+        // Draw center of mass if enabled
         if (m_showCenters)
         {
             painter.save();
             painter.setBrush(Qt::red);
-            painter.setPen(Qt::red);
+            painter.setPen(QPen(Qt::red, 2));
             QPointF center = figure->centerOfMass();
-            painter.drawEllipse(center, 5, 5);
+            painter.drawEllipse(center, 4, 4);
             
-            // Подписываем координаты центра
-            painter.setPen(Qt::darkRed);
-            painter.drawText(center + QPointF(10, -10), 
-                           QString("(%1, %2)").arg(center.x(), 0, 'f', 0).arg(center.y(), 0, 'f', 0));
+            // Draw cross at center
+            painter.drawLine(center - QPointF(8, 0), center + QPointF(8, 0));
+            painter.drawLine(center - QPointF(0, 8), center + QPointF(0, 8));
             painter.restore();
         }
+        
+        // Draw bounding box if enabled
+        if (m_showBoundingBox)
+        {
+            painter.save();
+            painter.setPen(QPen(QColor(100, 100, 255, 150), 1, Qt::DashLine));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawRect(figure->boundingRect());
+            painter.restore();
+        }
+        
+        // Draw vertices if enabled and figure is polygon
+        if (m_showVertices)
+        {
+            // Используем dynamic_cast для проверки типа
+            PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(figure);
+            if (polygon)
+            {
+                painter.save();
+                painter.setBrush(QColor(255, 100, 100, 200));
+                painter.setPen(QPen(QColor(200, 50, 50), 1));
+                
+                QList<QPointF> vertices = polygon->getVertices();
+                for (const QPointF &vertex : vertices)
+                {
+                    painter.drawEllipse(vertex, 3, 3);
+                }
+                painter.restore();
+            }
+        }
+    }
+    
+    // Draw selection highlight
+    if (m_selectedFigure)
+    {
+        drawSelection(painter, m_selectedFigure);
     }
     
     painter.restore();
     
-    // Рисуем информацию о масштабе
+    // Draw info overlay
+    painter.save();
     painter.setPen(Qt::black);
-    painter.drawText(10, 20, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
-    painter.drawText(10, 40, QString("Figures: %1").arg(m_figures.size()));
+    painter.setBrush(QColor(255, 255, 255, 200));
+    painter.drawRect(10, 10, 180, 60);
+    painter.setPen(Qt::black);
+    painter.drawText(20, 30, QString("Figures: %1").arg(m_figures.size()));
+    painter.drawText(20, 50, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
+    painter.drawText(20, 70, QString("View: %1,%2").arg(m_viewport.x(), 0, 'f', 0).arg(m_viewport.y(), 0, 'f', 0));
+    painter.restore();
 }
 
 void FigureCanvas::drawGrid(QPainter &painter)
 {
     painter.save();
+    
+    // Draw major grid lines (every 100 units)
     painter.setPen(QPen(QColor(200, 200, 200), 1, Qt::SolidLine));
     
-    int gridSize = 50;
-    QRectF visibleRect = rect();
+    int gridSize = 100;
+    double startX = std::floor(m_viewport.left() / gridSize) * gridSize;
+    double startY = std::floor(m_viewport.top() / gridSize) * gridSize;
+    double endX = m_viewport.right();
+    double endY = m_viewport.bottom();
     
-    // Вертикальные линии
-    for (int x = static_cast<int>(visibleRect.left() - m_offset.x()); 
-         x < visibleRect.right(); x += gridSize)
+    for (double x = startX; x <= endX; x += gridSize)
     {
-        painter.drawLine(x, visibleRect.top(), x, visibleRect.bottom());
+        painter.drawLine(QPointF(x, m_viewport.top()), QPointF(x, m_viewport.bottom()));
     }
     
-    // Горизонтальные линии
-    for (int y = static_cast<int>(visibleRect.top() - m_offset.y()); 
-         y < visibleRect.bottom(); y += gridSize)
+    for (double y = startY; y <= endY; y += gridSize)
     {
-        painter.drawLine(visibleRect.left(), y, visibleRect.right(), y);
+        painter.drawLine(QPointF(m_viewport.left(), y), QPointF(m_viewport.right(), y));
     }
     
-    // Центральные оси
+    // Draw minor grid lines (every 25 units)
+    painter.setPen(QPen(QColor(230, 230, 230), 0.5, Qt::SolidLine));
+    gridSize = 25;
+    startX = std::floor(m_viewport.left() / gridSize) * gridSize;
+    startY = std::floor(m_viewport.top() / gridSize) * gridSize;
+    
+    for (double x = startX; x <= endX; x += gridSize)
+    {
+        painter.drawLine(QPointF(x, m_viewport.top()), QPointF(x, m_viewport.bottom()));
+    }
+    
+    for (double y = startY; y <= endY; y += gridSize)
+    {
+        painter.drawLine(QPointF(m_viewport.left(), y), QPointF(m_viewport.right(), y));
+    }
+    
+    // Draw axes
     painter.setPen(QPen(Qt::gray, 2, Qt::SolidLine));
-    painter.drawLine(visibleRect.left(), -m_offset.y(), 
-                     visibleRect.right(), -m_offset.y());
-    painter.drawLine(-m_offset.x(), visibleRect.top(), 
-                     -m_offset.x(), visibleRect.bottom());
+    painter.drawLine(QPointF(m_viewport.left(), 0), QPointF(m_viewport.right(), 0));
+    painter.drawLine(QPointF(0, m_viewport.top()), QPointF(0, m_viewport.bottom()));
+    
+    // Draw axis labels
+    painter.setPen(Qt::darkGray);
+    gridSize = 100;
+    startX = std::floor(m_viewport.left() / gridSize) * gridSize;
+    startY = std::floor(m_viewport.top() / gridSize) * gridSize;
+    
+    for (double x = startX; x <= endX; x += gridSize)
+    {
+        if (qAbs(x) > 1) {
+            painter.drawText(QPointF(x + 2, -2), QString::number(x, 'f', 0));
+        }
+    }
+    
+    for (double y = startY; y <= endY; y += gridSize)
+    {
+        if (qAbs(y) > 1) {
+            painter.drawText(QPointF(2, y - 2), QString::number(y, 'f', 0));
+        }
+    }
     
     painter.restore();
 }
 
 void FigureCanvas::drawTriangulation(QPainter &painter, Figure *figure)
 {
-    QVector<QVector<QPointF>> triangles = figure->triangulate();
+    QList<QList<QPointF>> triangles = figure->triangulate();
     if (!triangles.isEmpty())
     {
         painter.save();
@@ -189,12 +392,7 @@ void FigureCanvas::drawTriangulation(QPainter &painter, Figure *figure)
         {
             if (triangle.size() == 3)
             {
-                painter.drawPolygon(triangle.data(), triangle.size());
-                
-                // Рисуем центры треугольников
-                QPointF center = (triangle[0] + triangle[1] + triangle[2]) / 3;
-                painter.setBrush(QColor(255, 100, 100, 100));
-                painter.drawEllipse(center, 3, 3);
+                painter.drawPolygon(triangle.constData(), triangle.size());
             }
         }
         
@@ -202,14 +400,52 @@ void FigureCanvas::drawTriangulation(QPainter &painter, Figure *figure)
     }
 }
 
+void FigureCanvas::drawSelection(QPainter &painter, Figure *figure)
+{
+    painter.save();
+    
+    // Draw bounding box with selection color
+    QRectF bounds = figure->boundingRect();
+    painter.setPen(QPen(QColor(255, 100, 0, 200), 2, Qt::DashLine));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(bounds);
+    
+    // Draw resize handles
+    painter.setBrush(QColor(255, 100, 0));
+    painter.setPen(Qt::black);
+    
+    QList<QPointF> handles = {
+        bounds.topLeft(),
+        bounds.topRight(),
+        bounds.bottomRight(),
+        bounds.bottomLeft(),
+        QPointF(bounds.center().x(), bounds.top()),
+        QPointF(bounds.right(), bounds.center().y()),
+        QPointF(bounds.center().x(), bounds.bottom()),
+        QPointF(bounds.left(), bounds.center().y())
+    };
+    
+    for (const QPointF &handle : handles)
+    {
+        painter.drawEllipse(handle, 4, 4);
+    }
+    
+    // Draw center of mass for selected figure
+    painter.setBrush(Qt::green);
+    painter.setPen(QPen(Qt::darkGreen, 1));
+    QPointF center = figure->centerOfMass();
+    painter.drawEllipse(center, 6, 6);
+    
+    painter.restore();
+}
+
 void FigureCanvas::mousePressEvent(QMouseEvent *event)
 {
+    QPointF pos = (event->position() - m_offset) / m_scale;
+    
     if (event->button() == Qt::LeftButton)
     {
-        // Преобразуем координаты с учетом масштаба и смещения
-        QPointF pos = (event->position() - m_offset) / m_scale;
-        
-        // Ищем фигуру, по которой кликнули
+        // Check if clicking on a figure
         for (Figure *figure : m_figures)
         {
             if (figure->boundingRect().contains(pos))
@@ -218,16 +454,26 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
                 m_lastMousePos = event->position();
                 m_isDragging = true;
                 setCursor(Qt::ClosedHandCursor);
-                break;
+                emit figureSelected(figure);
+                update();
+                return;
             }
         }
+        
+        // If no figure clicked, start panning
+        m_isPanning = true;
+        m_panStartPos = event->position();
+        setCursor(Qt::OpenHandCursor);
     }
     else if (event->button() == Qt::RightButton)
     {
-        // Сброс масштаба и смещения
-        m_scale = 1.0;
-        m_offset = QPointF(0, 0);
-        update();
+        // Deselect figure on right click
+        if (m_selectedFigure)
+        {
+            m_selectedFigure = nullptr;
+            emit figureSelected(nullptr);
+            update();
+        }
     }
 }
 
@@ -235,7 +481,6 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_isDragging && m_selectedFigure)
     {
-        // Перемещение фигуры
         QPointF currentPos = event->position();
         QPointF offset = (currentPos - m_lastMousePos) / m_scale;
         
@@ -243,13 +488,13 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         m_lastMousePos = currentPos;
         update();
     }
-    else if (event->buttons() & Qt::MiddleButton)
+    else if (m_isPanning)
     {
-        // Прокрутка канваса
         QPointF currentPos = event->position();
-        QPointF delta = currentPos - m_lastMousePos;
+        QPointF delta = currentPos - m_panStartPos;
         m_offset += delta;
-        m_lastMousePos = currentPos;
+        m_panStartPos = currentPos;
+        updateViewport();
         update();
     }
 }
@@ -259,26 +504,44 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         m_isDragging = false;
-        m_selectedFigure = nullptr;
+        m_isPanning = false;
         setCursor(Qt::ArrowCursor);
+    }
+}
+
+void FigureCanvas::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    QPointF pos = (event->position() - m_offset) / m_scale;
+    
+    for (Figure *figure : m_figures)
+    {
+        if (figure->boundingRect().contains(pos))
+    {
+            emit figureDoubleClicked(figure);
+            break;
+        }
     }
 }
 
 void FigureCanvas::wheelEvent(QWheelEvent *event)
 {
-    // Масштабирование колесиком мыши
-    double scaleFactor = 1.1;
+    QPointF mousePos = event->position();
+    double factor = 1.1;
+    
     if (event->angleDelta().y() > 0)
     {
-        m_scale *= scaleFactor;
+        zoom(factor, mousePos);
     }
     else
     {
-        m_scale /= scaleFactor;
+        zoom(1.0/factor, mousePos);
     }
     
-    // Ограничиваем масштаб
-    m_scale = qMax(0.1, qMin(10.0, m_scale));
-    
-    update();
+    event->accept();
+}
+
+void FigureCanvas::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+    updateViewport();
 }

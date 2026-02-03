@@ -25,8 +25,8 @@ void Hexagon::setHexagon(const QPointF &center, double radius)
     for (int i = 0; i < 6; i++)
     {
         double angle = 2 * M_PI * i / 6;
-        double x = center.x() + radius * cos(angle);
-        double y = center.y() + radius * sin(angle);
+        double x = center.x() + radius * std::cos(angle);
+        double y = center.y() + radius * std::sin(angle);
         m_vertices.append(QPointF(x, y));
     }
     
