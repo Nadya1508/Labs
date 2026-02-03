@@ -4,21 +4,22 @@
 #include <QWheelEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QDebug>
 #include <cmath>
 
 FigureCanvas::FigureCanvas(QWidget *parent)
     : QWidget(parent)
+    , m_selectedFigure(nullptr)
+    , m_drawingTool(new DrawingTool(this))
+    , m_scale(1.0)
+    , m_offset(0, 0)
     , m_gridEnabled(true)
     , m_showCenters(true)
     , m_showTriangulation(false)
     , m_showVertices(true)
     , m_showBoundingBox(false)
-    , m_selectedFigure(nullptr)
     , m_isDragging(false)
     , m_isPanning(false)
-    , m_scale(1.0)
-    , m_offset(0, 0)
-    , m_drawingTool(new DrawingTool(this))
 {
     setMinimumSize(600, 400);
     setMouseTracking(true);
@@ -42,6 +43,49 @@ FigureCanvas::FigureCanvas(QWidget *parent)
 FigureCanvas::~FigureCanvas()
 {
     // QObject parent автоматически удалит m_drawingTool
+}
+
+DrawingTool::DrawingMode FigureCanvas::drawingMode() const
+{
+    return m_drawingTool->drawingMode();
+}
+
+Figure* FigureCanvas::selectedFigure() const
+{
+    return m_selectedFigure;
+}
+
+double FigureCanvas::scale() const
+{
+    return m_scale;
+}
+
+QPointF FigureCanvas::offset() const
+{
+    return m_offset;
+}
+
+void FigureCanvas::setScale(double scale)
+{
+    scale = qMax(0.1, qMin(20.0, scale));
+    if (qFuzzyCompare(m_scale, scale))
+        return;
+    
+    m_scale = scale;
+    updateViewport();
+    update();
+    emit viewChanged();
+}
+
+void FigureCanvas::setOffset(const QPointF &offset)
+{
+    if (qFuzzyCompare(m_offset.x(), offset.x()) && qFuzzyCompare(m_offset.y(), offset.y()))
+        return;
+    
+    m_offset = offset;
+    updateViewport();
+    update();
+    emit viewChanged();
 }
 
 void FigureCanvas::setDrawingMode(DrawingTool::DrawingMode mode)
@@ -100,24 +144,44 @@ void FigureCanvas::pan(const QPointF &delta)
     emit viewChanged();
 }
 
-void FigureCanvas::setScale(double scale)
+void FigureCanvas::resetView()
 {
-    scale = qMax(0.1, qMin(20.0, scale));
-    if (qFuzzyCompare(m_scale, scale))
-        return;
-    
-    m_scale = scale;
+    m_scale = 1.0;
+    m_offset = QPointF(0, 0);
     updateViewport();
     update();
     emit viewChanged();
 }
 
-void FigureCanvas::setOffset(const QPointF &offset)
+void FigureCanvas::fitToView()
 {
-    if (qFuzzyCompare(m_offset.x(), offset.x()) && qFuzzyCompare(m_offset.y(), offset.y()))
+    if (m_figures.empty())
+        return;
+        
+    // Calculate bounding box of all figures
+    QRectF totalBounds;
+    for (Figure *figure : m_figures)
+    {
+        totalBounds = totalBounds.united(figure->boundingRect());
+    }
+    
+    if (totalBounds.isEmpty())
         return;
     
-    m_offset = offset;
+    // Add padding
+    totalBounds.adjust(-50, -50, 50, 50);
+    
+    // Calculate scale to fit
+    double widthScale = width() / totalBounds.width();
+    double heightScale = height() / totalBounds.height();
+    m_scale = qMin(widthScale, heightScale) * 0.9;
+    
+    // Center the view
+    m_offset = QPointF(
+        width()/2.0 - totalBounds.center().x() * m_scale,
+        height()/2.0 - totalBounds.center().y() * m_scale
+    );
+    
     updateViewport();
     update();
     emit viewChanged();
@@ -169,6 +233,16 @@ void FigureCanvas::clearFigures()
 QList<Figure*> FigureCanvas::getFigures() const
 {
     return m_figures;
+}
+
+void FigureCanvas::setSelectedFigure(Figure *figure)
+{
+    if (m_selectedFigure != figure)
+    {
+        m_selectedFigure = figure;
+        update();
+        emit figureSelected(figure);
+    }
 }
 
 void FigureCanvas::setGridEnabled(bool enabled)
@@ -224,25 +298,6 @@ void FigureCanvas::setShowBoundingBox(bool show)
 bool FigureCanvas::isShowBoundingBox() const
 {
     return m_showBoundingBox;
-}
-
-void FigureCanvas::resetView()
-{
-    m_scale = 1.0;
-    m_offset = QPointF(0, 0);
-    updateViewport();
-    update();
-    emit viewChanged();
-}
-
-void FigureCanvas::setSelectedFigure(Figure *figure)
-{
-    if (m_selectedFigure != figure)
-    {
-        m_selectedFigure = figure;
-        update();
-        emit figureSelected(figure);
-    }
 }
 
 void FigureCanvas::updateViewport()
@@ -421,23 +476,6 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     }
     
     painter.restore();
-    
-    // Draw info overlay
-    painter.save();
-    painter.setPen(Qt::black);
-    painter.setBrush(QColor(255, 255, 255, 200));
-    painter.drawRect(10, 10, 180, 60);
-    painter.setPen(Qt::black);
-    painter.drawText(20, 30, QString("Figures: %1").arg(m_figures.size()));
-    painter.drawText(20, 50, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
-    painter.drawText(20, 70, QString("View: %1,%2").arg(m_viewport.x(), 0, 'f', 0).arg(m_viewport.y(), 0, 'f', 0));
-    
-    if (m_drawingTool->isDrawing())
-    {
-        painter.drawText(20, 90, QString("Drawing: %1 points").arg(m_currentDrawingPoints.size()));
-    }
-    
-    painter.restore();
 }
 
 void FigureCanvas::drawGrid(QPainter &painter)
@@ -483,26 +521,6 @@ void FigureCanvas::drawGrid(QPainter &painter)
     painter.setPen(QPen(Qt::gray, 2, Qt::SolidLine));
     painter.drawLine(QPointF(m_viewport.left(), 0), QPointF(m_viewport.right(), 0));
     painter.drawLine(QPointF(0, m_viewport.top()), QPointF(0, m_viewport.bottom()));
-    
-    // Draw axis labels
-    painter.setPen(Qt::darkGray);
-    gridSize = 100;
-    startX = std::floor(m_viewport.left() / gridSize) * gridSize;
-    startY = std::floor(m_viewport.top() / gridSize) * gridSize;
-    
-    for (double x = startX; x <= endX; x += gridSize)
-    {
-        if (qAbs(x) > 1) {
-            painter.drawText(QPointF(x + 2, -2), QString::number(x, 'f', 0));
-        }
-    }
-    
-    for (double y = startY; y <= endY; y += gridSize)
-    {
-        if (qAbs(y) > 1) {
-            painter.drawText(QPointF(2, y - 2), QString::number(y, 'f', 0));
-        }
-    }
     
     painter.restore();
 }
@@ -582,8 +600,7 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
                 m_currentDrawingPoints.clear();
                 m_currentDrawingPoints.append(pos);
             }
-            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon || 
-                     m_drawingTool->drawingMode() == DrawingTool::DrawCustomPolygon)
+            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
             {
                 // For polygons, add point on click
                 m_currentDrawingPoints.append(pos);
@@ -677,6 +694,9 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         updateViewport();
         update();
     }
+    
+    // Emit mouse moved signal
+    emit mouseMoved(pos);
 }
 
 void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
@@ -685,8 +705,7 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
     {
         if (m_drawingTool->isDrawing())
         {
-            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon && 
-                m_drawingTool->drawingMode() != DrawingTool::DrawCustomPolygon)
+            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon)
             {
                 // For simple shapes, finish on mouse release
                 Figure *figure = m_drawingTool->finishDrawing();

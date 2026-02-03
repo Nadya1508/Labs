@@ -2,76 +2,72 @@
 #define FIGURECANVAS_H
 
 #include <QWidget>
-#include <QList>
 #include <QPainter>
+#include <QMouseEvent>
+#include <QWheelEvent>
+#include <QList>
 #include "Figure.h"
 #include "DrawingTool.h"
-
-// Forward declaration
-class PolygonFigure;
 
 class FigureCanvas : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(double scale READ scale WRITE setScale)
-    Q_PROPERTY(QPointF offset READ offset WRITE setOffset)
 
 public:
     explicit FigureCanvas(QWidget *parent = nullptr);
     ~FigureCanvas();
-    
-    void addFigure(Figure *figure);
-    void removeFigure(Figure *figure);
-    void clearFigures();
-    
-    QList<Figure*> getFigures() const;
-    
-    void setGridEnabled(bool enabled);
-    bool isGridEnabled() const;
-    
-    void setShowCenters(bool show);
-    bool isShowCenters() const;
-    
-    void setShowTriangulation(bool show);
-    bool isShowTriangulation() const;
-    
-    void setShowVertices(bool show);
-    bool isShowVertices() const;
-    
-    void setShowBoundingBox(bool show);
-    bool isShowBoundingBox() const;
-    
-    void resetView();
-    
-    Figure* selectedFigure() const { return m_selectedFigure; }
-    void setSelectedFigure(Figure *figure);
-    
-    // Drawing functionality
+
+    // Drawing mode
     void setDrawingMode(DrawingTool::DrawingMode mode);
-    DrawingTool::DrawingMode drawingMode() const { return m_drawingTool->drawingMode(); }
-    bool isDrawing() const { return m_drawingTool->isDrawing(); }
+    DrawingTool::DrawingMode drawingMode() const;
     
-    // Public methods for zoom control
+    // View controls
     void zoomIn();
     void zoomOut();
     void zoom(double factor, const QPointF &center = QPointF());
     void pan(const QPointF &delta);
-    
-    double scale() const { return m_scale; }
-    void setScale(double scale);
-    QPointF offset() const { return m_offset; }
-    void setOffset(const QPointF &offset);
-    
+    void resetView();
+    void fitToView();
+
+    // Figure management
+    void addFigure(Figure *figure);
+    void removeFigure(Figure *figure);
+    void clearFigures();
+    QList<Figure*> getFigures() const;
+
+    // Selection
+    void setSelectedFigure(Figure *figure);
+    Figure* selectedFigure() const;
+
+    // Canvas settings
+    void setGridEnabled(bool enabled);
+    bool isGridEnabled() const;
+    void setShowCenters(bool show);
+    bool isShowCenters() const;
+    void setShowTriangulation(bool show);
+    bool isShowTriangulation() const;
+    void setShowVertices(bool show);
+    bool isShowVertices() const;
+    void setShowBoundingBox(bool show);
+    bool isShowBoundingBox() const;
+
     // Drawing properties
     void setDrawingColor(const QColor &color);
     void setDrawingFillColor(const QColor &color);
     void setDrawingLineWidth(int width);
 
+    // View parameters
+    double scale() const;
+    QPointF offset() const;
+    void setScale(double scale);
+    void setOffset(const QPointF &offset);
+
 signals:
+    void viewChanged();
     void figureSelected(Figure *figure);
     void figureDoubleClicked(Figure *figure);
     void figureCreated(Figure *figure);
-    void viewChanged();
+    void mouseMoved(const QPointF &scenePos);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -83,39 +79,34 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
+    void updateViewport();
     void drawGrid(QPainter &painter);
     void drawTriangulation(QPainter &painter, Figure *figure);
     void drawSelection(QPainter &painter, Figure *figure);
     void drawCurrentDrawing(QPainter &painter);
-    void updateViewport();
-    
-private:
+
     QList<Figure*> m_figures;
+    Figure *m_selectedFigure;
+    DrawingTool *m_drawingTool;
+    QList<QPointF> m_currentDrawingPoints;
+
+    // View parameters
+    double m_scale;
+    QPointF m_offset;
+    QRectF m_viewport;
+
+    // Canvas settings
     bool m_gridEnabled;
     bool m_showCenters;
     bool m_showTriangulation;
     bool m_showVertices;
     bool m_showBoundingBox;
-    
-    // For dragging figures
-    Figure *m_selectedFigure;
-    QPointF m_lastMousePos;
+
+    // Interaction state
     bool m_isDragging;
-    
-    // For panning
     bool m_isPanning;
+    QPointF m_lastMousePos;
     QPointF m_panStartPos;
-    
-    // For wheel zoom
-    double m_scale;
-    QPointF m_offset;
-    
-    // Viewport
-    QRectF m_viewport;
-    
-    // Drawing tool
-    DrawingTool *m_drawingTool;
-    QList<QPointF> m_currentDrawingPoints;
 };
 
 #endif // FIGURECANVAS_H

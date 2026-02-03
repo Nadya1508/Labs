@@ -39,39 +39,39 @@ template <> constexpr inline auto FigureCanvas::qt_create_metaobjectdata<qt_meta
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "FigureCanvas",
-        "figureSelected",
+        "viewChanged",
         "",
+        "figureSelected",
         "Figure*",
         "figure",
         "figureDoubleClicked",
         "figureCreated",
-        "viewChanged",
-        "scale",
-        "offset",
-        "QPointF"
+        "mouseMoved",
+        "QPointF",
+        "scenePos"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'viewChanged'
+        QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'figureSelected'
-        QtMocHelpers::SignalData<void(Figure *)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SignalData<void(Figure *)>(3, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 4, 5 },
         }}),
         // Signal 'figureDoubleClicked'
-        QtMocHelpers::SignalData<void(Figure *)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SignalData<void(Figure *)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 4, 5 },
         }}),
         // Signal 'figureCreated'
-        QtMocHelpers::SignalData<void(Figure *)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SignalData<void(Figure *)>(7, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 4, 5 },
         }}),
-        // Signal 'viewChanged'
-        QtMocHelpers::SignalData<void()>(7, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'mouseMoved'
+        QtMocHelpers::SignalData<void(const QPointF &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 9, 10 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
-        // property 'scale'
-        QtMocHelpers::PropertyData<double>(8, QMetaType::Double, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet),
-        // property 'offset'
-        QtMocHelpers::PropertyData<QPointF>(9, 0x80000000 | 10, QMC::DefaultPropertyFlags | QMC::Writable | QMC::EnumOrFlag | QMC::StdCppSet),
     };
     QtMocHelpers::UintData qt_enums {
     };
@@ -93,23 +93,17 @@ void FigureCanvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
     auto *_t = static_cast<FigureCanvas *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->figureSelected((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
-        case 1: _t->figureDoubleClicked((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
-        case 2: _t->figureCreated((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
-        case 3: _t->viewChanged(); break;
+        case 0: _t->viewChanged(); break;
+        case 1: _t->figureSelected((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
+        case 2: _t->figureDoubleClicked((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
+        case 3: _t->figureCreated((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
+        case 4: _t->mouseMoved((*reinterpret_cast<std::add_pointer_t<QPointF>>(_a[1]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 0:
-            switch (*reinterpret_cast<int*>(_a[1])) {
-            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-            case 0:
-                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< Figure* >(); break;
-            }
-            break;
         case 1:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
@@ -124,33 +118,26 @@ void FigureCanvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< Figure* >(); break;
             }
             break;
+        case 3:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
+            case 0:
+                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< Figure* >(); break;
+            }
+            break;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
-        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureSelected, 0))
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)()>(_a, &FigureCanvas::viewChanged, 0))
             return;
-        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureDoubleClicked, 1))
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureSelected, 1))
             return;
-        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureCreated, 2))
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureDoubleClicked, 2))
             return;
-        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)()>(_a, &FigureCanvas::viewChanged, 3))
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureCreated, 3))
             return;
-    }
-    if (_c == QMetaObject::ReadProperty) {
-        void *_v = _a[0];
-        switch (_id) {
-        case 0: *reinterpret_cast<double*>(_v) = _t->scale(); break;
-        case 1: *reinterpret_cast<QPointF*>(_v) = _t->offset(); break;
-        default: break;
-        }
-    }
-    if (_c == QMetaObject::WriteProperty) {
-        void *_v = _a[0];
-        switch (_id) {
-        case 0: _t->setScale(*reinterpret_cast<double*>(_v)); break;
-        case 1: _t->setOffset(*reinterpret_cast<QPointF*>(_v)); break;
-        default: break;
-        }
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(const QPointF & )>(_a, &FigureCanvas::mouseMoved, 4))
+            return;
     }
 }
 
@@ -173,45 +160,45 @@ int FigureCanvas::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
-    }
-    if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
-            || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
-            || _c == QMetaObject::RegisterPropertyMetaType) {
-        qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 5;
     }
     return _id;
 }
 
 // SIGNAL 0
-void FigureCanvas::figureSelected(Figure * _t1)
+void FigureCanvas::viewChanged()
 {
-    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
 
 // SIGNAL 1
-void FigureCanvas::figureDoubleClicked(Figure * _t1)
+void FigureCanvas::figureSelected(Figure * _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1);
 }
 
 // SIGNAL 2
-void FigureCanvas::figureCreated(Figure * _t1)
+void FigureCanvas::figureDoubleClicked(Figure * _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1);
 }
 
 // SIGNAL 3
-void FigureCanvas::viewChanged()
+void FigureCanvas::figureCreated(Figure * _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
+    QMetaObject::activate<void>(this, &staticMetaObject, 3, nullptr, _t1);
+}
+
+// SIGNAL 4
+void FigureCanvas::mouseMoved(const QPointF & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
 }
 QT_WARNING_POP

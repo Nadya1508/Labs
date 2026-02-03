@@ -1,4 +1,5 @@
-QT += core gui widgets
+# GeometryApp.pro
+QT       += core gui widgets
 
 TARGET = GeometryApp
 TEMPLATE = app
@@ -38,9 +39,12 @@ HEADERS += \
     DrawingTool.h \
     FigureCanvas.h
 
-# Добавьте, если используете иконки
-RESOURCES += \
-    icons.qrc
+# Для Mac - попробуйте разные версии
+macx {
+    QMAKE_MAC_SDK = macosx
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+    QMAKE_APPLE_DEVICE_ARCHS = arm64
+}
 
-# Настройки компилятора
-QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic
+# Компиляторные флаги
+QMAKE_CXXFLAGS += -Wall -Wextra

@@ -27,9 +27,11 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 #include <QShortcut>
+
+// ВАЖНО: Добавьте этот include
 #include "FigureCanvas.h"
 
-// Добавим forward declarations для всех фигур
+// Forward declarations для всех фигур
 class Triangle;
 class Rectangle;
 class Square;

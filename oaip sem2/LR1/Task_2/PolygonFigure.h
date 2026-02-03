@@ -25,7 +25,8 @@ public:
     QList<QPointF> getVertices() const;
     int vertexCount() const;
     
-    virtual void updateFromVertices() {}
+    // Сделаем эту функцию виртуальной без реализации по умолчанию
+    virtual void updateFromVertices() { emit figureChanged(); }
 
 protected:
     void transform(const QTransform &transform) override;
