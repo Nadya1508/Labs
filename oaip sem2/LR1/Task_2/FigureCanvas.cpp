@@ -201,18 +201,31 @@ void FigureCanvas::removeFigure(Figure *figure)
 {
     if (figure)
     {
-        // Отключаем все соединения
-        disconnect(figure, nullptr, this, nullptr);
-        
-        m_figures.removeAll(figure);
-        
-        if (m_selectedFigure == figure)
+        // Находим индекс фигуры
+        int index = m_figures.indexOf(figure);
+        if (index >= 0)
         {
-            m_selectedFigure = nullptr;
-            emit figureSelected(nullptr);
+            qDebug() << "Removing figure at index:" << index << "Type:" << figure->type();
+            
+            // Отключаем все соединения
+            disconnect(figure, nullptr, this, nullptr);
+            
+            // Удаляем из списка
+            m_figures.removeAt(index);
+            
+            // Если это выбранная фигура - сбрасываем выбор
+            if (m_selectedFigure == figure)
+            {
+                m_selectedFigure = nullptr;
+                emit figureSelected(nullptr);
+            }
+            
+            // Удаляем объект (он имеет родителя, поэтому deleteLater безопасен)
+            figure->deleteLater();
+            
+            // Обновляем отображение
+            update();
         }
-        
-        update();
     }
 }
 
@@ -476,6 +489,23 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     }
     
     painter.restore();
+    
+    // Draw info overlay
+    painter.save();
+    painter.setPen(Qt::black);
+    painter.setBrush(QColor(255, 255, 255, 200));
+    painter.drawRect(10, 10, 180, 60);
+    painter.setPen(Qt::black);
+    painter.drawText(20, 30, QString("Figures: %1").arg(m_figures.size()));
+    painter.drawText(20, 50, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
+    painter.drawText(20, 70, QString("View: %1,%2").arg(m_viewport.x(), 0, 'f', 0).arg(m_viewport.y(), 0, 'f', 0));
+    
+    if (m_drawingTool->isDrawing())
+    {
+        painter.drawText(20, 90, QString("Drawing: %1 points").arg(m_currentDrawingPoints.size()));
+    }
+    
+    painter.restore();
 }
 
 void FigureCanvas::drawGrid(QPainter &painter)
@@ -521,6 +551,26 @@ void FigureCanvas::drawGrid(QPainter &painter)
     painter.setPen(QPen(Qt::gray, 2, Qt::SolidLine));
     painter.drawLine(QPointF(m_viewport.left(), 0), QPointF(m_viewport.right(), 0));
     painter.drawLine(QPointF(0, m_viewport.top()), QPointF(0, m_viewport.bottom()));
+    
+    // Draw axis labels
+    painter.setPen(Qt::darkGray);
+    gridSize = 100;
+    startX = std::floor(m_viewport.left() / gridSize) * gridSize;
+    startY = std::floor(m_viewport.top() / gridSize) * gridSize;
+    
+    for (double x = startX; x <= endX; x += gridSize)
+    {
+        if (qAbs(x) > 1) {
+            painter.drawText(QPointF(x + 2, -2), QString::number(x, 'f', 0));
+        }
+    }
+    
+    for (double y = startY; y <= endY; y += gridSize)
+    {
+        if (qAbs(y) > 1) {
+            painter.drawText(QPointF(2, y - 2), QString::number(y, 'f', 0));
+        }
+    }
     
     painter.restore();
 }
@@ -600,7 +650,8 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
                 m_currentDrawingPoints.clear();
                 m_currentDrawingPoints.append(pos);
             }
-            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
+            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon || 
+                     m_drawingTool->drawingMode() == DrawingTool::DrawCustomPolygon)
             {
                 // For polygons, add point on click
                 m_currentDrawingPoints.append(pos);
@@ -695,7 +746,7 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         update();
     }
     
-    // Emit mouse moved signal
+    // Update mouse position in status bar
     emit mouseMoved(pos);
 }
 
@@ -705,7 +756,8 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
     {
         if (m_drawingTool->isDrawing())
         {
-            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon)
+            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon && 
+                m_drawingTool->drawingMode() != DrawingTool::DrawCustomPolygon)
             {
                 // For simple shapes, finish on mouse release
                 Figure *figure = m_drawingTool->finishDrawing();

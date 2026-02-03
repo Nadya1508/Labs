@@ -4,7 +4,6 @@
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QDateTime>
 #include <QRandomGenerator>
 #include <QDebug>
@@ -12,13 +11,16 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QSplitter>
-#include <QApplication>
 #include <QRadioButton>
 #include <QButtonGroup>
 #include <QShortcut>
+#include <QApplication>
 #include <QPainter>
 
-// Добавим include для всех классов фигур
+// Временно закомментируем QFileDialog чтобы избежать ошибок
+// #include <QFileDialog>
+
+// Включаем все классы фигур
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "Square.h"
@@ -43,20 +45,19 @@ MainWindow::MainWindow(QWidget *parent)
     setupStatusBar();
     createConnections();
     
-    // Create some default figures
+    // Создаем несколько тестовых фигур
     createFigureByType("Triangle", QPointF(200, 200));
     createFigureByType("Circle", QPointF(400, 300));
-    createFigureByType("Star", QPointF(600, 400));
     createFigureByType("Square", QPointF(300, 500));
     
-    // Update UI
+    // Обновляем UI
     updateFigureList();
     if (m_figureList->count() > 0)
     {
         m_figureList->setCurrentRow(0);
     }
     
-    // Setup update timer
+    // Таймер обновления
     m_updateTimer = new QTimer(this);
     m_updateTimer->setInterval(100);
     connect(m_updateTimer, &QTimer::timeout, m_canvas, qOverload<>(&FigureCanvas::update));
@@ -82,19 +83,16 @@ void MainWindow::setupMenuBar()
     
     QAction *newAction = new QAction("&New Project", this);
     newAction->setShortcut(QKeySequence::New);
-    newAction->setIcon(QIcon::fromTheme("document-new"));
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
     m_fileMenu->addAction(newAction);
     
     QAction *openAction = new QAction("&Open...", this);
     openAction->setShortcut(QKeySequence::Open);
-    openAction->setIcon(QIcon::fromTheme("document-open"));
     connect(openAction, &QAction::triggered, this, &MainWindow::openFile);
     m_fileMenu->addAction(openAction);
     
     QAction *saveAction = new QAction("&Save", this);
     saveAction->setShortcut(QKeySequence::Save);
-    saveAction->setIcon(QIcon::fromTheme("document-save"));
     connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
     m_fileMenu->addAction(saveAction);
     
@@ -106,7 +104,6 @@ void MainWindow::setupMenuBar()
     m_fileMenu->addSeparator();
     
     QAction *exportAction = new QAction("&Export Image...", this);
-    exportAction->setIcon(QIcon::fromTheme("document-export"));
     connect(exportAction, &QAction::triggered, this, &MainWindow::exportImage);
     m_fileMenu->addAction(exportAction);
     
@@ -114,7 +111,6 @@ void MainWindow::setupMenuBar()
     
     QAction *exitAction = new QAction("E&xit", this);
     exitAction->setShortcut(QKeySequence::Quit);
-    exitAction->setIcon(QIcon::fromTheme("application-exit"));
     connect(exitAction, &QAction::triggered, this, &MainWindow::exitApplication);
     m_fileMenu->addAction(exitAction);
     
@@ -123,19 +119,16 @@ void MainWindow::setupMenuBar()
     
     QAction *copyAction = new QAction("&Copy", this);
     copyAction->setShortcut(QKeySequence::Copy);
-    copyAction->setIcon(QIcon::fromTheme("edit-copy"));
     connect(copyAction, &QAction::triggered, this, &MainWindow::copyFigure);
     m_editMenu->addAction(copyAction);
     
     QAction *pasteAction = new QAction("&Paste", this);
     pasteAction->setShortcut(QKeySequence::Paste);
-    pasteAction->setIcon(QIcon::fromTheme("edit-paste"));
     connect(pasteAction, &QAction::triggered, this, &MainWindow::pasteFigure);
     m_editMenu->addAction(pasteAction);
     
     QAction *deleteAction = new QAction("&Delete", this);
     deleteAction->setShortcut(QKeySequence::Delete);
-    deleteAction->setIcon(QIcon::fromTheme("edit-delete"));
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteFigure);
     m_editMenu->addAction(deleteAction);
     
@@ -156,25 +149,21 @@ void MainWindow::setupMenuBar()
     
     QAction *zoomInAction = new QAction("Zoom &In", this);
     zoomInAction->setShortcut(QKeySequence::ZoomIn);
-    zoomInAction->setIcon(QIcon::fromTheme("zoom-in"));
     connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn);
     m_viewMenu->addAction(zoomInAction);
     
     QAction *zoomOutAction = new QAction("Zoom &Out", this);
     zoomOutAction->setShortcut(QKeySequence::ZoomOut);
-    zoomOutAction->setIcon(QIcon::fromTheme("zoom-out"));
     connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut);
     m_viewMenu->addAction(zoomOutAction);
     
     QAction *resetViewAction = new QAction("&Reset View", this);
     resetViewAction->setShortcut(QKeySequence("Ctrl+R"));
-    resetViewAction->setIcon(QIcon::fromTheme("view-refresh"));
     connect(resetViewAction, &QAction::triggered, this, &MainWindow::resetView);
     m_viewMenu->addAction(resetViewAction);
     
     QAction *fitViewAction = new QAction("&Fit to View", this);
     fitViewAction->setShortcut(QKeySequence("Ctrl+F"));
-    fitViewAction->setIcon(QIcon::fromTheme("zoom-fit-best"));
     connect(fitViewAction, &QAction::triggered, this, &MainWindow::fitToView);
     m_viewMenu->addAction(fitViewAction);
     
@@ -247,7 +236,6 @@ void MainWindow::setupMenuBar()
     m_figureMenu->addSeparator();
     
     QAction *clearAction = new QAction("&Clear All Figures", this);
-    clearAction->setIcon(QIcon::fromTheme("edit-clear"));
     connect(clearAction, &QAction::triggered, this, &MainWindow::clearAllFigures);
     m_figureMenu->addAction(clearAction);
     
@@ -306,7 +294,6 @@ void MainWindow::setupMenuBar()
     
     m_stopDrawingAction = new QAction("&Stop Drawing", this);
     m_stopDrawingAction->setShortcut(QKeySequence("Escape"));
-    m_stopDrawingAction->setIcon(QIcon::fromTheme("process-stop"));
     connect(m_stopDrawingAction, &QAction::triggered, this, &MainWindow::stopDrawingMode);
     m_drawingMenu->addAction(m_stopDrawingAction);
     
@@ -315,25 +302,21 @@ void MainWindow::setupMenuBar()
     
     QAction *applyTransformAction = new QAction("&Apply Transformations", this);
     applyTransformAction->setShortcut(QKeySequence("Ctrl+T"));
-    applyTransformAction->setIcon(QIcon::fromTheme("transform-move"));
     connect(applyTransformAction, &QAction::triggered, this, &MainWindow::applyTransformation);
     m_transformMenu->addAction(applyTransformAction);
     
     QAction *animateTransformAction = new QAction("&Animate Transformations", this);
     animateTransformAction->setShortcut(QKeySequence("Ctrl+Shift+T"));
-    animateTransformAction->setIcon(QIcon::fromTheme("media-playback-start"));
     connect(animateTransformAction, &QAction::triggered, this, &MainWindow::animateTransformation);
     m_transformMenu->addAction(animateTransformAction);
     
     m_transformMenu->addSeparator();
     
     QAction *calculateAreaAction = new QAction("Calculate &Total Area", this);
-    calculateAreaAction->setIcon(QIcon::fromTheme("calculator"));
     connect(calculateAreaAction, &QAction::triggered, this, &MainWindow::calculateTotalArea);
     m_transformMenu->addAction(calculateAreaAction);
     
     QAction *calculatePerimeterAction = new QAction("Calculate Total &Perimeter", this);
-    calculatePerimeterAction->setIcon(QIcon::fromTheme("calculator"));
     connect(calculatePerimeterAction, &QAction::triggered, this, &MainWindow::calculateTotalPerimeter);
     m_transformMenu->addAction(calculatePerimeterAction);
     
@@ -342,7 +325,6 @@ void MainWindow::setupMenuBar()
     
     QAction *helpAction = new QAction("&Help Contents", this);
     helpAction->setShortcut(QKeySequence::HelpContents);
-    helpAction->setIcon(QIcon::fromTheme("help-contents"));
     connect(helpAction, &QAction::triggered, this, &MainWindow::showHelp);
     m_helpMenu->addAction(helpAction);
     
@@ -354,21 +336,19 @@ void MainWindow::setupMenuBar()
     m_helpMenu->addSeparator();
     
     QAction *aboutAction = new QAction("&About", this);
-    aboutAction->setIcon(QIcon::fromTheme("help-about"));
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     m_helpMenu->addAction(aboutAction);
 }
 
 void MainWindow::setupToolBar()
 {
-    // Main toolbar - только базовые инструменты (без кнопок создания фигур)
+    // Main toolbar
     m_mainToolBar = addToolBar("Main Toolbar");
     m_mainToolBar->setMovable(false);
     
     // Кнопки трансформации
     QAction *moveAction = new QAction("Move", this);
     moveAction->setToolTip("Move selected figure");
-    moveAction->setIcon(QIcon::fromTheme("transform-move"));
     connect(moveAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -380,7 +360,6 @@ void MainWindow::setupToolBar()
     
     QAction *rotateAction = new QAction("Rotate", this);
     rotateAction->setToolTip("Rotate selected figure");
-    rotateAction->setIcon(QIcon::fromTheme("object-rotate-right"));
     connect(rotateAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -393,7 +372,6 @@ void MainWindow::setupToolBar()
     
     QAction *scaleAction = new QAction("Scale", this);
     scaleAction->setToolTip("Scale selected figure");
-    scaleAction->setIcon(QIcon::fromTheme("transform-scale"));
     connect(scaleAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -408,17 +386,14 @@ void MainWindow::setupToolBar()
     
     // Кнопки управления
     QAction *zoomInAction = new QAction("Zoom In", this);
-    zoomInAction->setIcon(QIcon::fromTheme("zoom-in"));
     connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn);
     m_mainToolBar->addAction(zoomInAction);
     
     QAction *zoomOutAction = new QAction("Zoom Out", this);
-    zoomOutAction->setIcon(QIcon::fromTheme("zoom-out"));
     connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut);
     m_mainToolBar->addAction(zoomOutAction);
     
     QAction *resetViewAction = new QAction("Reset View", this);
-    resetViewAction->setIcon(QIcon::fromTheme("view-refresh"));
     connect(resetViewAction, &QAction::triggered, this, &MainWindow::resetView);
     m_mainToolBar->addAction(resetViewAction);
     
@@ -427,41 +402,32 @@ void MainWindow::setupToolBar()
     m_drawingToolBar->setMovable(false);
     
     // Drawing mode buttons
-    m_drawTriangleAction->setIcon(QIcon::fromTheme("draw-triangle"));
     m_drawTriangleAction->setToolTip("Draw Triangle (Alt+T)");
     m_drawingToolBar->addAction(m_drawTriangleAction);
     
-    m_drawRectangleAction->setIcon(QIcon::fromTheme("draw-rectangle"));
     m_drawRectangleAction->setToolTip("Draw Rectangle (Alt+R)");
     m_drawingToolBar->addAction(m_drawRectangleAction);
     
-    m_drawSquareAction->setIcon(QIcon::fromTheme("draw-square"));
     m_drawSquareAction->setToolTip("Draw Square (Alt+Q)");
     m_drawingToolBar->addAction(m_drawSquareAction);
     
-    m_drawCircleAction->setIcon(QIcon::fromTheme("draw-circle"));
     m_drawCircleAction->setToolTip("Draw Circle (Alt+C)");
     m_drawingToolBar->addAction(m_drawCircleAction);
     
-    m_drawRhombusAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawRhombusAction->setToolTip("Draw Rhombus (Alt+O)");
     m_drawingToolBar->addAction(m_drawRhombusAction);
     
-    m_drawHexagonAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawHexagonAction->setToolTip("Draw Hexagon (Alt+H)");
     m_drawingToolBar->addAction(m_drawHexagonAction);
     
-    m_drawStarAction->setIcon(QIcon::fromTheme("draw-star"));
     m_drawStarAction->setToolTip("Draw Star (Alt+S)");
     m_drawingToolBar->addAction(m_drawStarAction);
     
-    m_drawPolygonAction->setIcon(QIcon::fromTheme("draw-polygon"));
     m_drawPolygonAction->setToolTip("Draw Polygon (Alt+P)");
     m_drawingToolBar->addAction(m_drawPolygonAction);
     
     m_drawingToolBar->addSeparator();
     
-    m_stopDrawingAction->setIcon(QIcon::fromTheme("process-stop"));
     m_stopDrawingAction->setToolTip("Stop Drawing (Esc)");
     m_drawingToolBar->addAction(m_stopDrawingAction);
     
@@ -515,21 +481,6 @@ void MainWindow::setupDockWidgets()
     connect(createButton, &QPushButton::clicked, this, &MainWindow::createFigure);
     creationLayout->addWidget(createButton);
     
-    QPushButton *createAtCenterButton = new QPushButton("Create at Center");
-    connect(createAtCenterButton, &QPushButton::clicked, this, [this]() {
-        createFigureByType(m_figureTypeCombo->currentText(), 
-                          QPointF(m_canvas->width()/2.0, m_canvas->height()/2.0));
-    });
-    creationLayout->addWidget(createAtCenterButton);
-    
-    QPushButton *createRandomButton = new QPushButton("Create Random");
-    connect(createRandomButton, &QPushButton::clicked, this, [this]() {
-        int x = 100 + QRandomGenerator::global()->bounded(600);
-        int y = 100 + QRandomGenerator::global()->bounded(400);
-        createFigureByType(m_figureTypeCombo->currentText(), QPointF(x, y));
-    });
-    creationLayout->addWidget(createRandomButton);
-    
     creationGroup->setLayout(creationLayout);
     figuresLayout->addWidget(creationGroup);
     
@@ -576,7 +527,7 @@ void MainWindow::setupDockWidgets()
     m_drawingButtonGroup->addButton(m_drawPolygonRadio, 8);
     drawingLayout->addWidget(m_drawPolygonRadio);
     
-    // Исправим подключение сигнала
+    // Подключение сигнала
     connect(m_drawingButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
             this, [this](QAbstractButton *button) {
         int id = m_drawingButtonGroup->id(button);
@@ -803,18 +754,7 @@ void MainWindow::setupDockWidgets()
     vertexLayout->addRow("Vertex Y:", m_vertexYSpinBox);
     
     QPushButton *updateVertexButton = new QPushButton("Update Vertex");
-    connect(updateVertexButton, &QPushButton::clicked, this, [this]() {
-        if (m_currentFigure) {
-            if (PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure)) {
-                int index = m_vertexIndexSpinBox->value();
-                QPointF point(m_vertexXSpinBox->value(), m_vertexYSpinBox->value());
-                polygon->setVertex(index, point);
-                updateFigureInfo();
-                m_canvas->update();
-                statusBar()->showMessage("Vertex updated", 2000);
-            }
-        }
-    });
+    connect(updateVertexButton, &QPushButton::clicked, this, &MainWindow::updateVertex);
     vertexLayout->addRow(updateVertexButton);
     
     m_vertexGroup->setLayout(vertexLayout);
@@ -1091,49 +1031,28 @@ void MainWindow::newFile()
 
 void MainWindow::openFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Project", 
-                                                   "", "Geometry Files (*.geom);;All Files (*)");
-    if (!fileName.isEmpty())
-    {
-        // TODO: Implement file loading
-        statusBar()->showMessage("Loaded: " + fileName, 3000);
-    }
+    // Временно отключено из-за проблем с std::filesystem в старых версиях macOS
+    QMessageBox::information(this, "Open", 
+                           "File open feature is temporarily disabled.\n"
+                           "Use 'Create Figure' button to add figures.");
 }
 
 void MainWindow::saveFile()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Save Project", 
-                                                   "project.geom", "Geometry Files (*.geom);;All Files (*)");
-    if (!fileName.isEmpty())
-    {
-        // TODO: Implement file saving
-        statusBar()->showMessage("Saved: " + fileName, 3000);
-    }
+    QMessageBox::information(this, "Save", 
+                           "File save feature is temporarily disabled.");
 }
 
 void MainWindow::saveAsFile()
 {
-    saveFile();
+    QMessageBox::information(this, "Save As", 
+                           "Save As feature is temporarily disabled.");
 }
 
 void MainWindow::exportImage()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Export Image", 
-                                                   "figure.png", 
-                                                   "Images (*.png *.jpg *.bmp *.tiff);;All Files (*)");
-    if (!fileName.isEmpty())
-    {
-        QPixmap pixmap(m_canvas->size());
-        m_canvas->render(&pixmap);
-        if (pixmap.save(fileName))
-        {
-            statusBar()->showMessage("Exported: " + fileName, 3000);
-        }
-        else
-        {
-            QMessageBox::warning(this, "Export Error", "Failed to save image");
-        }
-    }
+    QMessageBox::information(this, "Export", 
+                           "Export image feature is temporarily disabled.");
 }
 
 void MainWindow::exitApplication()
@@ -1153,15 +1072,15 @@ void MainWindow::copyFigure()
 {
     if (m_currentFigure)
     {
-        // TODO: Implement figure copying
-        statusBar()->showMessage("Figure copied to clipboard", 2000);
+        QMessageBox::information(this, "Copy", 
+                               "Figure copy feature is temporarily disabled.");
     }
 }
 
 void MainWindow::pasteFigure()
 {
-    // TODO: Implement figure pasting
-    statusBar()->showMessage("Figure pasted from clipboard", 2000);
+    QMessageBox::information(this, "Paste", 
+                           "Figure paste feature is temporarily disabled.");
 }
 
 void MainWindow::deleteFigure()
@@ -1195,19 +1114,17 @@ void MainWindow::createFigure()
 
 void MainWindow::createFigureFromType(const QString &type)
 {
-    // Create figure at random position
-    int x = 200 + QRandomGenerator::global()->bounded(400);
-    int y = 200 + QRandomGenerator::global()->bounded(300);
+    // Создаем фигуру в центре холста
+    int x = m_canvas->width() / 2;
+    int y = m_canvas->height() / 2;
+    
     Figure *figure = createFigureByType(type, QPointF(x, y));
     
     if (figure)
     {
-        figure->setColor(m_currentLineColor);
-        figure->setFillColor(m_currentFillColor);
-        figure->setLineWidth(m_lineWidthSpinBox->value());
-        
         m_canvas->addFigure(figure);
         
+        // Подключаем сигналы
         connect(figure, &Figure::figureChanged, this, &MainWindow::updateFigureInfo);
         connect(figure, &Figure::animationProgress, this, &MainWindow::updateAnimationProgress);
         connect(figure, &Figure::animationFinished, this, [this]() {
@@ -1220,6 +1137,10 @@ void MainWindow::createFigureFromType(const QString &type)
         m_figureList->setCurrentRow(m_figureList->count() - 1);
         
         statusBar()->showMessage("Created " + type, 2000);
+    }
+    else
+    {
+        QMessageBox::warning(this, "Error", "Failed to create figure");
     }
 }
 
@@ -1253,11 +1174,6 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
     else if (type == "Star")
     {
         Star::StarType starType = Star::FivePointed;
-        int starChoice = QRandomGenerator::global()->bounded(3);
-        if (starChoice == 0) starType = Star::FivePointed;
-        else if (starChoice == 1) starType = Star::SixPointed;
-        else starType = Star::EightPointed;
-        
         figure = new Star(center, 70, 35, starType, this);
     }
     else if (type == "Circle")
@@ -1269,25 +1185,30 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
         figure = new CustomFigure(center, 65, 7, this);
     }
     
+    if (figure)
+    {
+        // Устанавливаем начальные свойства
+        figure->setColor(m_currentLineColor);
+        figure->setFillColor(m_currentFillColor);
+        figure->setLineWidth(m_lineWidthSpinBox->value());
+    }
+    
     return figure;
 }
 
-// ИСПРАВЛЕННЫЙ МЕТОД УДАЛЕНИЯ ФИГУРЫ
 void MainWindow::removeSelectedFigure()
 {
     if (m_currentFigure)
     {
-        // Отключаем все соединения перед удалением
-        m_currentFigure->disconnect();
+        qDebug() << "Removing figure:" << m_currentFigure->type();
         
-        // Удаляем из canvas
+        // Сохраняем текущий индекс
+        int row = m_figureList->currentRow();
+        
+        // Удаляем фигуру из canvas
         m_canvas->removeFigure(m_currentFigure);
         
-        // Находим индекс удаляемой фигуры
-        int index = m_canvas->getFigures().indexOf(m_currentFigure);
-        
-        // Удаляем объект
-        m_currentFigure->deleteLater();
+        // Сбрасываем указатель
         m_currentFigure = nullptr;
         
         // Обновляем интерфейс
@@ -1297,8 +1218,11 @@ void MainWindow::removeSelectedFigure()
         // Выбираем следующую фигуру, если есть
         if (m_figureList->count() > 0)
         {
-            int newIndex = qMin(index, m_figureList->count() - 1);
-            m_figureList->setCurrentRow(newIndex);
+            int newIndex = qMin(row, m_figureList->count() - 1);
+            if (newIndex >= 0)
+            {
+                m_figureList->setCurrentRow(newIndex);
+            }
         }
         else
         {
@@ -1321,12 +1245,6 @@ void MainWindow::clearAllFigures()
                                       QMessageBox::Yes | QMessageBox::No);
     if (result == QMessageBox::Yes)
     {
-        // Отключаем все соединения
-        for (Figure *figure : m_canvas->getFigures())
-        {
-            figure->disconnect();
-        }
-        
         m_canvas->clearFigures();
         updateFigureInfo();
         updateFigureList();
@@ -1355,9 +1273,11 @@ void MainWindow::updateFigureList()
 void MainWindow::updateSelectedFigure()
 {
     int row = m_figureList->currentRow();
-    if (row >= 0 && row < m_canvas->getFigures().size())
+    QList<Figure*> figures = m_canvas->getFigures();
+    
+    if (row >= 0 && row < figures.size())
     {
-        m_currentFigure = m_canvas->getFigures()[row];
+        m_currentFigure = figures[row];
         m_canvas->setSelectedFigure(m_currentFigure);
         updateFigureInfo();
         updateParameterControls();
@@ -1470,10 +1390,10 @@ void MainWindow::updateParameterControls()
     if (hexagon)
     {
         m_paramTabs->setCurrentWidget(m_hexagonParams);
-        QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
-        if (radiusSpinBox)
+        QList<QDoubleSpinBox*> spinBoxes = m_hexagonParams->findChildren<QDoubleSpinBox*>();
+        if (!spinBoxes.isEmpty())
         {
-            radiusSpinBox->setValue(hexagon->radius());
+            spinBoxes[0]->setValue(hexagon->radius());
         }
     }
     
@@ -1840,11 +1760,11 @@ void MainWindow::updateSpecificParameter()
     Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure);
     if (hexagon)
     {
-        QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
-        if (radiusSpinBox)
+        QList<QDoubleSpinBox*> spinBoxes = m_hexagonParams->findChildren<QDoubleSpinBox*>();
+        if (!spinBoxes.isEmpty())
         {
             QPointF center = hexagon->centerOfMass();
-            double radius = radiusSpinBox->value();
+            double radius = spinBoxes[0]->value();
             hexagon->setHexagon(center, radius);
         }
     }
@@ -1986,17 +1906,7 @@ void MainWindow::fitToView()
         return;
     }
     
-    // Calculate bounding box of all figures
-    QRectF totalBounds;
-    for (Figure *figure : m_canvas->getFigures())
-    {
-        totalBounds = totalBounds.united(figure->boundingRect());
-    }
-    
-    // Add some padding
-    totalBounds.adjust(-50, -50, 50, 50);
-    
-    // TODO: Implement fit to view logic
+    m_canvas->fitToView();
     statusBar()->showMessage("Fit to view", 2000);
 }
 
@@ -2104,7 +2014,7 @@ void MainWindow::about()
         "with geometric figures using Qt framework.</p>"
         "<p>Features:</p>"
         "<ul>"
-        "<li>Create various geometric figures (programmatically or by drawing)</li>"
+        "<li>Create various geometric figures</li>"
         "<li>Transform figures (move, rotate, scale)</li>"
         "<li>Animate transformations</li>"
         "<li>Calculate area, perimeter, center of mass</li>"
