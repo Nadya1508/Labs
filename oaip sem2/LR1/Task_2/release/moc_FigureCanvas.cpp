@@ -44,6 +44,7 @@ template <> constexpr inline auto FigureCanvas::qt_create_metaobjectdata<qt_meta
         "Figure*",
         "figure",
         "figureDoubleClicked",
+        "figureCreated",
         "viewChanged",
         "scale",
         "offset",
@@ -59,14 +60,18 @@ template <> constexpr inline auto FigureCanvas::qt_create_metaobjectdata<qt_meta
         QtMocHelpers::SignalData<void(Figure *)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 },
         }}),
+        // Signal 'figureCreated'
+        QtMocHelpers::SignalData<void(Figure *)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 },
+        }}),
         // Signal 'viewChanged'
-        QtMocHelpers::SignalData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SignalData<void()>(7, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
         // property 'scale'
-        QtMocHelpers::PropertyData<double>(7, QMetaType::Double, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet),
+        QtMocHelpers::PropertyData<double>(8, QMetaType::Double, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet),
         // property 'offset'
-        QtMocHelpers::PropertyData<QPointF>(8, 0x80000000 | 9, QMC::DefaultPropertyFlags | QMC::Writable | QMC::EnumOrFlag | QMC::StdCppSet),
+        QtMocHelpers::PropertyData<QPointF>(9, 0x80000000 | 10, QMC::DefaultPropertyFlags | QMC::Writable | QMC::EnumOrFlag | QMC::StdCppSet),
     };
     QtMocHelpers::UintData qt_enums {
     };
@@ -90,7 +95,8 @@ void FigureCanvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         switch (_id) {
         case 0: _t->figureSelected((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
         case 1: _t->figureDoubleClicked((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
-        case 2: _t->viewChanged(); break;
+        case 2: _t->figureCreated((*reinterpret_cast<std::add_pointer_t<Figure*>>(_a[1]))); break;
+        case 3: _t->viewChanged(); break;
         default: ;
         }
     }
@@ -111,6 +117,13 @@ void FigureCanvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< Figure* >(); break;
             }
             break;
+        case 2:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
+            case 0:
+                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< Figure* >(); break;
+            }
+            break;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
@@ -118,7 +131,9 @@ void FigureCanvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
             return;
         if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureDoubleClicked, 1))
             return;
-        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)()>(_a, &FigureCanvas::viewChanged, 2))
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)(Figure * )>(_a, &FigureCanvas::figureCreated, 2))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (FigureCanvas::*)()>(_a, &FigureCanvas::viewChanged, 3))
             return;
     }
     if (_c == QMetaObject::ReadProperty) {
@@ -158,14 +173,14 @@ int FigureCanvas::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
@@ -189,8 +204,14 @@ void FigureCanvas::figureDoubleClicked(Figure * _t1)
 }
 
 // SIGNAL 2
+void FigureCanvas::figureCreated(Figure * _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1);
+}
+
+// SIGNAL 3
 void FigureCanvas::viewChanged()
 {
-    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
+    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
 }
 QT_WARNING_POP

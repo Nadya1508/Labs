@@ -5,6 +5,7 @@
 #include <QList>
 #include <QPainter>
 #include "Figure.h"
+#include "DrawingTool.h"
 
 // Forward declaration
 class PolygonFigure;
@@ -17,6 +18,7 @@ class FigureCanvas : public QWidget
 
 public:
     explicit FigureCanvas(QWidget *parent = nullptr);
+    ~FigureCanvas();
     
     void addFigure(Figure *figure);
     void removeFigure(Figure *figure);
@@ -44,6 +46,11 @@ public:
     Figure* selectedFigure() const { return m_selectedFigure; }
     void setSelectedFigure(Figure *figure);
     
+    // Drawing functionality
+    void setDrawingMode(DrawingTool::DrawingMode mode);
+    DrawingTool::DrawingMode drawingMode() const { return m_drawingTool->drawingMode(); }
+    bool isDrawing() const { return m_drawingTool->isDrawing(); }
+    
     // Public methods for zoom control
     void zoomIn();
     void zoomOut();
@@ -54,10 +61,16 @@ public:
     void setScale(double scale);
     QPointF offset() const { return m_offset; }
     void setOffset(const QPointF &offset);
+    
+    // Drawing properties
+    void setDrawingColor(const QColor &color);
+    void setDrawingFillColor(const QColor &color);
+    void setDrawingLineWidth(int width);
 
 signals:
     void figureSelected(Figure *figure);
     void figureDoubleClicked(Figure *figure);
+    void figureCreated(Figure *figure);
     void viewChanged();
 
 protected:
@@ -73,6 +86,7 @@ private:
     void drawGrid(QPainter &painter);
     void drawTriangulation(QPainter &painter, Figure *figure);
     void drawSelection(QPainter &painter, Figure *figure);
+    void drawCurrentDrawing(QPainter &painter);
     void updateViewport();
     
 private:
@@ -98,6 +112,10 @@ private:
     
     // Viewport
     QRectF m_viewport;
+    
+    // Drawing tool
+    DrawingTool *m_drawingTool;
+    QList<QPointF> m_currentDrawingPoints;
 };
 
 #endif // FIGURECANVAS_H

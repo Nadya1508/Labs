@@ -59,28 +59,39 @@ QPointF PolygonFigure::centerOfMass() const
     if (m_vertices.size() == 2)
         return (m_vertices[0] + m_vertices[1]) / 2;
     
-    // Для полигонов используем формулу для центра масс многоугольника
-    double area = 0.0;
+    // Используем формулу для центра масс многоугольника через триангуляцию
+    double totalArea = 0.0;
     double cx = 0.0;
     double cy = 0.0;
-    int n = m_vertices.size();
     
-    for (int i = 0; i < n; i++)
+    QList<QList<QPointF>> triangles = triangulate();
+    
+    for (const auto &triangle : triangles)
     {
-        const QPointF &p1 = m_vertices[i];
-        const QPointF &p2 = m_vertices[(i + 1) % n];
-        double cross = p1.x() * p2.y() - p2.x() * p1.y();
-        area += cross;
-        cx += (p1.x() + p2.x()) * cross;
-        cy += (p1.y() + p2.y()) * cross;
+        if (triangle.size() == 3)
+        {
+            double triangleArea = this->triangleArea(triangle[0], triangle[1], triangle[2]);
+            QPointF triangleCenter = (triangle[0] + triangle[1] + triangle[2]) / 3;
+            
+            totalArea += triangleArea;
+            cx += triangleCenter.x() * triangleArea;
+            cy += triangleCenter.y() * triangleArea;
+        }
     }
     
-    area /= 2.0;
-    double factor = 1.0 / (6.0 * area);
-    cx *= factor;
-    cy *= factor;
+    if (totalArea == 0.0)
+    {
+        // Если площадь нулевая (все точки на одной линии), возвращаем среднее арифметическое
+        double sumX = 0.0, sumY = 0.0;
+        for (const QPointF &vertex : m_vertices)
+        {
+            sumX += vertex.x();
+            sumY += vertex.y();
+        }
+        return QPointF(sumX / m_vertices.size(), sumY / m_vertices.size());
+    }
     
-    return QPointF(cx, cy);
+    return QPointF(cx / totalArea, cy / totalArea);
 }
 
 QRectF PolygonFigure::boundingRect() const
@@ -98,6 +109,8 @@ QRectF PolygonFigure::boundingRect() const
         rect.setBottom(qMax(rect.bottom(), point.y()));
     }
     
+    // Добавим небольшой отступ
+    rect.adjust(-5, -5, 5, 5);
     return rect;
 }
 
@@ -134,10 +147,18 @@ QList<QList<QPointF>> PolygonFigure::triangulate() const
     if (m_vertices.size() < 3)
         return triangles;
     
-    // Простая триангуляция для выпуклых полигонов
-    for (int i = 1; i < m_vertices.size() - 1; i++)
+    // Простая триангуляция для выпуклых полигонов (метод веера)
+    QPointF center;
+    for (const QPointF &vertex : m_vertices)
     {
-        triangles.append({m_vertices[0], m_vertices[i], m_vertices[i + 1]});
+        center += vertex;
+    }
+    center /= m_vertices.size();
+    
+    for (int i = 0; i < m_vertices.size(); i++)
+    {
+        int next = (i + 1) % m_vertices.size();
+        triangles.append({center, m_vertices[i], m_vertices[next]});
     }
     
     return triangles;

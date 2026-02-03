@@ -20,7 +20,8 @@ SOURCES += \
     Hexagon.cpp \
     Star.cpp \
     Circle.cpp \
-    CustomFigure.cpp
+    CustomFigure.cpp \
+    DrawingTool.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -35,7 +36,23 @@ HEADERS += \
     Hexagon.h \
     Star.h \
     Circle.h \
-    CustomFigure.h
+    CustomFigure.h \
+    DrawingTool.h
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 macx: QMAKE_APPLE_DEVICE_ARCH = arm64
+
+# Для отладки
+CONFIG(debug, debug|release) {
+    DEFINES += DEBUG
+    QMAKE_CXXFLAGS += -g
+}
+
+# Для релиза
+CONFIG(release, debug|release) {
+    DEFINES += NDEBUG
+    QMAKE_CXXFLAGS += -O2
+}
+
+# Включить автоматическую генерацию MOC
+CONFIG += automoc

@@ -1,8 +1,9 @@
 #include "FigureCanvas.h"
-#include "PolygonFigure.h"  // Добавьте этот include
+#include "PolygonFigure.h"
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QPainter>
+#include <QPainterPath>  // Добавьте этот include
 #include <cmath>
 
 FigureCanvas::FigureCanvas(QWidget *parent)
@@ -17,6 +18,7 @@ FigureCanvas::FigureCanvas(QWidget *parent)
     , m_isPanning(false)
     , m_scale(1.0)
     , m_offset(0, 0)
+    , m_drawingTool(new DrawingTool(this))
 {
     setMinimumSize(600, 400);
     setMouseTracking(true);
@@ -28,7 +30,38 @@ FigureCanvas::FigureCanvas(QWidget *parent)
     setPalette(palette);
     setAutoFillBackground(true);
     
+    // Connect drawing tool signals
+    connect(m_drawingTool, &DrawingTool::figureCreated, this, [this](Figure *figure) {
+        addFigure(figure);
+        emit figureCreated(figure);
+    });
+    
     updateViewport();
+}
+
+FigureCanvas::~FigureCanvas()
+{
+    // QObject parent автоматически удалит m_drawingTool
+}
+
+void FigureCanvas::setDrawingMode(DrawingTool::DrawingMode mode)
+{
+    m_drawingTool->setDrawingMode(mode);
+}
+
+void FigureCanvas::setDrawingColor(const QColor &color)
+{
+    m_drawingTool->setCurrentColor(color);
+}
+
+void FigureCanvas::setDrawingFillColor(const QColor &color)
+{
+    m_drawingTool->setCurrentFillColor(color);
+}
+
+void FigureCanvas::setDrawingLineWidth(int width)
+{
+    m_drawingTool->setCurrentLineWidth(width);
 }
 
 void FigureCanvas::zoomIn()
@@ -214,6 +247,87 @@ void FigureCanvas::updateViewport()
                        height() / m_scale);
 }
 
+void FigureCanvas::drawCurrentDrawing(QPainter &painter)
+{
+    if (!m_drawingTool->isDrawing() || m_currentDrawingPoints.size() < 2)
+        return;
+    
+    painter.save();
+    painter.setPen(QPen(Qt::blue, 2, Qt::DashLine));
+    painter.setBrush(Qt::NoBrush);
+    
+    // Draw the current drawing path
+    QPainterPath path;
+    path.moveTo(m_currentDrawingPoints.first());
+    
+    for (int i = 1; i < m_currentDrawingPoints.size(); i++)
+    {
+        path.lineTo(m_currentDrawingPoints[i]);
+    }
+    
+    painter.drawPath(path);
+    
+    // Draw temporary figure based on drawing mode
+    if (m_currentDrawingPoints.size() >= 2)
+    {
+        QPointF start = m_currentDrawingPoints.first();
+        QPointF current = m_currentDrawingPoints.last();
+        
+        switch (m_drawingTool->drawingMode())
+        {
+        case DrawingTool::DrawRectangle:
+        {
+            QRectF rect(start, current);
+            painter.drawRect(rect.normalized());
+            break;
+        }
+        case DrawingTool::DrawSquare:
+        {
+            double side = qMin(qAbs(current.x() - start.x()), qAbs(current.y() - start.y()));
+            QPointF end = start + QPointF(
+                current.x() > start.x() ? side : -side,
+                current.y() > start.y() ? side : -side
+            );
+            painter.drawRect(QRectF(start, end).normalized());
+            break;
+        }
+        case DrawingTool::DrawCircle:
+        {
+            double radius = QLineF(start, current).length();
+            painter.drawEllipse(start, radius, radius);
+            break;
+        }
+        case DrawingTool::DrawTriangle:
+        {
+            QPolygonF triangle;
+            triangle << start 
+                    << QPointF(current.x(), start.y())
+                    << QPointF(start.x() + (current.x() - start.x()) / 2, current.y());
+            painter.drawPolygon(triangle);
+            break;
+        }
+        case DrawingTool::DrawRhombus:
+        {
+            QPointF center = (start + current) / 2;
+            double dx = qAbs(current.x() - start.x()) / 2;
+            double dy = qAbs(current.y() - start.y()) / 2;
+            
+            QPolygonF rhombus;
+            rhombus << QPointF(center.x(), center.y() - dy)
+                   << QPointF(center.x() + dx, center.y())
+                   << QPointF(center.x(), center.y() + dy)
+                   << QPointF(center.x() - dx, center.y());
+            painter.drawPolygon(rhombus);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    
+    painter.restore();
+}
+
 void FigureCanvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -274,7 +388,6 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
         // Draw vertices if enabled and figure is polygon
         if (m_showVertices)
         {
-            // Используем dynamic_cast для проверки типа
             PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(figure);
             if (polygon)
             {
@@ -291,6 +404,9 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
             }
         }
     }
+    
+    // Draw current drawing
+    drawCurrentDrawing(painter);
     
     // Draw selection highlight
     if (m_selectedFigure)
@@ -309,6 +425,12 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     painter.drawText(20, 30, QString("Figures: %1").arg(m_figures.size()));
     painter.drawText(20, 50, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
     painter.drawText(20, 70, QString("View: %1,%2").arg(m_viewport.x(), 0, 'f', 0).arg(m_viewport.y(), 0, 'f', 0));
+    
+    if (m_drawingTool->isDrawing())
+    {
+        painter.drawText(20, 90, QString("Drawing: %1 points").arg(m_currentDrawingPoints.size()));
+    }
+    
     painter.restore();
 }
 
@@ -443,6 +565,40 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
 {
     QPointF pos = (event->position() - m_offset) / m_scale;
     
+    // Check if we're in drawing mode
+    if (m_drawingTool->drawingMode() != DrawingTool::NoDrawing)
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            if (!m_drawingTool->isDrawing())
+            {
+                m_drawingTool->startDrawing(pos);
+                m_currentDrawingPoints.clear();
+                m_currentDrawingPoints.append(pos);
+            }
+            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon || 
+                     m_drawingTool->drawingMode() == DrawingTool::DrawCustomPolygon)
+            {
+                // For polygons, add point on click
+                m_currentDrawingPoints.append(pos);
+                m_drawingTool->updateDrawing(pos);
+            }
+        }
+        else if (event->button() == Qt::RightButton && m_drawingTool->isDrawing())
+        {
+            // Right click to finish polygon drawing
+            Figure *figure = m_drawingTool->finishDrawing();
+            if (figure)
+            {
+                addFigure(figure);
+                emit figureCreated(figure);
+            }
+            m_currentDrawingPoints.clear();
+        }
+        update();
+        return;
+    }
+    
     if (event->button() == Qt::LeftButton)
     {
         // Check if clicking on a figure
@@ -479,6 +635,24 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
 
 void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
 {
+    QPointF pos = (event->position() - m_offset) / m_scale;
+    
+    if (m_drawingTool->isDrawing())
+    {
+        // Update current drawing
+        if (m_currentDrawingPoints.size() < 2)
+        {
+            m_currentDrawingPoints.append(pos);
+        }
+        else
+        {
+            m_currentDrawingPoints.last() = pos;
+        }
+        m_drawingTool->updateDrawing(pos);
+        update();
+        return;
+    }
+    
     if (m_isDragging && m_selectedFigure)
     {
         QPointF currentPos = event->position();
@@ -503,9 +677,28 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        m_isDragging = false;
-        m_isPanning = false;
-        setCursor(Qt::ArrowCursor);
+        if (m_drawingTool->isDrawing())
+        {
+            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon && 
+                m_drawingTool->drawingMode() != DrawingTool::DrawCustomPolygon)
+            {
+                // For simple shapes, finish on mouse release
+                Figure *figure = m_drawingTool->finishDrawing();
+                if (figure)
+                {
+                    addFigure(figure);
+                    emit figureCreated(figure);
+                }
+                m_currentDrawingPoints.clear();
+            }
+        }
+        else
+        {
+            m_isDragging = false;
+            m_isPanning = false;
+            setCursor(Qt::ArrowCursor);
+        }
+        update();
     }
 }
 
@@ -516,7 +709,7 @@ void FigureCanvas::mouseDoubleClickEvent(QMouseEvent *event)
     for (Figure *figure : m_figures)
     {
         if (figure->boundingRect().contains(pos))
-    {
+        {
             emit figureDoubleClicked(figure);
             break;
         }

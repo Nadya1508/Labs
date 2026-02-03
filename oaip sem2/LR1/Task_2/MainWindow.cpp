@@ -13,6 +13,21 @@
 #include <QStatusBar>
 #include <QSplitter>
 #include <QApplication>
+#include <QRadioButton>
+#include <QButtonGroup>
+#include <QShortcut>
+#include <QPainter>
+
+// Добавим include для всех классов фигур
+#include "Triangle.h"
+#include "Rectangle.h"
+#include "Square.h"
+#include "Rhombus.h"
+#include "Hexagon.h"
+#include "Star.h"
+#include "Circle.h"
+#include "CustomFigure.h"
+#include "PolygonFigure.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupToolBar();
     setupDockWidgets();
     setupStatusBar();
+    createConnections();
     
     // Create some default figures
     createFigureByType("Triangle", QPointF(200, 200));
@@ -40,8 +56,11 @@ MainWindow::MainWindow(QWidget *parent)
         m_figureList->setCurrentRow(0);
     }
     
-    // Connect signals
-    connect(m_canvas, &FigureCanvas::figureSelected, this, &MainWindow::updateSelectedFigure);
+    // Setup update timer
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setInterval(100);
+    connect(m_updateTimer, &QTimer::timeout, m_canvas, qOverload<>(&FigureCanvas::update));
+    m_updateTimer->start();
     
     resize(1400, 900);
     setWindowTitle("Geometry Figures Application");
@@ -61,18 +80,21 @@ void MainWindow::setupMenuBar()
     // File menu
     m_fileMenu = menuBar()->addMenu("&File");
     
-    QAction *newAction = new QAction("&New", this);
+    QAction *newAction = new QAction("&New Project", this);
     newAction->setShortcut(QKeySequence::New);
+    newAction->setIcon(QIcon::fromTheme("document-new"));
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
     m_fileMenu->addAction(newAction);
     
     QAction *openAction = new QAction("&Open...", this);
     openAction->setShortcut(QKeySequence::Open);
+    openAction->setIcon(QIcon::fromTheme("document-open"));
     connect(openAction, &QAction::triggered, this, &MainWindow::openFile);
     m_fileMenu->addAction(openAction);
     
     QAction *saveAction = new QAction("&Save", this);
     saveAction->setShortcut(QKeySequence::Save);
+    saveAction->setIcon(QIcon::fromTheme("document-save"));
     connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
     m_fileMenu->addAction(saveAction);
     
@@ -84,6 +106,7 @@ void MainWindow::setupMenuBar()
     m_fileMenu->addSeparator();
     
     QAction *exportAction = new QAction("&Export Image...", this);
+    exportAction->setIcon(QIcon::fromTheme("document-export"));
     connect(exportAction, &QAction::triggered, this, &MainWindow::exportImage);
     m_fileMenu->addAction(exportAction);
     
@@ -91,7 +114,8 @@ void MainWindow::setupMenuBar()
     
     QAction *exitAction = new QAction("E&xit", this);
     exitAction->setShortcut(QKeySequence::Quit);
-    connect(exitAction, &QAction::triggered, this, &QWidget::close);
+    exitAction->setIcon(QIcon::fromTheme("application-exit"));
+    connect(exitAction, &QAction::triggered, this, &MainWindow::exitApplication);
     m_fileMenu->addAction(exitAction);
     
     // Edit menu
@@ -99,39 +123,58 @@ void MainWindow::setupMenuBar()
     
     QAction *copyAction = new QAction("&Copy", this);
     copyAction->setShortcut(QKeySequence::Copy);
+    copyAction->setIcon(QIcon::fromTheme("edit-copy"));
     connect(copyAction, &QAction::triggered, this, &MainWindow::copyFigure);
     m_editMenu->addAction(copyAction);
     
     QAction *pasteAction = new QAction("&Paste", this);
     pasteAction->setShortcut(QKeySequence::Paste);
+    pasteAction->setIcon(QIcon::fromTheme("edit-paste"));
     connect(pasteAction, &QAction::triggered, this, &MainWindow::pasteFigure);
     m_editMenu->addAction(pasteAction);
     
     QAction *deleteAction = new QAction("&Delete", this);
     deleteAction->setShortcut(QKeySequence::Delete);
+    deleteAction->setIcon(QIcon::fromTheme("edit-delete"));
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteFigure);
     m_editMenu->addAction(deleteAction);
+    
+    m_editMenu->addSeparator();
+    
+    QAction *selectAllAction = new QAction("Select &All", this);
+    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    connect(selectAllAction, &QAction::triggered, this, &MainWindow::selectAll);
+    m_editMenu->addAction(selectAllAction);
+    
+    QAction *deselectAllAction = new QAction("&Deselect All", this);
+    deselectAllAction->setShortcut(QKeySequence("Ctrl+Shift+A"));
+    connect(deselectAllAction, &QAction::triggered, this, &MainWindow::deselectAll);
+    m_editMenu->addAction(deselectAllAction);
     
     // View menu
     m_viewMenu = menuBar()->addMenu("&View");
     
     QAction *zoomInAction = new QAction("Zoom &In", this);
     zoomInAction->setShortcut(QKeySequence::ZoomIn);
+    zoomInAction->setIcon(QIcon::fromTheme("zoom-in"));
     connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn);
     m_viewMenu->addAction(zoomInAction);
     
     QAction *zoomOutAction = new QAction("Zoom &Out", this);
     zoomOutAction->setShortcut(QKeySequence::ZoomOut);
+    zoomOutAction->setIcon(QIcon::fromTheme("zoom-out"));
     connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut);
     m_viewMenu->addAction(zoomOutAction);
     
     QAction *resetViewAction = new QAction("&Reset View", this);
     resetViewAction->setShortcut(QKeySequence("Ctrl+R"));
+    resetViewAction->setIcon(QIcon::fromTheme("view-refresh"));
     connect(resetViewAction, &QAction::triggered, this, &MainWindow::resetView);
     m_viewMenu->addAction(resetViewAction);
     
     QAction *fitViewAction = new QAction("&Fit to View", this);
     fitViewAction->setShortcut(QKeySequence("Ctrl+F"));
+    fitViewAction->setIcon(QIcon::fromTheme("zoom-fit-best"));
     connect(fitViewAction, &QAction::triggered, this, &MainWindow::fitToView);
     m_viewMenu->addAction(fitViewAction);
     
@@ -140,32 +183,51 @@ void MainWindow::setupMenuBar()
     QAction *gridAction = new QAction("Show &Grid", this);
     gridAction->setCheckable(true);
     gridAction->setChecked(true);
+    gridAction->setShortcut(QKeySequence("Ctrl+G"));
     connect(gridAction, &QAction::toggled, this, &MainWindow::toggleGrid);
     m_viewMenu->addAction(gridAction);
     
     QAction *centersAction = new QAction("Show &Centers", this);
     centersAction->setCheckable(true);
     centersAction->setChecked(true);
+    centersAction->setShortcut(QKeySequence("Ctrl+C"));
     connect(centersAction, &QAction::toggled, this, &MainWindow::toggleCenters);
     m_viewMenu->addAction(centersAction);
     
     QAction *verticesAction = new QAction("Show &Vertices", this);
     verticesAction->setCheckable(true);
     verticesAction->setChecked(true);
+    verticesAction->setShortcut(QKeySequence("Ctrl+V"));
     connect(verticesAction, &QAction::toggled, this, &MainWindow::toggleVertices);
     m_viewMenu->addAction(verticesAction);
     
     QAction *bboxAction = new QAction("Show &Bounding Boxes", this);
     bboxAction->setCheckable(true);
     bboxAction->setChecked(false);
+    bboxAction->setShortcut(QKeySequence("Ctrl+B"));
     connect(bboxAction, &QAction::toggled, this, &MainWindow::toggleBoundingBox);
     m_viewMenu->addAction(bboxAction);
     
     QAction *triangulationAction = new QAction("Show &Triangulation", this);
     triangulationAction->setCheckable(true);
     triangulationAction->setChecked(false);
+    triangulationAction->setShortcut(QKeySequence("Ctrl+T"));
     connect(triangulationAction, &QAction::toggled, this, &MainWindow::toggleTriangulation);
     m_viewMenu->addAction(triangulationAction);
+    
+    QAction *snapAction = new QAction("&Snap to Grid", this);
+    snapAction->setCheckable(true);
+    snapAction->setChecked(false);
+    snapAction->setShortcut(QKeySequence("Ctrl+S"));
+    connect(snapAction, &QAction::toggled, this, &MainWindow::toggleSnapToGrid);
+    m_viewMenu->addAction(snapAction);
+    
+    m_viewMenu->addSeparator();
+    
+    QAction *fullScreenAction = new QAction("&Full Screen", this);
+    fullScreenAction->setShortcut(QKeySequence::FullScreen);
+    connect(fullScreenAction, &QAction::triggered, this, &MainWindow::showFullScreen);
+    m_viewMenu->addAction(fullScreenAction);
     
     // Figure menu
     m_figureMenu = menuBar()->addMenu("&Figure");
@@ -185,34 +247,132 @@ void MainWindow::setupMenuBar()
     m_figureMenu->addSeparator();
     
     QAction *clearAction = new QAction("&Clear All Figures", this);
+    clearAction->setIcon(QIcon::fromTheme("edit-clear"));
     connect(clearAction, &QAction::triggered, this, &MainWindow::clearAllFigures);
     m_figureMenu->addAction(clearAction);
+    
+    // Drawing menu
+    m_drawingMenu = menuBar()->addMenu("&Drawing");
+    
+    m_drawTriangleAction = new QAction("Draw &Triangle", this);
+    m_drawTriangleAction->setCheckable(true);
+    m_drawTriangleAction->setShortcut(QKeySequence("Alt+T"));
+    connect(m_drawTriangleAction, &QAction::triggered, this, &MainWindow::setDrawTriangleMode);
+    m_drawingMenu->addAction(m_drawTriangleAction);
+    
+    m_drawRectangleAction = new QAction("Draw &Rectangle", this);
+    m_drawRectangleAction->setCheckable(true);
+    m_drawRectangleAction->setShortcut(QKeySequence("Alt+R"));
+    connect(m_drawRectangleAction, &QAction::triggered, this, &MainWindow::setDrawRectangleMode);
+    m_drawingMenu->addAction(m_drawRectangleAction);
+    
+    m_drawSquareAction = new QAction("Draw S&quare", this);
+    m_drawSquareAction->setCheckable(true);
+    m_drawSquareAction->setShortcut(QKeySequence("Alt+Q"));
+    connect(m_drawSquareAction, &QAction::triggered, this, &MainWindow::setDrawSquareMode);
+    m_drawingMenu->addAction(m_drawSquareAction);
+    
+    m_drawCircleAction = new QAction("Draw &Circle", this);
+    m_drawCircleAction->setCheckable(true);
+    m_drawCircleAction->setShortcut(QKeySequence("Alt+C"));
+    connect(m_drawCircleAction, &QAction::triggered, this, &MainWindow::setDrawCircleMode);
+    m_drawingMenu->addAction(m_drawCircleAction);
+    
+    m_drawRhombusAction = new QAction("Draw Rh&ombus", this);
+    m_drawRhombusAction->setCheckable(true);
+    m_drawRhombusAction->setShortcut(QKeySequence("Alt+O"));
+    connect(m_drawRhombusAction, &QAction::triggered, this, &MainWindow::setDrawRhombusMode);
+    m_drawingMenu->addAction(m_drawRhombusAction);
+    
+    m_drawHexagonAction = new QAction("Draw &Hexagon", this);
+    m_drawHexagonAction->setCheckable(true);
+    m_drawHexagonAction->setShortcut(QKeySequence("Alt+H"));
+    connect(m_drawHexagonAction, &QAction::triggered, this, &MainWindow::setDrawHexagonMode);
+    m_drawingMenu->addAction(m_drawHexagonAction);
+    
+    m_drawStarAction = new QAction("Draw &Star", this);
+    m_drawStarAction->setCheckable(true);
+    m_drawStarAction->setShortcut(QKeySequence("Alt+S"));
+    connect(m_drawStarAction, &QAction::triggered, this, &MainWindow::setDrawStarMode);
+    m_drawingMenu->addAction(m_drawStarAction);
+    
+    m_drawPolygonAction = new QAction("Draw &Polygon", this);
+    m_drawPolygonAction->setCheckable(true);
+    m_drawPolygonAction->setShortcut(QKeySequence("Alt+P"));
+    connect(m_drawPolygonAction, &QAction::triggered, this, &MainWindow::setDrawPolygonMode);
+    m_drawingMenu->addAction(m_drawPolygonAction);
+    
+    m_drawingMenu->addSeparator();
+    
+    m_stopDrawingAction = new QAction("&Stop Drawing", this);
+    m_stopDrawingAction->setShortcut(QKeySequence("Escape"));
+    m_stopDrawingAction->setIcon(QIcon::fromTheme("process-stop"));
+    connect(m_stopDrawingAction, &QAction::triggered, this, &MainWindow::stopDrawingMode);
+    m_drawingMenu->addAction(m_stopDrawingAction);
+    
+    // Transform menu
+    m_transformMenu = menuBar()->addMenu("&Transform");
+    
+    QAction *applyTransformAction = new QAction("&Apply Transformations", this);
+    applyTransformAction->setShortcut(QKeySequence("Ctrl+T"));
+    applyTransformAction->setIcon(QIcon::fromTheme("transform-move"));
+    connect(applyTransformAction, &QAction::triggered, this, &MainWindow::applyTransformation);
+    m_transformMenu->addAction(applyTransformAction);
+    
+    QAction *animateTransformAction = new QAction("&Animate Transformations", this);
+    animateTransformAction->setShortcut(QKeySequence("Ctrl+Shift+T"));
+    animateTransformAction->setIcon(QIcon::fromTheme("media-playback-start"));
+    connect(animateTransformAction, &QAction::triggered, this, &MainWindow::animateTransformation);
+    m_transformMenu->addAction(animateTransformAction);
+    
+    m_transformMenu->addSeparator();
+    
+    QAction *calculateAreaAction = new QAction("Calculate &Total Area", this);
+    calculateAreaAction->setIcon(QIcon::fromTheme("calculator"));
+    connect(calculateAreaAction, &QAction::triggered, this, &MainWindow::calculateTotalArea);
+    m_transformMenu->addAction(calculateAreaAction);
+    
+    QAction *calculatePerimeterAction = new QAction("Calculate Total &Perimeter", this);
+    calculatePerimeterAction->setIcon(QIcon::fromTheme("calculator"));
+    connect(calculatePerimeterAction, &QAction::triggered, this, &MainWindow::calculateTotalPerimeter);
+    m_transformMenu->addAction(calculatePerimeterAction);
     
     // Help menu
     m_helpMenu = menuBar()->addMenu("&Help");
     
     QAction *helpAction = new QAction("&Help Contents", this);
     helpAction->setShortcut(QKeySequence::HelpContents);
+    helpAction->setIcon(QIcon::fromTheme("help-contents"));
     connect(helpAction, &QAction::triggered, this, &MainWindow::showHelp);
     m_helpMenu->addAction(helpAction);
     
+    QAction *shortcutsAction = new QAction("&Keyboard Shortcuts", this);
+    shortcutsAction->setShortcut(QKeySequence("Ctrl+K"));
+    connect(shortcutsAction, &QAction::triggered, this, &MainWindow::showShortcuts);
+    m_helpMenu->addAction(shortcutsAction);
+    
+    m_helpMenu->addSeparator();
+    
     QAction *aboutAction = new QAction("&About", this);
+    aboutAction->setIcon(QIcon::fromTheme("help-about"));
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     m_helpMenu->addAction(aboutAction);
 }
 
 void MainWindow::setupToolBar()
 {
+    // Main toolbar
     m_mainToolBar = addToolBar("Main Toolbar");
+    m_mainToolBar->setMovable(false);
     
-    // Figure creation buttons
+    // Create figure buttons
     QStringList figureTypes = {"Triangle", "Rectangle", "Square", "Rhombus", 
                               "Hexagon", "Star", "Circle", "Polygon"};
     
     for (const QString &type : figureTypes)
     {
         QAction *action = new QAction(type, this);
-        action->setIconText(type.left(3));
+        action->setToolTip("Create " + type);
         connect(action, &QAction::triggered, this, [this, type]() {
             createFigureFromType(type);
         });
@@ -223,7 +383,7 @@ void MainWindow::setupToolBar()
     
     // Transformation buttons
     QAction *moveAction = new QAction("Move", this);
-    moveAction->setIconText("Move");
+    moveAction->setToolTip("Move selected figure");
     connect(moveAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -234,7 +394,7 @@ void MainWindow::setupToolBar()
     m_mainToolBar->addAction(moveAction);
     
     QAction *rotateAction = new QAction("Rotate", this);
-    rotateAction->setIconText("Rotate");
+    rotateAction->setToolTip("Rotate selected figure");
     connect(rotateAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -246,7 +406,7 @@ void MainWindow::setupToolBar()
     m_mainToolBar->addAction(rotateAction);
     
     QAction *scaleAction = new QAction("Scale", this);
-    scaleAction->setIconText("Scale");
+    scaleAction->setToolTip("Scale selected figure");
     connect(scaleAction, &QAction::triggered, this, [this]() {
         if (m_currentFigure)
         {
@@ -256,12 +416,65 @@ void MainWindow::setupToolBar()
         }
     });
     m_mainToolBar->addAction(scaleAction);
+    
+    // Drawing toolbar
+    m_drawingToolBar = addToolBar("Drawing Tools");
+    m_drawingToolBar->setMovable(false);
+    
+    // Drawing mode buttons
+    m_drawTriangleAction->setToolTip("Draw Triangle (Alt+T)");
+    m_drawingToolBar->addAction(m_drawTriangleAction);
+    
+    m_drawRectangleAction->setToolTip("Draw Rectangle (Alt+R)");
+    m_drawingToolBar->addAction(m_drawRectangleAction);
+    
+    m_drawSquareAction->setToolTip("Draw Square (Alt+Q)");
+    m_drawingToolBar->addAction(m_drawSquareAction);
+    
+    m_drawCircleAction->setToolTip("Draw Circle (Alt+C)");
+    m_drawingToolBar->addAction(m_drawCircleAction);
+    
+    m_drawRhombusAction->setToolTip("Draw Rhombus (Alt+O)");
+    m_drawingToolBar->addAction(m_drawRhombusAction);
+    
+    m_drawHexagonAction->setToolTip("Draw Hexagon (Alt+H)");
+    m_drawingToolBar->addAction(m_drawHexagonAction);
+    
+    m_drawStarAction->setToolTip("Draw Star (Alt+S)");
+    m_drawingToolBar->addAction(m_drawStarAction);
+    
+    m_drawPolygonAction->setToolTip("Draw Polygon (Alt+P)");
+    m_drawingToolBar->addAction(m_drawPolygonAction);
+    
+    m_drawingToolBar->addSeparator();
+    
+    m_stopDrawingAction->setToolTip("Stop Drawing (Esc)");
+    m_drawingToolBar->addAction(m_stopDrawingAction);
+    
+    // Create action group for exclusive drawing modes
+    QActionGroup *drawingGroup = new QActionGroup(this);
+    drawingGroup->addAction(m_drawTriangleAction);
+    drawingGroup->addAction(m_drawRectangleAction);
+    drawingGroup->addAction(m_drawSquareAction);
+    drawingGroup->addAction(m_drawCircleAction);
+    drawingGroup->addAction(m_drawRhombusAction);
+    drawingGroup->addAction(m_drawHexagonAction);
+    drawingGroup->addAction(m_drawStarAction);
+    drawingGroup->addAction(m_drawPolygonAction);
+    drawingGroup->setExclusive(true);
 }
 
 void MainWindow::setupStatusBar()
 {
     m_statusLabel = new QLabel("Ready");
     statusBar()->addWidget(m_statusLabel);
+    
+    m_mousePositionLabel = new QLabel("Mouse: (0, 0)");
+    statusBar()->addPermanentWidget(m_mousePositionLabel);
+    
+    m_drawingModeLabel = new QLabel("Mode: Selection");
+    statusBar()->addPermanentWidget(m_drawingModeLabel);
+    
     statusBar()->showMessage("Geometry Figures Application Ready", 3000);
 }
 
@@ -291,12 +504,83 @@ void MainWindow::setupDockWidgets()
     QPushButton *createAtCenterButton = new QPushButton("Create at Center");
     connect(createAtCenterButton, &QPushButton::clicked, this, [this]() {
         createFigureByType(m_figureTypeCombo->currentText(), 
-                          QPointF(m_canvas->width()/2, m_canvas->height()/2));
+                          QPointF(m_canvas->width()/2.0, m_canvas->height()/2.0));
     });
     creationLayout->addWidget(createAtCenterButton);
     
+    QPushButton *createRandomButton = new QPushButton("Create Random");
+    connect(createRandomButton, &QPushButton::clicked, this, [this]() {
+        int x = 100 + QRandomGenerator::global()->bounded(600);
+        int y = 100 + QRandomGenerator::global()->bounded(400);
+        createFigureByType(m_figureTypeCombo->currentText(), QPointF(x, y));
+    });
+    creationLayout->addWidget(createRandomButton);
+    
     creationGroup->setLayout(creationLayout);
     figuresLayout->addWidget(creationGroup);
+    
+    // Drawing controls
+    m_drawingControlsGroup = new QGroupBox("Drawing Mode");
+    QVBoxLayout *drawingLayout = new QVBoxLayout();
+    
+    m_drawingButtonGroup = new QButtonGroup(this);
+    
+    m_noDrawingRadio = new QRadioButton("No Drawing (Select)");
+    m_noDrawingRadio->setChecked(true);
+    m_drawingButtonGroup->addButton(m_noDrawingRadio, 0);
+    drawingLayout->addWidget(m_noDrawingRadio);
+    
+    m_drawTriangleRadio = new QRadioButton("Draw Triangle");
+    m_drawingButtonGroup->addButton(m_drawTriangleRadio, 1);
+    drawingLayout->addWidget(m_drawTriangleRadio);
+    
+    m_drawRectangleRadio = new QRadioButton("Draw Rectangle");
+    m_drawingButtonGroup->addButton(m_drawRectangleRadio, 2);
+    drawingLayout->addWidget(m_drawRectangleRadio);
+    
+    m_drawSquareRadio = new QRadioButton("Draw Square");
+    m_drawingButtonGroup->addButton(m_drawSquareRadio, 3);
+    drawingLayout->addWidget(m_drawSquareRadio);
+    
+    m_drawCircleRadio = new QRadioButton("Draw Circle");
+    m_drawingButtonGroup->addButton(m_drawCircleRadio, 4);
+    drawingLayout->addWidget(m_drawCircleRadio);
+    
+    m_drawRhombusRadio = new QRadioButton("Draw Rhombus");
+    m_drawingButtonGroup->addButton(m_drawRhombusRadio, 5);
+    drawingLayout->addWidget(m_drawRhombusRadio);
+    
+    m_drawHexagonRadio = new QRadioButton("Draw Hexagon");
+    m_drawingButtonGroup->addButton(m_drawHexagonRadio, 6);
+    drawingLayout->addWidget(m_drawHexagonRadio);
+    
+    m_drawStarRadio = new QRadioButton("Draw Star");
+    m_drawingButtonGroup->addButton(m_drawStarRadio, 7);
+    drawingLayout->addWidget(m_drawStarRadio);
+    
+    m_drawPolygonRadio = new QRadioButton("Draw Polygon");
+    m_drawingButtonGroup->addButton(m_drawPolygonRadio, 8);
+    drawingLayout->addWidget(m_drawPolygonRadio);
+    
+    // Исправим подключение сигнала - используем старый синтаксис
+        connect(m_drawingButtonGroup, &QButtonGroup::buttonClicked, this, [this](QAbstractButton *button) {
+        int id = m_drawingButtonGroup->id(button);
+        switch(id) {
+            case 0: m_canvas->setDrawingMode(DrawingTool::NoDrawing); break;
+            case 1: m_canvas->setDrawingMode(DrawingTool::DrawTriangle); break;
+            case 2: m_canvas->setDrawingMode(DrawingTool::DrawRectangle); break;
+            case 3: m_canvas->setDrawingMode(DrawingTool::DrawSquare); break;
+            case 4: m_canvas->setDrawingMode(DrawingTool::DrawCircle); break;
+            case 5: m_canvas->setDrawingMode(DrawingTool::DrawRhombus); break;
+            case 6: m_canvas->setDrawingMode(DrawingTool::DrawHexagon); break;
+            case 7: m_canvas->setDrawingMode(DrawingTool::DrawStar); break;
+            case 8: m_canvas->setDrawingMode(DrawingTool::DrawPolygon); break;
+        }
+        updateDrawingControls();
+    });
+    
+    m_drawingControlsGroup->setLayout(drawingLayout);
+    figuresLayout->addWidget(m_drawingControlsGroup);
     
     // Figure list
     QGroupBox *listGroup = new QGroupBox("Figure List");
@@ -317,6 +601,10 @@ void MainWindow::setupDockWidgets()
     QPushButton *clearButton = new QPushButton("Clear All");
     connect(clearButton, &QPushButton::clicked, this, &MainWindow::clearAllFigures);
     listButtonsLayout->addWidget(clearButton);
+    
+    QPushButton *statisticsButton = new QPushButton("Statistics");
+    connect(statisticsButton, &QPushButton::clicked, this, &MainWindow::showFigureStatistics);
+    listButtonsLayout->addWidget(statisticsButton);
     
     listLayout->addLayout(listButtonsLayout);
     listGroup->setLayout(listLayout);
@@ -444,6 +732,34 @@ void MainWindow::setupDockWidgets()
     starLayout->addRow("Inner Radius:", m_innerRadiusSpinBox);
     m_paramTabs->addTab(m_starParams, "Star");
     
+    // Triangle parameters
+    m_triangleParams = new QWidget();
+    QFormLayout *triangleLayout = new QFormLayout(m_triangleParams);
+    m_triangleBaseSpinBox = new QDoubleSpinBox();
+    m_triangleBaseSpinBox->setRange(10, 500);
+    m_triangleBaseSpinBox->setValue(100);
+    m_triangleBaseSpinBox->setSuffix(" px");
+    triangleLayout->addRow("Base:", m_triangleBaseSpinBox);
+    
+    m_triangleHeightSpinBox = new QDoubleSpinBox();
+    m_triangleHeightSpinBox->setRange(10, 500);
+    m_triangleHeightSpinBox->setValue(80);
+    m_triangleHeightSpinBox->setSuffix(" px");
+    triangleLayout->addRow("Height:", m_triangleHeightSpinBox);
+    m_paramTabs->addTab(m_triangleParams, "Triangle");
+    
+    // Hexagon parameters
+    m_hexagonParams = new QWidget();
+    QFormLayout *hexagonLayout = new QFormLayout(m_hexagonParams);
+    // Создаем отдельный спинбокс для радиуса шестиугольника
+    QDoubleSpinBox *hexagonRadiusSpinBox = new QDoubleSpinBox();
+    hexagonRadiusSpinBox->setRange(10, 500);
+    hexagonRadiusSpinBox->setValue(70);
+    hexagonRadiusSpinBox->setSuffix(" px");
+    hexagonLayout->addRow("Radius:", hexagonRadiusSpinBox);
+    
+    m_paramTabs->addTab(m_hexagonParams, "Hexagon");
+    
     paramsLayout->addWidget(m_paramTabs);
     
     QPushButton *updateParamsButton = new QPushButton("Update Parameters");
@@ -453,6 +769,43 @@ void MainWindow::setupDockWidgets()
     
     paramsGroup->setLayout(paramsLayout);
     propertiesLayout->addWidget(paramsGroup);
+    
+    // Vertex control
+    m_vertexGroup = new QGroupBox("Vertex Control");
+    QFormLayout *vertexLayout = new QFormLayout();
+    
+    m_vertexIndexSpinBox = new QSpinBox();
+    m_vertexIndexSpinBox->setRange(0, 0);
+    m_vertexIndexSpinBox->setValue(0);
+    vertexLayout->addRow("Vertex Index:", m_vertexIndexSpinBox);
+    
+    m_vertexXSpinBox = new QDoubleSpinBox();
+    m_vertexXSpinBox->setRange(-1000, 1000);
+    m_vertexXSpinBox->setValue(0);
+    vertexLayout->addRow("Vertex X:", m_vertexXSpinBox);
+    
+    m_vertexYSpinBox = new QDoubleSpinBox();
+    m_vertexYSpinBox->setRange(-1000, 1000);
+    m_vertexYSpinBox->setValue(0);
+    vertexLayout->addRow("Vertex Y:", m_vertexYSpinBox);
+    
+    QPushButton *updateVertexButton = new QPushButton("Update Vertex");
+        connect(updateVertexButton, &QPushButton::clicked, this, [this]() {
+        if (m_currentFigure) {
+            if (PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure)) {
+                int index = m_vertexIndexSpinBox->value();
+                QPointF point(m_vertexXSpinBox->value(), m_vertexYSpinBox->value());
+                polygon->setVertex(index, point);
+                updateFigureInfo();
+                m_canvas->update();
+                statusBar()->showMessage("Vertex updated", 2000);
+            }
+        }
+    });
+    vertexLayout->addRow(updateVertexButton);
+    
+    m_vertexGroup->setLayout(vertexLayout);
+    propertiesLayout->addWidget(m_vertexGroup);
     
     // Center control
     QGroupBox *centerGroup = new QGroupBox("Center Control");
@@ -582,25 +935,148 @@ void MainWindow::setupDockWidgets()
     m_centerLabel = new QLabel("(0, 0)");
     m_verticesLabel = new QLabel("0");
     m_trianglesLabel = new QLabel("0");
+    m_figureTypeLabel = new QLabel("None");
     
+    infoLayout->addRow("Type:", m_figureTypeLabel);
     infoLayout->addRow("Area:", m_areaLabel);
     infoLayout->addRow("Perimeter:", m_perimeterLabel);
     infoLayout->addRow("Center of Mass:", m_centerLabel);
     infoLayout->addRow("Vertices:", m_verticesLabel);
     infoLayout->addRow("Triangles:", m_trianglesLabel);
     
+    QHBoxLayout *infoButtonsLayout = new QHBoxLayout();
     QPushButton *showCenterButton = new QPushButton("Show Center Info");
     connect(showCenterButton, &QPushButton::clicked, this, &MainWindow::showCenterInfo);
-    infoLayout->addRow(showCenterButton);
+    infoButtonsLayout->addWidget(showCenterButton);
+    
+    QPushButton *refreshButton = new QPushButton("Refresh");
+    connect(refreshButton, &QPushButton::clicked, this, &MainWindow::updateFigureInfo);
+    infoButtonsLayout->addWidget(refreshButton);
+    
+    infoLayout->addRow(infoButtonsLayout);
     
     m_infoDock->setWidget(infoWidget);
     addDockWidget(Qt::BottomDockWidgetArea, m_infoDock);
     
     // Set initial sizes
-    m_figuresDock->setMinimumWidth(200);
-    m_propertiesDock->setMinimumWidth(250);
-    m_transformationsDock->setMinimumWidth(250);
-    m_infoDock->setMaximumHeight(150);
+    m_figuresDock->setMinimumWidth(250);
+    m_propertiesDock->setMinimumWidth(300);
+    m_transformationsDock->setMinimumWidth(300);
+    m_infoDock->setMaximumHeight(200);
+    
+    // Tabify docks
+    tabifyDockWidget(m_propertiesDock, m_transformationsDock);
+}
+
+// Добавим слот для обработки кликов на кнопках рисования
+void MainWindow::handleDrawingButtonClicked(QAbstractButton *button)
+{
+    int id = m_drawingButtonGroup->id(button);
+    switch(id) {
+        case 0: m_canvas->setDrawingMode(DrawingTool::NoDrawing); break;
+        case 1: m_canvas->setDrawingMode(DrawingTool::DrawTriangle); break;
+        case 2: m_canvas->setDrawingMode(DrawingTool::DrawRectangle); break;
+        case 3: m_canvas->setDrawingMode(DrawingTool::DrawSquare); break;
+        case 4: m_canvas->setDrawingMode(DrawingTool::DrawCircle); break;
+        case 5: m_canvas->setDrawingMode(DrawingTool::DrawRhombus); break;
+        case 6: m_canvas->setDrawingMode(DrawingTool::DrawHexagon); break;
+        case 7: m_canvas->setDrawingMode(DrawingTool::DrawStar); break;
+        case 8: m_canvas->setDrawingMode(DrawingTool::DrawPolygon); break;
+    }
+    updateDrawingControls();
+}
+
+void MainWindow::createConnections()
+{
+    // Connect canvas signals
+    connect(m_canvas, &FigureCanvas::figureSelected, this, &MainWindow::updateSelectedFigure);
+    connect(m_canvas, &FigureCanvas::figureCreated, this, [this](Figure *figure) {
+        Q_UNUSED(figure);
+        updateFigureList();
+        m_figureList->setCurrentRow(m_figureList->count() - 1);
+        statusBar()->showMessage("Figure created", 2000);
+    });
+    
+    // Connect mouse position tracking
+    connect(m_canvas, &FigureCanvas::viewChanged, this, [this]() {
+        updateDrawingControls();
+    });
+    
+    // Connect drawing mode changes
+    connect(m_canvas, &FigureCanvas::viewChanged, this, [this]() {
+        m_canvas->update();
+    });
+}
+
+void MainWindow::updateDrawingControls()
+{
+    DrawingTool::DrawingMode mode = m_canvas->drawingMode();
+    
+    // Update radio buttons
+    switch(mode) {
+        case DrawingTool::NoDrawing:
+            m_noDrawingRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Selection");
+            break;
+        case DrawingTool::DrawTriangle:
+            m_drawTriangleRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Triangle");
+            break;
+        case DrawingTool::DrawRectangle:
+            m_drawRectangleRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Rectangle");
+            break;
+        case DrawingTool::DrawSquare:
+            m_drawSquareRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Square");
+            break;
+        case DrawingTool::DrawCircle:
+            m_drawCircleRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Circle");
+            break;
+        case DrawingTool::DrawRhombus:
+            m_drawRhombusRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Rhombus");
+            break;
+        case DrawingTool::DrawHexagon:
+            m_drawHexagonRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Hexagon");
+            break;
+        case DrawingTool::DrawStar:
+            m_drawStarRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Star");
+            break;
+        case DrawingTool::DrawPolygon:
+            m_drawPolygonRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Polygon");
+            break;
+        default:
+            m_noDrawingRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Unknown");
+            break;
+    }
+    
+    // Update toolbar actions
+    m_drawTriangleAction->setChecked(mode == DrawingTool::DrawTriangle);
+    m_drawRectangleAction->setChecked(mode == DrawingTool::DrawRectangle);
+    m_drawSquareAction->setChecked(mode == DrawingTool::DrawSquare);
+    m_drawCircleAction->setChecked(mode == DrawingTool::DrawCircle);
+    m_drawRhombusAction->setChecked(mode == DrawingTool::DrawRhombus);
+    m_drawHexagonAction->setChecked(mode == DrawingTool::DrawHexagon);
+    m_drawStarAction->setChecked(mode == DrawingTool::DrawStar);
+    m_drawPolygonAction->setChecked(mode == DrawingTool::DrawPolygon);
+}
+
+void MainWindow::uncheckDrawingActions()
+{
+    m_drawTriangleAction->setChecked(false);
+    m_drawRectangleAction->setChecked(false);
+    m_drawSquareAction->setChecked(false);
+    m_drawCircleAction->setChecked(false);
+    m_drawRhombusAction->setChecked(false);
+    m_drawHexagonAction->setChecked(false);
+    m_drawStarAction->setChecked(false);
+    m_drawPolygonAction->setChecked(false);
 }
 
 // ============ FILE OPERATIONS ============
@@ -621,7 +1097,7 @@ void MainWindow::newFile()
 void MainWindow::openFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, "Open Project", 
-                                                   "", "Geometry Files (*.geom)");
+                                                   "", "Geometry Files (*.geom);;All Files (*)");
     if (!fileName.isEmpty())
     {
         // TODO: Implement file loading
@@ -632,7 +1108,7 @@ void MainWindow::openFile()
 void MainWindow::saveFile()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Save Project", 
-                                                   "project.geom", "Geometry Files (*.geom)");
+                                                   "project.geom", "Geometry Files (*.geom);;All Files (*)");
     if (!fileName.isEmpty())
     {
         // TODO: Implement file saving
@@ -649,13 +1125,30 @@ void MainWindow::exportImage()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Export Image", 
                                                    "figure.png", 
-                                                   "Images (*.png *.jpg *.bmp)");
+                                                   "Images (*.png *.jpg *.bmp *.tiff);;All Files (*)");
     if (!fileName.isEmpty())
     {
         QPixmap pixmap(m_canvas->size());
         m_canvas->render(&pixmap);
-        pixmap.save(fileName);
-        statusBar()->showMessage("Exported: " + fileName, 3000);
+        if (pixmap.save(fileName))
+        {
+            statusBar()->showMessage("Exported: " + fileName, 3000);
+        }
+        else
+        {
+            QMessageBox::warning(this, "Export Error", "Failed to save image");
+        }
+    }
+}
+
+void MainWindow::exitApplication()
+{
+    int result = QMessageBox::question(this, "Exit", 
+                                      "Are you sure you want to exit?",
+                                      QMessageBox::Yes | QMessageBox::No);
+    if (result == QMessageBox::Yes)
+    {
+        QApplication::quit();
     }
 }
 
@@ -679,6 +1172,22 @@ void MainWindow::pasteFigure()
 void MainWindow::deleteFigure()
 {
     removeSelectedFigure();
+}
+
+void MainWindow::selectAll()
+{
+    if (!m_canvas->getFigures().isEmpty())
+    {
+        m_figureList->selectAll();
+    }
+}
+
+void MainWindow::deselectAll()
+{
+    m_figureList->clearSelection();
+    m_currentFigure = nullptr;
+    m_canvas->setSelectedFigure(nullptr);
+    updateFigureInfo();
 }
 
 // ============ FIGURE METHODS ============
@@ -836,13 +1345,15 @@ void MainWindow::updateFigureInfo()
 {
     if (m_currentFigure)
     {
+        m_figureTypeLabel->setText(m_currentFigure->type());
         m_areaLabel->setText(QString::number(m_currentFigure->area(), 'f', 2));
         m_perimeterLabel->setText(QString::number(m_currentFigure->perimeter(), 'f', 2));
         
         QPointF center = m_currentFigure->centerOfMass();
         m_centerLabel->setText(QString("(%1, %2)").arg(center.x(), 0, 'f', 1).arg(center.y(), 0, 'f', 1));
         
-        if (PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure))
+        PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure);
+        if (polygon)
         {
             m_verticesLabel->setText(QString::number(polygon->vertexCount()));
             m_trianglesLabel->setText(QString::number(polygon->triangulate().size()));
@@ -855,6 +1366,7 @@ void MainWindow::updateFigureInfo()
     }
     else
     {
+        m_figureTypeLabel->setText("None");
         m_areaLabel->setText("0.0");
         m_perimeterLabel->setText("0.0");
         m_centerLabel->setText("(0, 0)");
@@ -872,6 +1384,7 @@ void MainWindow::updateParameterControls()
         m_fillColorButton->setEnabled(false);
         m_lineWidthSpinBox->setEnabled(false);
         m_paramTabs->setEnabled(false);
+        m_vertexGroup->setEnabled(false);
         return;
     }
     
@@ -892,44 +1405,101 @@ void MainWindow::updateParameterControls()
     // Update specific parameters based on figure type
     m_paramTabs->setEnabled(true);
     
-    if (Circle *circle = dynamic_cast<Circle*>(m_currentFigure))
+    Circle *circle = dynamic_cast<Circle*>(m_currentFigure);
+    if (circle)
     {
         m_paramTabs->setCurrentWidget(m_circleParams);
         m_radiusSpinBox->setValue(circle->radius());
     }
-    else if (Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure))
+    
+    Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure);
+    if (rect)
     {
         m_paramTabs->setCurrentWidget(m_rectangleParams);
         m_widthSpinBox->setValue(rect->width());
         m_heightSpinBox->setValue(rect->height());
     }
-    else if (Square *square = dynamic_cast<Square*>(m_currentFigure))
+    
+    Square *square = dynamic_cast<Square*>(m_currentFigure);
+    if (square)
     {
         m_paramTabs->setCurrentWidget(m_squareParams);
         m_sideSpinBox->setValue(square->side());
     }
-    else if (Rhombus *rhombus = dynamic_cast<Rhombus*>(m_currentFigure))
+    
+    Rhombus *rhombus = dynamic_cast<Rhombus*>(m_currentFigure);
+    if (rhombus)
     {
         m_paramTabs->setCurrentWidget(m_rhombusParams);
         m_diag1SpinBox->setValue(rhombus->diagonal1());
         m_diag2SpinBox->setValue(rhombus->diagonal2());
     }
-    else if (Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure))
+    
+    Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure);
+    if (hexagon)
     {
-        m_paramTabs->setCurrentWidget(m_circleParams); // Reuse circle params for radius
-        m_radiusSpinBox->setValue(hexagon->radius());
+        m_paramTabs->setCurrentWidget(m_hexagonParams);
+        // Для hexagon получим первый спинбокс (радиус)
+        QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
+        if (radiusSpinBox)
+        {
+            radiusSpinBox->setValue(hexagon->radius());
+        }
     }
-    else if (Star *star = dynamic_cast<Star*>(m_currentFigure))
+    
+    Star *star = dynamic_cast<Star*>(m_currentFigure);
+    if (star)
     {
         m_paramTabs->setCurrentWidget(m_starParams);
         m_starTypeCombo->setCurrentIndex(static_cast<int>(star->starType()) - 5);
         m_outerRadiusSpinBox->setValue(star->outerRadius());
         m_innerRadiusSpinBox->setValue(star->innerRadius());
     }
-    else if (CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure))
+    
+    Triangle *triangle = dynamic_cast<Triangle*>(m_currentFigure);
+    if (triangle)
+    {
+        m_paramTabs->setCurrentWidget(m_triangleParams);
+        // For triangle, calculate approximate base and height
+        QList<QPointF> points = triangle->getPoints();
+        if (points.size() == 3)
+        {
+            double base = QLineF(points[0], points[1]).length();
+            double height = qAbs(points[2].y() - points[0].y());
+            m_triangleBaseSpinBox->setValue(base);
+            m_triangleHeightSpinBox->setValue(height);
+        }
+    }
+    
+    CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure);
+    if (custom)
     {
         m_paramTabs->setCurrentWidget(m_polygonParams);
         m_sidesSpinBox->setValue(custom->sides());
+    }
+    
+    // Update vertex control
+    PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure);
+    if (polygon)
+    {
+        m_vertexGroup->setEnabled(true);
+        int vertexCount = polygon->vertexCount();
+        m_vertexIndexSpinBox->setRange(0, qMax(0, vertexCount - 1));
+        
+        if (vertexCount > 0)
+        {
+            QList<QPointF> vertices = polygon->getVertices();
+            int index = m_vertexIndexSpinBox->value();
+            if (index < vertices.size())
+            {
+                m_vertexXSpinBox->setValue(vertices[index].x());
+                m_vertexYSpinBox->setValue(vertices[index].y());
+            }
+        }
+    }
+    else
+    {
+        m_vertexGroup->setEnabled(false);
     }
     
     // Update center position
@@ -966,6 +1536,80 @@ void MainWindow::showCenterInfo()
                 .arg(m_currentFigure->area(), 0, 'f', 2)
                 .arg(m_currentFigure->perimeter(), 0, 'f', 2));
     }
+}
+
+// ============ DRAWING MODES ============
+
+void MainWindow::setDrawTriangleMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawTriangle);
+    uncheckDrawingActions();
+    m_drawTriangleAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Triangle", 2000);
+}
+
+void MainWindow::setDrawRectangleMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawRectangle);
+    uncheckDrawingActions();
+    m_drawRectangleAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Rectangle", 2000);
+}
+
+void MainWindow::setDrawSquareMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawSquare);
+    uncheckDrawingActions();
+    m_drawSquareAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Square", 2000);
+}
+
+void MainWindow::setDrawCircleMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawCircle);
+    uncheckDrawingActions();
+    m_drawCircleAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Circle", 2000);
+}
+
+void MainWindow::setDrawRhombusMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawRhombus);
+    uncheckDrawingActions();
+    m_drawRhombusAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Rhombus", 2000);
+}
+
+void MainWindow::setDrawHexagonMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawHexagon);
+    uncheckDrawingActions();
+    m_drawHexagonAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Hexagon", 2000);
+}
+
+void MainWindow::setDrawStarMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawStar);
+    uncheckDrawingActions();
+    m_drawStarAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Star", 2000);
+}
+
+void MainWindow::setDrawPolygonMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawPolygon);
+    uncheckDrawingActions();
+    m_drawPolygonAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Polygon", 2000);
+}
+
+void MainWindow::stopDrawingMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::NoDrawing);
+    uncheckDrawingActions();
+    m_noDrawingRadio->setChecked(true);
+    statusBar()->showMessage("Drawing stopped", 2000);
 }
 
 // ============ TRANSFORMATIONS ============
@@ -1100,6 +1744,8 @@ void MainWindow::chooseLineColor()
             m_currentFigure->setColor(color);
             m_canvas->update();
         }
+        // Also update drawing color
+        m_canvas->setDrawingColor(color);
     }
 }
 
@@ -1116,6 +1762,8 @@ void MainWindow::chooseFillColor()
             m_currentFigure->setFillColor(color);
             m_canvas->update();
         }
+        // Also update drawing fill color
+        m_canvas->setDrawingFillColor(color);
     }
 }
 
@@ -1126,42 +1774,84 @@ void MainWindow::updateLineWidth()
         m_currentFigure->setLineWidth(m_lineWidthSpinBox->value());
         m_canvas->update();
     }
+    // Also update drawing line width
+    m_canvas->setDrawingLineWidth(m_lineWidthSpinBox->value());
 }
 
 void MainWindow::updateSpecificParameter()
 {
     if (!m_currentFigure) return;
     
-    if (Circle *circle = dynamic_cast<Circle*>(m_currentFigure))
+    Circle *circle = dynamic_cast<Circle*>(m_currentFigure);
+    if (circle)
     {
         circle->setRadius(m_radiusSpinBox->value());
     }
-    else if (Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure))
+    
+    Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure);
+    if (rect)
     {
         rect->setWidth(m_widthSpinBox->value());
         rect->setHeight(m_heightSpinBox->value());
     }
-    else if (Square *square = dynamic_cast<Square*>(m_currentFigure))
+    
+    Square *square = dynamic_cast<Square*>(m_currentFigure);
+    if (square)
     {
         square->setSide(m_sideSpinBox->value());
     }
-    else if (Rhombus *rhombus = dynamic_cast<Rhombus*>(m_currentFigure))
+    
+    Rhombus *rhombus = dynamic_cast<Rhombus*>(m_currentFigure);
+    if (rhombus)
     {
         rhombus->setDiagonal1(m_diag1SpinBox->value());
         rhombus->setDiagonal2(m_diag2SpinBox->value());
     }
-    else if (Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure))
+    
+    Hexagon *hexagon = dynamic_cast<Hexagon*>(m_currentFigure);
+    if (hexagon)
     {
-        hexagon->setRadius(m_radiusSpinBox->value());
+        // Для hexagon получим спинбокс радиуса
+        QDoubleSpinBox *radiusSpinBox = m_hexagonParams->findChild<QDoubleSpinBox*>();
+        if (radiusSpinBox)
+        {
+            QPointF center = hexagon->centerOfMass();
+            double radius = radiusSpinBox->value();
+            hexagon->setHexagon(center, radius);
+        }
     }
-    else if (Star *star = dynamic_cast<Star*>(m_currentFigure))
+    
+    Star *star = dynamic_cast<Star*>(m_currentFigure);
+    if (star)
     {
         Star::StarType starType = static_cast<Star::StarType>(5 + m_starTypeCombo->currentIndex());
         star->setStarType(starType);
         star->setOuterRadius(m_outerRadiusSpinBox->value());
         star->setInnerRadius(m_innerRadiusSpinBox->value());
     }
-    else if (CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure))
+    
+    Triangle *triangle = dynamic_cast<Triangle*>(m_currentFigure);
+    if (triangle)
+    {
+        // For triangle, we can't easily change base/height directly
+        // We'll just update the vertices based on new dimensions
+        QList<QPointF> points = triangle->getPoints();
+        if (points.size() == 3)
+        {
+            QPointF center = triangle->centerOfMass();
+            double base = m_triangleBaseSpinBox->value();
+            double height = m_triangleHeightSpinBox->value();
+            
+            QPointF p1(center.x() - base/2, center.y() + height/2);
+            QPointF p2(center.x() + base/2, center.y() + height/2);
+            QPointF p3(center.x(), center.y() - height/2);
+            
+            triangle->setPoints(p1, p2, p3);
+        }
+    }
+    
+    CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure);
+    if (custom)
     {
         custom->setSides(m_sidesSpinBox->value());
     }
@@ -1170,6 +1860,23 @@ void MainWindow::updateSpecificParameter()
     updateFigureList();
     m_canvas->update();
     statusBar()->showMessage("Parameters updated", 2000);
+}
+
+void MainWindow::updateVertex()
+{
+    if (!m_currentFigure)
+        return;
+    
+    PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure);
+    if (polygon)
+    {
+        int index = m_vertexIndexSpinBox->value();
+        QPointF point(m_vertexXSpinBox->value(), m_vertexYSpinBox->value());
+        polygon->setVertex(index, point);
+        updateFigureInfo();
+        m_canvas->update();
+        statusBar()->showMessage("Vertex updated", 2000);
+    }
 }
 
 void MainWindow::moveCenterToPoint()
@@ -1194,36 +1901,49 @@ void MainWindow::moveCenterToPoint()
 void MainWindow::toggleGrid(bool enabled)
 {
     m_canvas->setGridEnabled(enabled);
+    statusBar()->showMessage(enabled ? "Grid enabled" : "Grid disabled", 1000);
 }
 
 void MainWindow::toggleCenters(bool enabled)
 {
     m_canvas->setShowCenters(enabled);
+    statusBar()->showMessage(enabled ? "Centers visible" : "Centers hidden", 1000);
 }
 
 void MainWindow::toggleTriangulation(bool enabled)
 {
     m_canvas->setShowTriangulation(enabled);
+    statusBar()->showMessage(enabled ? "Triangulation visible" : "Triangulation hidden", 1000);
 }
 
 void MainWindow::toggleVertices(bool enabled)
 {
     m_canvas->setShowVertices(enabled);
+    statusBar()->showMessage(enabled ? "Vertices visible" : "Vertices hidden", 1000);
 }
 
 void MainWindow::toggleBoundingBox(bool enabled)
 {
     m_canvas->setShowBoundingBox(enabled);
+    statusBar()->showMessage(enabled ? "Bounding boxes visible" : "Bounding boxes hidden", 1000);
+}
+
+void MainWindow::toggleSnapToGrid(bool enabled)
+{
+    // TODO: Implement snap to grid
+    statusBar()->showMessage(enabled ? "Snap to grid enabled" : "Snap to grid disabled", 1000);
 }
 
 void MainWindow::zoomIn()
 {
     m_canvas->zoomIn();
+    statusBar()->showMessage("Zoomed in", 1000);
 }
 
 void MainWindow::zoomOut()
 {
     m_canvas->zoomOut();
+    statusBar()->showMessage("Zoomed out", 1000);
 }
 
 void MainWindow::resetView()
@@ -1235,7 +1955,10 @@ void MainWindow::resetView()
 void MainWindow::fitToView()
 {
     if (m_canvas->getFigures().isEmpty())
+    {
+        statusBar()->showMessage("No figures to fit", 2000);
         return;
+    }
     
     // Calculate bounding box of all figures
     QRectF totalBounds;
@@ -1251,6 +1974,99 @@ void MainWindow::fitToView()
     statusBar()->showMessage("Fit to view", 2000);
 }
 
+void MainWindow::showFullScreen()
+{
+    if (isFullScreen())
+    {
+        showNormal();
+        statusBar()->showMessage("Exited full screen", 1000);
+    }
+    else
+    {
+        showFullScreen();
+        statusBar()->showMessage("Entered full screen", 1000);
+    }
+}
+
+// ============ CALCULATIONS ============
+
+void MainWindow::calculateTotalArea()
+{
+    double totalArea = 0.0;
+    for (Figure *figure : m_canvas->getFigures())
+    {
+        totalArea += figure->area();
+    }
+    
+    QMessageBox::information(this, "Total Area", 
+        QString("Total area of all figures: %1").arg(totalArea, 0, 'f', 2));
+}
+
+void MainWindow::calculateTotalPerimeter()
+{
+    double totalPerimeter = 0.0;
+    for (Figure *figure : m_canvas->getFigures())
+    {
+        totalPerimeter += figure->perimeter();
+    }
+    
+    QMessageBox::information(this, "Total Perimeter", 
+        QString("Total perimeter of all figures: %1").arg(totalPerimeter, 0, 'f', 2));
+}
+
+void MainWindow::showFigureStatistics()
+{
+    int triangleCount = 0;
+    int rectangleCount = 0;
+    int squareCount = 0;
+    int circleCount = 0;
+    int rhombusCount = 0;
+    int hexagonCount = 0;
+    int starCount = 0;
+    int polygonCount = 0;
+    
+    double totalArea = 0.0;
+    double totalPerimeter = 0.0;
+    
+    for (Figure *figure : m_canvas->getFigures())
+    {
+        totalArea += figure->area();
+        totalPerimeter += figure->perimeter();
+        
+        QString type = figure->type();
+        if (type == "Triangle") triangleCount++;
+        else if (type == "Rectangle") rectangleCount++;
+        else if (type == "Square") squareCount++;
+        else if (type == "Circle") circleCount++;
+        else if (type == "Rhombus") rhombusCount++;
+        else if (type == "Hexagon") hexagonCount++;
+        else if (type == "Star") starCount++;
+        else if (type == "Polygon" || type == "CustomFigure") polygonCount++;
+    }
+    
+    QString stats = QString(
+        "Figure Statistics:\n\n"
+        "Total Figures: %1\n"
+        "Triangles: %2\n"
+        "Rectangles: %3\n"
+        "Squares: %4\n"
+        "Circles: %5\n"
+        "Rhombuses: %6\n"
+        "Hexagons: %7\n"
+        "Stars: %8\n"
+        "Polygons: %9\n\n"
+        "Total Area: %10\n"
+        "Total Perimeter: %11"
+    ).arg(m_canvas->getFigures().size())
+     .arg(triangleCount).arg(rectangleCount).arg(squareCount)
+     .arg(circleCount).arg(rhombusCount).arg(hexagonCount)
+     .arg(starCount).arg(polygonCount)
+     .arg(totalArea, 0, 'f', 2)
+     .arg(totalPerimeter, 0, 'f', 2);
+    
+    QMessageBox::information(this, "Figure Statistics", stats);
+}
+
 // ============ HELP ============
 
 void MainWindow::about()
@@ -1262,11 +2078,12 @@ void MainWindow::about()
         "with geometric figures using Qt framework.</p>"
         "<p>Features:</p>"
         "<ul>"
-        "<li>Create various geometric figures</li>"
+        "<li>Create various geometric figures (programmatically or by drawing)</li>"
         "<li>Transform figures (move, rotate, scale)</li>"
         "<li>Animate transformations</li>"
         "<li>Calculate area, perimeter, center of mass</li>"
         "<li>Visualize triangulation</li>"
+        "<li>Edit figure properties in real-time</li>"
         "</ul>"
         "<p>Developed for educational purposes.</p>");
 }
@@ -1276,8 +2093,14 @@ void MainWindow::showHelp()
     QMessageBox::information(this, "Help", 
         "<h3>Geometry Figures Application Help</h3>"
         "<p><b>Creating Figures:</b><br>"
-        "Use the Figure menu or toolbar to create new figures. "
-        "Figures can also be created from the Figures dock.</p>"
+        "1. Use the Figure menu or toolbar to create figures at random positions<br>"
+        "2. Use the Drawing tools to draw figures with the mouse</p>"
+        "<p><b>Drawing Modes:</b><br>"
+        "- Triangle: Click and drag to draw<br>"
+        "- Rectangle: Click and drag to draw<br>"
+        "- Square: Click and drag (hold Shift for perfect square)<br>"
+        "- Circle: Click and drag to draw<br>"
+        "- Polygon: Click to add vertices, right-click to finish</p>"
         "<p><b>Selecting Figures:</b><br>"
         "Click on a figure to select it. Selected figures show a bounding box "
         "and can be manipulated.</p>"
@@ -1289,8 +2112,50 @@ void MainWindow::showHelp()
         "parameters like radius, width, height, etc.</p>"
         "<p><b>View Controls:</b><br>"
         "- Zoom: Use mouse wheel or View menu<br>"
-        "- Pan: Middle-click and drag<br>"
-        "- Reset View: View → Reset View or Ctrl+R</p>"
+        "- Pan: Click and drag empty space<br>"
+        "- Reset View: View → Reset View or Ctrl+R<br>"
+        "- Toggle grid, centers, vertices, etc. from View menu</p>"
         "<p><b>Figure Information:</b><br>"
         "The bottom dock shows detailed information about the selected figure.</p>");
+}
+
+void MainWindow::showShortcuts()
+{
+    QMessageBox::information(this, "Keyboard Shortcuts",
+        "<h3>Keyboard Shortcuts</h3>"
+        "<p><b>File:</b><br>"
+        "Ctrl+N - New project<br>"
+        "Ctrl+O - Open<br>"
+        "Ctrl+S - Save<br>"
+        "Ctrl+Shift+S - Save As<br>"
+        "Ctrl+Q - Quit</p>"
+        "<p><b>Edit:</b><br>"
+        "Ctrl+C - Copy<br>"
+        "Ctrl+V - Paste<br>"
+        "Del - Delete<br>"
+        "Ctrl+A - Select All<br>"
+        "Ctrl+Shift+A - Deselect All</p>"
+        "<p><b>View:</b><br>"
+        "Ctrl++ - Zoom In<br>"
+        "Ctrl+- - Zoom Out<br>"
+        "Ctrl+R - Reset View<br>"
+        "Ctrl+F - Fit to View<br>"
+        "Ctrl+G - Toggle Grid<br>"
+        "Ctrl+C - Toggle Centers<br>"
+        "Ctrl+V - Toggle Vertices<br>"
+        "Ctrl+B - Toggle Bounding Boxes<br>"
+        "Ctrl+T - Toggle Triangulation</p>"
+        "<p><b>Drawing:</b><br>"
+        "Alt+T - Draw Triangle<br>"
+        "Alt+R - Draw Rectangle<br>"
+        "Alt+Q - Draw Square<br>"
+        "Alt+C - Draw Circle<br>"
+        "Alt+O - Draw Rhombus<br>"
+        "Alt+H - Draw Hexagon<br>"
+        "Alt+S - Draw Star<br>"
+        "Alt+P - Draw Polygon<br>"
+        "Esc - Stop Drawing</p>"
+        "<p><b>Transform:</b><br>"
+        "Ctrl+T - Apply Transformations<br>"
+        "Ctrl+Shift+T - Animate Transformations</p>");
 }
