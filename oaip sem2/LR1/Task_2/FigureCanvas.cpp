@@ -1,7 +1,9 @@
 #include "FigureCanvas.h"
 #include "PolygonFigure.h"
+#include "Polygon.h"
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QKeyEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QDebug>
@@ -91,6 +93,7 @@ void FigureCanvas::setOffset(const QPointF &offset)
 void FigureCanvas::setDrawingMode(DrawingTool::DrawingMode mode)
 {
     m_drawingTool->setDrawingMode(mode);
+    update();
 }
 
 void FigureCanvas::setDrawingColor(const QColor &color)
@@ -323,79 +326,172 @@ void FigureCanvas::updateViewport()
 
 void FigureCanvas::drawCurrentDrawing(QPainter &painter)
 {
-    if (!m_drawingTool->isDrawing() || m_currentDrawingPoints.size() < 2)
+    if (!m_drawingTool->isDrawing() || m_currentDrawingPoints.size() < 1)
         return;
     
     painter.save();
-    painter.setPen(QPen(Qt::blue, 2, Qt::DashLine));
-    painter.setBrush(Qt::NoBrush);
     
-    // Draw the current drawing path
-    QPainterPath path;
-    path.moveTo(m_currentDrawingPoints.first());
-    
-    for (int i = 1; i < m_currentDrawingPoints.size(); i++)
+    // Рисуем точки и линии текущего рисунка
+    if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
     {
-        path.lineTo(m_currentDrawingPoints[i]);
-    }
-    
-    painter.drawPath(path);
-    
-    // Draw temporary figure based on drawing mode
-    if (m_currentDrawingPoints.size() >= 2)
-    {
-        QPointF start = m_currentDrawingPoints.first();
-        QPointF current = m_currentDrawingPoints.last();
+        // Для полигона рисуем пунктирные линии
+        painter.setPen(QPen(QColor(100, 100, 255, 200), 2, Qt::DashLine));
+        painter.setBrush(QBrush(QColor(200, 200, 255, 100)));
         
-        switch (m_drawingTool->drawingMode())
+        if (m_currentDrawingPoints.size() > 1)
         {
-        case DrawingTool::DrawRectangle:
-        {
-            QRectF rect(start, current);
-            painter.drawRect(rect.normalized());
-            break;
-        }
-        case DrawingTool::DrawSquare:
-        {
-            double side = qMin(qAbs(current.x() - start.x()), qAbs(current.y() - start.y()));
-            QPointF end = start + QPointF(
-                current.x() > start.x() ? side : -side,
-                current.y() > start.y() ? side : -side
-            );
-            painter.drawRect(QRectF(start, end).normalized());
-            break;
-        }
-        case DrawingTool::DrawCircle:
-        {
-            double radius = QLineF(start, current).length();
-            painter.drawEllipse(start, radius, radius);
-            break;
-        }
-        case DrawingTool::DrawTriangle:
-        {
-            QPolygonF triangle;
-            triangle << start 
-                    << QPointF(current.x(), start.y())
-                    << QPointF(start.x() + (current.x() - start.x()) / 2, current.y());
-            painter.drawPolygon(triangle);
-            break;
-        }
-        case DrawingTool::DrawRhombus:
-        {
-            QPointF center = (start + current) / 2;
-            double dx = qAbs(current.x() - start.x()) / 2;
-            double dy = qAbs(current.y() - start.y()) / 2;
+            QPainterPath path;
+            path.moveTo(m_currentDrawingPoints.first());
             
-            QPolygonF rhombus;
-            rhombus << QPointF(center.x(), center.y() - dy)
-                   << QPointF(center.x() + dx, center.y())
-                   << QPointF(center.x(), center.y() + dy)
-                   << QPointF(center.x() - dx, center.y());
-            painter.drawPolygon(rhombus);
-            break;
+            for (int i = 1; i < m_currentDrawingPoints.size(); i++)
+            {
+                path.lineTo(m_currentDrawingPoints[i]);
+            }
+            
+            painter.drawPath(path);
+            
+            // Если точек больше 2, рисуем предварительный полигон
+            if (m_currentDrawingPoints.size() > 2)
+            {
+                QPainterPath polygonPath;
+                polygonPath.moveTo(m_currentDrawingPoints.first());
+                
+                for (int i = 1; i < m_currentDrawingPoints.size(); i++)
+                {
+                    polygonPath.lineTo(m_currentDrawingPoints[i]);
+                }
+                
+                // Замыкаем полигон
+                polygonPath.closeSubpath();
+                
+                painter.setBrush(QBrush(QColor(200, 200, 255, 50)));
+                painter.drawPath(polygonPath);
+            }
         }
-        default:
-            break;
+        
+        // Рисуем точки полигона
+        painter.setPen(QPen(Qt::blue, 3));
+        painter.setBrush(QBrush(Qt::white));
+        
+        for (const QPointF &point : m_currentDrawingPoints)
+        {
+            painter.drawEllipse(point, 4, 4);
+        }
+        
+        // Рисуем последнюю точку другим цветом
+        if (!m_currentDrawingPoints.isEmpty())
+        {
+            painter.setBrush(QBrush(Qt::red));
+            painter.drawEllipse(m_currentDrawingPoints.last(), 4, 4);
+        }
+    }
+    else
+    {
+        // Для обычных фигур рисуем как раньше
+        painter.setPen(QPen(Qt::blue, 2, Qt::DashLine));
+        painter.setBrush(Qt::NoBrush);
+        
+        // Draw the current drawing path
+        QPainterPath path;
+        path.moveTo(m_currentDrawingPoints.first());
+        
+        for (int i = 1; i < m_currentDrawingPoints.size(); i++)
+        {
+            path.lineTo(m_currentDrawingPoints[i]);
+        }
+        
+        painter.drawPath(path);
+        
+        // Draw temporary figure based on drawing mode
+        if (m_currentDrawingPoints.size() >= 2)
+        {
+            QPointF start = m_currentDrawingPoints.first();
+            QPointF current = m_currentDrawingPoints.last();
+            
+            switch (m_drawingTool->drawingMode())
+            {
+            case DrawingTool::DrawTriangle:
+            {
+                QPolygonF triangle;
+                triangle << start 
+                        << QPointF(current.x(), start.y())
+                        << QPointF(start.x() + (current.x() - start.x()) / 2, current.y());
+                painter.drawPolygon(triangle);
+                break;
+            }
+            case DrawingTool::DrawRectangle:
+            {
+                QRectF rect(start, current);
+                painter.drawRect(rect.normalized());
+                break;
+            }
+            case DrawingTool::DrawSquare:
+            {
+                double side = qMin(qAbs(current.x() - start.x()), qAbs(current.y() - start.y()));
+                QPointF end = start + QPointF(
+                    current.x() > start.x() ? side : -side,
+                    current.y() > start.y() ? side : -side
+                );
+                painter.drawRect(QRectF(start, end).normalized());
+                break;
+            }
+            case DrawingTool::DrawCircle:
+            {
+                double radius = QLineF(start, current).length();
+                painter.drawEllipse(start, radius, radius);
+                break;
+            }
+            case DrawingTool::DrawRhombus:
+            {
+                QPointF center = (start + current) / 2;
+                double dx = qAbs(current.x() - start.x()) / 2;
+                double dy = qAbs(current.y() - start.y()) / 2;
+                
+                QPolygonF rhombus;
+                rhombus << QPointF(center.x(), center.y() - dy)
+                       << QPointF(center.x() + dx, center.y())
+                       << QPointF(center.x(), center.y() + dy)
+                       << QPointF(center.x() - dx, center.y());
+                painter.drawPolygon(rhombus);
+                break;
+            }
+            case DrawingTool::DrawHexagon:
+            {
+                QPointF center = (start + current) / 2;
+                double radius = QLineF(center, start).length();
+                
+                QPolygonF hexagon;
+                for (int i = 0; i < 6; i++)
+                {
+                    double angle = 2 * M_PI * i / 6;
+                    double x = center.x() + radius * std::cos(angle);
+                    double y = center.y() + radius * std::sin(angle);
+                    hexagon << QPointF(x, y);
+                }
+                painter.drawPolygon(hexagon);
+                break;
+            }
+            case DrawingTool::DrawStar:
+            {
+                QPointF center = (start + current) / 2;
+                double outerRadius = QLineF(center, start).length();
+                double innerRadius = outerRadius * 0.5;
+                
+                QPolygonF star;
+                for (int i = 0; i < 10; i++)
+                {
+                    double radius = (i % 2 == 0) ? outerRadius : innerRadius;
+                    double angle = 2 * M_PI * i / 10 - M_PI/2;
+                    double x = center.x() + radius * std::cos(angle);
+                    double y = center.y() + radius * std::sin(angle);
+                    star << QPointF(x, y);
+                }
+                painter.drawPolygon(star);
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
     
@@ -494,7 +590,7 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     painter.save();
     painter.setPen(Qt::black);
     painter.setBrush(QColor(255, 255, 255, 200));
-    painter.drawRect(10, 10, 180, 60);
+    painter.drawRect(10, 10, 200, 100);
     painter.setPen(Qt::black);
     painter.drawText(20, 30, QString("Figures: %1").arg(m_figures.size()));
     painter.drawText(20, 50, QString("Scale: %1x").arg(m_scale, 0, 'f', 2));
@@ -503,6 +599,12 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     if (m_drawingTool->isDrawing())
     {
         painter.drawText(20, 90, QString("Drawing: %1 points").arg(m_currentDrawingPoints.size()));
+        
+        // Подсказка для полигона
+        if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
+        {
+            painter.drawText(20, 110, "Left click: add point, Right click: finish");
+        }
     }
     
     painter.restore();
@@ -646,21 +748,44 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
         {
             if (!m_drawingTool->isDrawing())
             {
+                // Начинаем рисование
                 m_drawingTool->startDrawing(pos);
                 m_currentDrawingPoints.clear();
                 m_currentDrawingPoints.append(pos);
+                
+                // Для полигона добавляем вторую точку
+                if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
+                {
+                    m_currentDrawingPoints.append(pos);
+                }
             }
-            else if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon || 
-                     m_drawingTool->drawingMode() == DrawingTool::DrawCustomPolygon)
+            else
             {
-                // For polygons, add point on click
-                m_currentDrawingPoints.append(pos);
-                m_drawingTool->updateDrawing(pos);
+                if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
+                {
+                    // Для полигона добавляем точку
+                    m_drawingTool->addPointToPolygon(pos);
+                    m_currentDrawingPoints.append(pos);
+                }
+                else
+                {
+                    // Для других фигур обновляем последнюю точку
+                    if (m_currentDrawingPoints.size() < 2)
+                    {
+                        m_currentDrawingPoints.append(pos);
+                    }
+                    else
+                    {
+                        m_currentDrawingPoints.last() = pos;
+                    }
+                    m_drawingTool->updateDrawing(pos);
+                }
             }
+            update();
         }
         else if (event->button() == Qt::RightButton && m_drawingTool->isDrawing())
         {
-            // Right click to finish polygon drawing
+            // Правый клик - завершение рисования
             Figure *figure = m_drawingTool->finishDrawing();
             if (figure)
             {
@@ -668,11 +793,19 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
                 emit figureCreated(figure);
             }
             m_currentDrawingPoints.clear();
+            update();
         }
-        update();
+        else if (event->button() == Qt::MiddleButton && m_drawingTool->isDrawing())
+        {
+            // Средний клик - отмена рисования
+            m_drawingTool->cancelDrawing();
+            m_currentDrawingPoints.clear();
+            update();
+        }
         return;
     }
     
+    // Если не в режиме рисования - обычный выбор
     if (event->button() == Qt::LeftButton)
     {
         // Check if clicking on a figure
@@ -714,16 +847,32 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
     if (m_drawingTool->isDrawing())
     {
         // Update current drawing
-        if (m_currentDrawingPoints.size() < 2)
+        if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
         {
-            m_currentDrawingPoints.append(pos);
+            // Для полигона обновляем последнюю точку
+            if (m_currentDrawingPoints.size() > 1)
+            {
+                m_currentDrawingPoints.last() = pos;
+            }
         }
         else
         {
-            m_currentDrawingPoints.last() = pos;
+            // Для обычных фигур обновляем последнюю точку
+            if (m_currentDrawingPoints.size() < 2)
+            {
+                m_currentDrawingPoints.append(pos);
+            }
+            else
+            {
+                m_currentDrawingPoints.last() = pos;
+            }
         }
+        
         m_drawingTool->updateDrawing(pos);
         update();
+        
+        // Update mouse position in status bar
+        emit mouseMoved(pos);
         return;
     }
     
@@ -756,10 +905,9 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
     {
         if (m_drawingTool->isDrawing())
         {
-            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon && 
-                m_drawingTool->drawingMode() != DrawingTool::DrawCustomPolygon)
+            if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon)
             {
-                // For simple shapes, finish on mouse release
+                // Для обычных фигур завершаем при отпускании мыши
                 Figure *figure = m_drawingTool->finishDrawing();
                 if (figure)
                 {
@@ -767,7 +915,9 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
                     emit figureCreated(figure);
                 }
                 m_currentDrawingPoints.clear();
+                update();
             }
+            // Для полигона ждем правый клик
         }
         else
         {
@@ -775,7 +925,6 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
             m_isPanning = false;
             setCursor(Qt::ArrowCursor);
         }
-        update();
     }
 }
 
@@ -808,6 +957,22 @@ void FigureCanvas::wheelEvent(QWheelEvent *event)
     }
     
     event->accept();
+}
+
+void FigureCanvas::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape && m_drawingTool->isDrawing())
+    {
+        // Отмена рисования по Esc
+        m_drawingTool->cancelDrawing();
+        m_currentDrawingPoints.clear();
+        update();
+        event->accept();
+    }
+    else
+    {
+        QWidget::keyPressEvent(event);
+    }
 }
 
 void FigureCanvas::resizeEvent(QResizeEvent *event)

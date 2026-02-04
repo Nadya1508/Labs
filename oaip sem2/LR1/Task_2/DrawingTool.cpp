@@ -6,7 +6,7 @@
 #include "Rhombus.h"
 #include "Hexagon.h"
 #include "Star.h"
-#include "CustomFigure.h"
+#include "Polygon.h"
 #include <QLineF>
 #include <cmath>
 
@@ -37,6 +37,12 @@ void DrawingTool::startDrawing(const QPointF &startPoint)
     m_startPoint = startPoint;
     m_drawingPoints.clear();
     m_drawingPoints.append(startPoint);
+    
+    // Для полигона добавляем вторую точку (предварительную)
+    if (m_drawingMode == DrawPolygon)
+    {
+        m_drawingPoints.append(startPoint);
+    }
 }
 
 void DrawingTool::updateDrawing(const QPointF &currentPoint)
@@ -44,19 +50,53 @@ void DrawingTool::updateDrawing(const QPointF &currentPoint)
     if (!m_isDrawing || m_drawingMode == NoDrawing)
         return;
     
-    if (m_drawingPoints.size() < 2)
+    if (m_drawingMode == DrawPolygon)
     {
-        m_drawingPoints.append(currentPoint);
+        // Для полигона обновляем только последнюю точку (предварительную)
+        if (m_drawingPoints.size() > 1)
+        {
+            m_drawingPoints.last() = currentPoint;
+        }
     }
     else
     {
-        m_drawingPoints.last() = currentPoint;
+        // Для других фигур обновляем как обычно
+        if (m_drawingPoints.size() < 2)
+        {
+            m_drawingPoints.append(currentPoint);
+        }
+        else
+        {
+            m_drawingPoints.last() = currentPoint;
+        }
+    }
+}
+
+void DrawingTool::addPointToPolygon(const QPointF &point)
+{
+    if (m_drawingMode == DrawPolygon && m_isDrawing)
+    {
+        // Добавляем точку в список
+        if (m_drawingPoints.size() > 1)
+        {
+            // Заменяем предварительную точку на реальную
+            m_drawingPoints.last() = point;
+            // Добавляем новую предварительную точку
+            m_drawingPoints.append(point);
+        }
     }
 }
 
 Figure* DrawingTool::finishDrawing()
 {
-    if (!m_isDrawing || m_drawingMode == NoDrawing || m_drawingPoints.size() < 2)
+    if (!m_isDrawing || m_drawingMode == NoDrawing)
+    {
+        cancelDrawing();
+        return nullptr;
+    }
+    
+    // Для полигона нужны хотя бы 3 реальные точки
+    if (m_drawingMode == DrawPolygon && m_drawingPoints.size() < 4)
     {
         cancelDrawing();
         return nullptr;
@@ -171,23 +211,33 @@ Figure* DrawingTool::createFigureFromPoints(const QList<QPointF> &points)
     
     case DrawPolygon:
     {
-        // Для многоугольника нужно больше точек
-        if (points.size() >= 3)
+        // Для полигона удаляем последнюю предварительную точку
+        QList<QPointF> polygonPoints = points;
+        if (polygonPoints.size() > 1)
         {
-            CustomFigure *polygon = new CustomFigure(this);
-            polygon->setVertices(points);
-            return polygon;
-        }
-        return nullptr;
-    }
-    
-    case DrawCustomPolygon:
-    {
-        if (points.size() >= 3)
-        {
-            CustomFigure *polygon = new CustomFigure(this);
-            polygon->setVertices(points);
-            return polygon;
+            polygonPoints.removeLast(); // Удаляем предварительную точку
+            
+            // Нужно хотя бы 3 точки для полигона
+            if (polygonPoints.size() < 3)
+                return nullptr;
+            
+            // Создаем правильный многоугольник
+            QPointF center(0, 0);
+            for (const QPointF &point : polygonPoints)
+            {
+                center += point;
+            }
+            center /= polygonPoints.size();
+            
+            // Находим средний радиус
+            double avgRadius = 0;
+            for (const QPointF &point : polygonPoints)
+            {
+                avgRadius += QLineF(center, point).length();
+            }
+            avgRadius /= polygonPoints.size();
+            
+            return new Polygon(center, avgRadius, polygonPoints.size(), this);
         }
         return nullptr;
     }

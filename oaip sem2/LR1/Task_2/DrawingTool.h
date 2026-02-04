@@ -20,8 +20,7 @@ public:
         DrawPolygon,
         DrawStar,
         DrawRhombus,
-        DrawHexagon,
-        DrawCustomPolygon
+        DrawHexagon
     };
 
     explicit DrawingTool(QObject *parent = nullptr);
@@ -31,6 +30,7 @@ public:
     
     void startDrawing(const QPointF &startPoint);
     void updateDrawing(const QPointF &currentPoint);
+    void addPointToPolygon(const QPointF &point); // Новая функция
     Figure* finishDrawing();
     void cancelDrawing();
     

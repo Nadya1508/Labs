@@ -1407,6 +1407,7 @@ moc_MainWindow.cpp: MainWindow.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
 		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/QKeyEvent \
 		/opt/homebrew/lib/QtCore.framework/Headers/QList \
 		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		Figure.h \
@@ -1433,6 +1434,7 @@ moc_FigureCanvas.cpp: FigureCanvas.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
 		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/QKeyEvent \
 		/opt/homebrew/lib/QtCore.framework/Headers/QList \
 		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		Figure.h \
@@ -1828,6 +1830,7 @@ main.o: main.cpp MainWindow.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
 		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/QKeyEvent \
 		/opt/homebrew/lib/QtCore.framework/Headers/QList \
 		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		Figure.h \
@@ -1906,6 +1909,7 @@ MainWindow.o: MainWindow.cpp MainWindow.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
 		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/QKeyEvent \
 		/opt/homebrew/lib/QtCore.framework/Headers/QList \
 		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		Figure.h \
@@ -1955,6 +1959,7 @@ FigureCanvas.o: FigureCanvas.cpp FigureCanvas.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
 		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/QKeyEvent \
 		/opt/homebrew/lib/QtCore.framework/Headers/QList \
 		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
 		Figure.h \
@@ -1972,6 +1977,7 @@ FigureCanvas.o: FigureCanvas.cpp FigureCanvas.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
 		DrawingTool.h \
 		PolygonFigure.h \
+		Polygon.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainterPath \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainterpath.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QDebug \
@@ -2005,7 +2011,7 @@ DrawingTool.o: DrawingTool.cpp DrawingTool.h \
 		Rhombus.h \
 		Hexagon.h \
 		Star.h \
-		CustomFigure.h \
+		Polygon.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QLineF \
 		/opt/homebrew/lib/QtCore.framework/Headers/qline.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DrawingTool.o DrawingTool.cpp

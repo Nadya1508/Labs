@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QKeyEvent>  // Добавить
 #include <QList>
 #include "Figure.h"
 #include "DrawingTool.h"
@@ -76,6 +77,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;  // Добавить
     void resizeEvent(QResizeEvent *event) override;
 
 private:
