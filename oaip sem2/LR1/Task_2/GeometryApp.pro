@@ -21,7 +21,8 @@ SOURCES += \
     Hexagon.cpp \
     Rhombus.cpp \
     Quadrilateral.cpp \
-    CustomFigure.cpp
+    CustomFigure.cpp \
+    Ellipse.cpp 
 
 HEADERS += \
     MainWindow.h \
@@ -38,7 +39,8 @@ HEADERS += \
     Hexagon.h \
     Rhombus.h \
     Quadrilateral.h \
-    CustomFigure.h
+    CustomFigure.h \
+    Ellipse.h
 
 # Для Mac
 macx {
