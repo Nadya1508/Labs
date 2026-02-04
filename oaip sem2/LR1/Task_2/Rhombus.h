@@ -1,9 +1,9 @@
 #ifndef RHOMBUS_H
 #define RHOMBUS_H
 
-#include "Quadrilateral.h"
+#include "PolygonFigure.h"
 
-class Rhombus : public Quadrilateral
+class Rhombus : public PolygonFigure
 {
     Q_OBJECT
 

@@ -54,61 +54,65 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		MainWindow.cpp \
+		FigureCanvas.cpp \
+		DrawingTool.cpp \
 		Figure.cpp \
 		PolygonFigure.cpp \
 		Triangle.cpp \
-		Quadrilateral.cpp \
 		Rectangle.cpp \
 		Square.cpp \
-		Rhombus.cpp \
-		Hexagon.cpp \
-		Star.cpp \
 		Circle.cpp \
-		CustomFigure.cpp \
-		DrawingTool.cpp \
-		FigureCanvas.cpp moc_MainWindow.cpp \
+		Polygon.cpp \
+		Star.cpp \
+		Hexagon.cpp \
+		Rhombus.cpp \
+		Quadrilateral.cpp \
+		CustomFigure.cpp moc_MainWindow.cpp \
+		moc_FigureCanvas.cpp \
+		moc_DrawingTool.cpp \
 		moc_Figure.cpp \
 		moc_PolygonFigure.cpp \
 		moc_Triangle.cpp \
-		moc_Quadrilateral.cpp \
 		moc_Rectangle.cpp \
 		moc_Square.cpp \
-		moc_Rhombus.cpp \
-		moc_Hexagon.cpp \
-		moc_Star.cpp \
 		moc_Circle.cpp \
-		moc_CustomFigure.cpp \
-		moc_DrawingTool.cpp \
-		moc_FigureCanvas.cpp
+		moc_Polygon.cpp \
+		moc_Star.cpp \
+		moc_Hexagon.cpp \
+		moc_Rhombus.cpp \
+		moc_Quadrilateral.cpp \
+		moc_CustomFigure.cpp
 OBJECTS       = main.o \
 		MainWindow.o \
+		FigureCanvas.o \
+		DrawingTool.o \
 		Figure.o \
 		PolygonFigure.o \
 		Triangle.o \
-		Quadrilateral.o \
 		Rectangle.o \
 		Square.o \
-		Rhombus.o \
-		Hexagon.o \
-		Star.o \
 		Circle.o \
+		Polygon.o \
+		Star.o \
+		Hexagon.o \
+		Rhombus.o \
+		Quadrilateral.o \
 		CustomFigure.o \
-		DrawingTool.o \
-		FigureCanvas.o \
 		moc_MainWindow.o \
+		moc_FigureCanvas.o \
+		moc_DrawingTool.o \
 		moc_Figure.o \
 		moc_PolygonFigure.o \
 		moc_Triangle.o \
-		moc_Quadrilateral.o \
 		moc_Rectangle.o \
 		moc_Square.o \
-		moc_Rhombus.o \
-		moc_Hexagon.o \
-		moc_Star.o \
 		moc_Circle.o \
-		moc_CustomFigure.o \
-		moc_DrawingTool.o \
-		moc_FigureCanvas.o
+		moc_Polygon.o \
+		moc_Star.o \
+		moc_Hexagon.o \
+		moc_Rhombus.o \
+		moc_Quadrilateral.o \
+		moc_CustomFigure.o
 DIST          = /opt/homebrew/share/qt/mkspecs/features/spec_pre.prf \
 		/opt/homebrew/share/qt/mkspecs/features/device_config.prf \
 		/opt/homebrew/share/qt/mkspecs/common/unix.conf \
@@ -479,33 +483,35 @@ DIST          = /opt/homebrew/share/qt/mkspecs/features/spec_pre.prf \
 		/opt/homebrew/share/qt/mkspecs/features/yacc.prf \
 		/opt/homebrew/share/qt/mkspecs/features/lex.prf \
 		GeometryApp.pro MainWindow.h \
+		FigureCanvas.h \
+		DrawingTool.h \
 		Figure.h \
 		PolygonFigure.h \
 		Triangle.h \
-		Quadrilateral.h \
 		Rectangle.h \
 		Square.h \
-		Rhombus.h \
-		Hexagon.h \
-		Star.h \
 		Circle.h \
-		CustomFigure.h \
-		DrawingTool.h \
-		FigureCanvas.h main.cpp \
+		Polygon.h \
+		Star.h \
+		Hexagon.h \
+		Rhombus.h \
+		Quadrilateral.h \
+		CustomFigure.h main.cpp \
 		MainWindow.cpp \
+		FigureCanvas.cpp \
+		DrawingTool.cpp \
 		Figure.cpp \
 		PolygonFigure.cpp \
 		Triangle.cpp \
-		Quadrilateral.cpp \
 		Rectangle.cpp \
 		Square.cpp \
-		Rhombus.cpp \
-		Hexagon.cpp \
-		Star.cpp \
 		Circle.cpp \
-		CustomFigure.cpp \
-		DrawingTool.cpp \
-		FigureCanvas.cpp
+		Polygon.cpp \
+		Star.cpp \
+		Hexagon.cpp \
+		Rhombus.cpp \
+		Quadrilateral.cpp \
+		CustomFigure.cpp
 QMAKE_TARGET  = GeometryApp
 DESTDIR       = 
 TARGET        = GeometryApp.app/Contents/MacOS/GeometryApp
@@ -1302,8 +1308,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/homebrew/share/qt/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents MainWindow.h Figure.h PolygonFigure.h Triangle.h Quadrilateral.h Rectangle.h Square.h Rhombus.h Hexagon.h Star.h Circle.h CustomFigure.h DrawingTool.h FigureCanvas.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp MainWindow.cpp Figure.cpp PolygonFigure.cpp Triangle.cpp Quadrilateral.cpp Rectangle.cpp Square.cpp Rhombus.cpp Hexagon.cpp Star.cpp Circle.cpp CustomFigure.cpp DrawingTool.cpp FigureCanvas.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents MainWindow.h FigureCanvas.h DrawingTool.h Figure.h PolygonFigure.h Triangle.h Rectangle.h Square.h Circle.h Polygon.h Star.h Hexagon.h Rhombus.h Quadrilateral.h CustomFigure.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp MainWindow.cpp FigureCanvas.cpp DrawingTool.cpp Figure.cpp PolygonFigure.cpp Triangle.cpp Rectangle.cpp Square.cpp Circle.cpp Polygon.cpp Star.cpp Hexagon.cpp Rhombus.cpp Quadrilateral.cpp CustomFigure.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1338,9 +1344,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /opt/homebrew/share/qt/mkspecs/features/data/dummy.cpp
 	/Library/Developer/CommandLineTools/usr/bin/clang++ -pipe -stdlib=libc++ -Wall -Wextra -O2 -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.15 -Wall -Wextra -dM -E -o moc_predefs.h /opt/homebrew/share/qt/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_MainWindow.cpp moc_Figure.cpp moc_PolygonFigure.cpp moc_Triangle.cpp moc_Quadrilateral.cpp moc_Rectangle.cpp moc_Square.cpp moc_Rhombus.cpp moc_Hexagon.cpp moc_Star.cpp moc_Circle.cpp moc_CustomFigure.cpp moc_DrawingTool.cpp moc_FigureCanvas.cpp
+compiler_moc_header_make_all: moc_MainWindow.cpp moc_FigureCanvas.cpp moc_DrawingTool.cpp moc_Figure.cpp moc_PolygonFigure.cpp moc_Triangle.cpp moc_Rectangle.cpp moc_Square.cpp moc_Circle.cpp moc_Polygon.cpp moc_Star.cpp moc_Hexagon.cpp moc_Rhombus.cpp moc_Quadrilateral.cpp moc_CustomFigure.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_MainWindow.cpp moc_Figure.cpp moc_PolygonFigure.cpp moc_Triangle.cpp moc_Quadrilateral.cpp moc_Rectangle.cpp moc_Square.cpp moc_Rhombus.cpp moc_Hexagon.cpp moc_Star.cpp moc_Circle.cpp moc_CustomFigure.cpp moc_DrawingTool.cpp moc_FigureCanvas.cpp
+	-$(DEL_FILE) moc_MainWindow.cpp moc_FigureCanvas.cpp moc_DrawingTool.cpp moc_Figure.cpp moc_PolygonFigure.cpp moc_Triangle.cpp moc_Rectangle.cpp moc_Square.cpp moc_Circle.cpp moc_Polygon.cpp moc_Star.cpp moc_Hexagon.cpp moc_Rhombus.cpp moc_Quadrilateral.cpp moc_CustomFigure.cpp
 moc_MainWindow.cpp: MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QMainWindow \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmainwindow.h \
@@ -1419,6 +1425,56 @@ moc_MainWindow.cpp: MainWindow.h \
 		/opt/homebrew/share/qt/libexec/moc
 	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib MainWindow.h -o moc_MainWindow.cpp
 
+moc_FigureCanvas.cpp: FigureCanvas.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		DrawingTool.h \
+		moc_predefs.h \
+		/opt/homebrew/share/qt/libexec/moc
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib FigureCanvas.h -o moc_FigureCanvas.cpp
+
+moc_DrawingTool.cpp: DrawingTool.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		Figure.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		moc_predefs.h \
+		/opt/homebrew/share/qt/libexec/moc
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib DrawingTool.h -o moc_DrawingTool.cpp
+
 moc_Figure.cpp: Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
 		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
@@ -1485,29 +1541,6 @@ moc_Triangle.cpp: Triangle.h \
 		/opt/homebrew/share/qt/libexec/moc
 	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Triangle.h -o moc_Triangle.cpp
 
-moc_Quadrilateral.cpp: Quadrilateral.h \
-		PolygonFigure.h \
-		Figure.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
-		moc_predefs.h \
-		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Quadrilateral.h -o moc_Quadrilateral.cpp
-
 moc_Rectangle.cpp: Rectangle.h \
 		Quadrilateral.h \
 		PolygonFigure.h \
@@ -1557,9 +1590,7 @@ moc_Square.cpp: Square.h \
 		/opt/homebrew/share/qt/libexec/moc
 	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Square.h -o moc_Square.cpp
 
-moc_Rhombus.cpp: Rhombus.h \
-		Quadrilateral.h \
-		PolygonFigure.h \
+moc_Circle.cpp: Circle.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
 		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
@@ -1579,9 +1610,9 @@ moc_Rhombus.cpp: Rhombus.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Rhombus.h -o moc_Rhombus.cpp
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Circle.h -o moc_Circle.cpp
 
-moc_Hexagon.cpp: Hexagon.h \
+moc_Polygon.cpp: Polygon.h \
 		PolygonFigure.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
@@ -1602,7 +1633,7 @@ moc_Hexagon.cpp: Hexagon.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Hexagon.h -o moc_Hexagon.cpp
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Polygon.h -o moc_Polygon.cpp
 
 moc_Star.cpp: Star.h \
 		PolygonFigure.h \
@@ -1627,7 +1658,8 @@ moc_Star.cpp: Star.h \
 		/opt/homebrew/share/qt/libexec/moc
 	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Star.h -o moc_Star.cpp
 
-moc_Circle.cpp: Circle.h \
+moc_Hexagon.cpp: Hexagon.h \
+		PolygonFigure.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
 		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
@@ -1647,7 +1679,53 @@ moc_Circle.cpp: Circle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Circle.h -o moc_Circle.cpp
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Hexagon.h -o moc_Hexagon.cpp
+
+moc_Rhombus.cpp: Rhombus.h \
+		PolygonFigure.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		moc_predefs.h \
+		/opt/homebrew/share/qt/libexec/moc
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Rhombus.h -o moc_Rhombus.cpp
+
+moc_Quadrilateral.cpp: Quadrilateral.h \
+		PolygonFigure.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		moc_predefs.h \
+		/opt/homebrew/share/qt/libexec/moc
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib Quadrilateral.h -o moc_Quadrilateral.cpp
 
 moc_CustomFigure.cpp: CustomFigure.h \
 		PolygonFigure.h \
@@ -1671,56 +1749,6 @@ moc_CustomFigure.cpp: CustomFigure.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
 	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib CustomFigure.h -o moc_CustomFigure.cpp
-
-moc_DrawingTool.cpp: DrawingTool.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		Figure.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
-		moc_predefs.h \
-		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib DrawingTool.h -o moc_DrawingTool.cpp
-
-moc_FigureCanvas.cpp: FigureCanvas.h \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
-		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		Figure.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
-		DrawingTool.h \
-		moc_predefs.h \
-		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/nadezdasedelnik/Documents/553503/oaip sem2/LR1/Task_2' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/17/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/opt/homebrew/lib FigureCanvas.h -o moc_FigureCanvas.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1897,8 +1925,6 @@ MainWindow.o: MainWindow.cpp MainWindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QHBoxLayout \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QMessageBox \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmessagebox.h \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/QFileDialog \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/qfiledialog.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QDateTime \
 		/opt/homebrew/lib/QtCore.framework/Headers/qdatetime.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QRandomGenerator \
@@ -1918,8 +1944,71 @@ MainWindow.o: MainWindow.cpp MainWindow.h \
 		Hexagon.h \
 		Star.h \
 		Circle.h \
-		CustomFigure.h
+		Polygon.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MainWindow.o MainWindow.cpp
+
+FigureCanvas.o: FigureCanvas.cpp FigureCanvas.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
+		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		DrawingTool.h \
+		PolygonFigure.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainterPath \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainterpath.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QDebug \
+		/opt/homebrew/lib/QtCore.framework/Headers/qdebug.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o FigureCanvas.o FigureCanvas.cpp
+
+DrawingTool.o: DrawingTool.cpp DrawingTool.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		Figure.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
+		Triangle.h \
+		PolygonFigure.h \
+		Rectangle.h \
+		Quadrilateral.h \
+		Square.h \
+		Circle.h \
+		Rhombus.h \
+		Hexagon.h \
+		Star.h \
+		CustomFigure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QLineF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qline.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DrawingTool.o DrawingTool.cpp
 
 Figure.o: Figure.cpp Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
@@ -1983,27 +2072,6 @@ Triangle.o: Triangle.cpp Triangle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Triangle.o Triangle.cpp
 
-Quadrilateral.o: Quadrilateral.cpp Quadrilateral.h \
-		PolygonFigure.h \
-		Figure.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Quadrilateral.o Quadrilateral.cpp
-
 Rectangle.o: Rectangle.cpp Rectangle.h \
 		Quadrilateral.h \
 		PolygonFigure.h \
@@ -2049,9 +2117,7 @@ Square.o: Square.cpp Square.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Square.o Square.cpp
 
-Rhombus.o: Rhombus.cpp Rhombus.h \
-		Quadrilateral.h \
-		PolygonFigure.h \
+Circle.o: Circle.cpp Circle.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
 		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
@@ -2069,9 +2135,9 @@ Rhombus.o: Rhombus.cpp Rhombus.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Rhombus.o Rhombus.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Circle.o Circle.cpp
 
-Hexagon.o: Hexagon.cpp Hexagon.h \
+Polygon.o: Polygon.cpp Polygon.h \
 		PolygonFigure.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
@@ -2090,7 +2156,7 @@ Hexagon.o: Hexagon.cpp Hexagon.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Hexagon.o Hexagon.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Polygon.o Polygon.cpp
 
 Star.o: Star.cpp Star.h \
 		PolygonFigure.h \
@@ -2113,7 +2179,8 @@ Star.o: Star.cpp Star.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Star.o Star.cpp
 
-Circle.o: Circle.cpp Circle.h \
+Hexagon.o: Hexagon.cpp Hexagon.h \
+		PolygonFigure.h \
 		Figure.h \
 		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
 		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
@@ -2131,7 +2198,49 @@ Circle.o: Circle.cpp Circle.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Circle.o Circle.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Hexagon.o Hexagon.cpp
+
+Rhombus.o: Rhombus.cpp Rhombus.h \
+		PolygonFigure.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Rhombus.o Rhombus.cpp
+
+Quadrilateral.o: Quadrilateral.cpp Quadrilateral.h \
+		PolygonFigure.h \
+		Figure.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
+		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
+		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QList \
+		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
+		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
+		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
+		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
+		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Quadrilateral.o Quadrilateral.cpp
 
 CustomFigure.o: CustomFigure.cpp CustomFigure.h \
 		PolygonFigure.h \
@@ -2154,71 +2263,14 @@ CustomFigure.o: CustomFigure.cpp CustomFigure.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CustomFigure.o CustomFigure.cpp
 
-DrawingTool.o: DrawingTool.cpp DrawingTool.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		Figure.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
-		Triangle.h \
-		PolygonFigure.h \
-		Rectangle.h \
-		Quadrilateral.h \
-		Square.h \
-		Circle.h \
-		Rhombus.h \
-		Hexagon.h \
-		Star.h \
-		CustomFigure.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QLineF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qline.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DrawingTool.o DrawingTool.cpp
-
-FigureCanvas.o: FigureCanvas.cpp FigureCanvas.h \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/qwidget.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QMouseEvent \
-		/opt/homebrew/lib/QtGui.framework/Headers/qevent.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QWheelEvent \
-		/opt/homebrew/lib/QtCore.framework/Headers/QList \
-		/opt/homebrew/lib/QtCore.framework/Headers/qlist.h \
-		Figure.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QObject \
-		/opt/homebrew/lib/QtCore.framework/Headers/qobject.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QPointF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qpoint.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QRectF \
-		/opt/homebrew/lib/QtCore.framework/Headers/qrect.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
-		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QColor \
-		/opt/homebrew/lib/QtGui.framework/Headers/qcolor.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QTransform \
-		/opt/homebrew/lib/QtGui.framework/Headers/qtransform.h \
-		DrawingTool.h \
-		PolygonFigure.h \
-		/opt/homebrew/lib/QtGui.framework/Headers/QPainterPath \
-		/opt/homebrew/lib/QtGui.framework/Headers/qpainterpath.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/QDebug \
-		/opt/homebrew/lib/QtCore.framework/Headers/qdebug.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o FigureCanvas.o FigureCanvas.cpp
-
 moc_MainWindow.o: moc_MainWindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MainWindow.o moc_MainWindow.cpp
+
+moc_FigureCanvas.o: moc_FigureCanvas.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_FigureCanvas.o moc_FigureCanvas.cpp
+
+moc_DrawingTool.o: moc_DrawingTool.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_DrawingTool.o moc_DrawingTool.cpp
 
 moc_Figure.o: moc_Figure.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Figure.o moc_Figure.cpp
@@ -2229,35 +2281,32 @@ moc_PolygonFigure.o: moc_PolygonFigure.cpp
 moc_Triangle.o: moc_Triangle.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Triangle.o moc_Triangle.cpp
 
-moc_Quadrilateral.o: moc_Quadrilateral.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Quadrilateral.o moc_Quadrilateral.cpp
-
 moc_Rectangle.o: moc_Rectangle.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Rectangle.o moc_Rectangle.cpp
 
 moc_Square.o: moc_Square.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Square.o moc_Square.cpp
 
-moc_Rhombus.o: moc_Rhombus.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Rhombus.o moc_Rhombus.cpp
+moc_Circle.o: moc_Circle.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Circle.o moc_Circle.cpp
 
-moc_Hexagon.o: moc_Hexagon.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Hexagon.o moc_Hexagon.cpp
+moc_Polygon.o: moc_Polygon.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Polygon.o moc_Polygon.cpp
 
 moc_Star.o: moc_Star.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Star.o moc_Star.cpp
 
-moc_Circle.o: moc_Circle.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Circle.o moc_Circle.cpp
+moc_Hexagon.o: moc_Hexagon.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Hexagon.o moc_Hexagon.cpp
+
+moc_Rhombus.o: moc_Rhombus.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Rhombus.o moc_Rhombus.cpp
+
+moc_Quadrilateral.o: moc_Quadrilateral.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Quadrilateral.o moc_Quadrilateral.cpp
 
 moc_CustomFigure.o: moc_CustomFigure.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_CustomFigure.o moc_CustomFigure.cpp
-
-moc_DrawingTool.o: moc_DrawingTool.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_DrawingTool.o moc_DrawingTool.cpp
-
-moc_FigureCanvas.o: moc_FigureCanvas.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_FigureCanvas.o moc_FigureCanvas.cpp
 
 ####### Install
 

@@ -17,9 +17,6 @@
 #include <QApplication>
 #include <QPainter>
 
-// Временно закомментируем QFileDialog чтобы избежать ошибок
-// #include <QFileDialog>
-
 // Включаем все классы фигур
 #include "Triangle.h"
 #include "Rectangle.h"
@@ -28,8 +25,7 @@
 #include "Hexagon.h"
 #include "Star.h"
 #include "Circle.h"
-#include "CustomFigure.h"
-#include "PolygonFigure.h"
+#include "Polygon.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -1031,7 +1027,6 @@ void MainWindow::newFile()
 
 void MainWindow::openFile()
 {
-    // Временно отключено из-за проблем с std::filesystem в старых версиях macOS
     QMessageBox::information(this, "Open", 
                            "File open feature is temporarily disabled.\n"
                            "Use 'Create Figure' button to add figures.");
@@ -1182,7 +1177,7 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
     }
     else if (type == "Polygon")
     {
-        figure = new CustomFigure(center, 65, 7, this);
+        figure = new Polygon(center, 65, 7, this);  // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
     }
     
     if (figure)
@@ -1420,11 +1415,12 @@ void MainWindow::updateParameterControls()
         }
     }
     
-    CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure);
-    if (custom)
+    // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
+    Polygon *polygonFigure = dynamic_cast<Polygon*>(m_currentFigure);
+    if (polygonFigure)
     {
         m_paramTabs->setCurrentWidget(m_polygonParams);
-        m_sidesSpinBox->setValue(custom->sides());
+        m_sidesSpinBox->setValue(polygonFigure->sides());
     }
     
     // Update vertex control
@@ -1796,10 +1792,11 @@ void MainWindow::updateSpecificParameter()
         }
     }
     
-    CustomFigure *custom = dynamic_cast<CustomFigure*>(m_currentFigure);
-    if (custom)
+    // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
+    Polygon *polygonFigure = dynamic_cast<Polygon*>(m_currentFigure);
+    if (polygonFigure)
     {
-        custom->setSides(m_sidesSpinBox->value());
+        polygonFigure->setSides(m_sidesSpinBox->value());
     }
     
     updateFigureInfo();
@@ -1977,7 +1974,7 @@ void MainWindow::showFigureStatistics()
         else if (type == "Rhombus") rhombusCount++;
         else if (type == "Hexagon") hexagonCount++;
         else if (type == "Star") starCount++;
-        else if (type == "Polygon" || type == "CustomFigure") polygonCount++;
+        else if (type == "Polygon") polygonCount++;  // ИЗМЕНЕНИЕ: Убрали CustomFigure
     }
     
     QString stats = QString(

@@ -12,6 +12,9 @@ class PolygonFigure : public Figure
 public:
     explicit PolygonFigure(QObject *parent = nullptr);
     
+    // Добавляем виртуальный метод type() в базовый класс
+    QString type() const override { return "PolygonFigure"; }
+    
     double area() const override;
     double perimeter() const override;
     QPointF centerOfMass() const override;

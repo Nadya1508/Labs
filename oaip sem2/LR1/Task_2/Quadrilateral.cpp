@@ -6,11 +6,6 @@ Quadrilateral::Quadrilateral(QObject *parent)
     setPoints(QPointF(0, 0), QPointF(100, 0), QPointF(100, 100), QPointF(0, 100));
 }
 
-QString Quadrilateral::type() const 
-{ 
-    return "Quadrilateral"; 
-}
-
 void Quadrilateral::setPoints(const QPointF &p1, const QPointF &p2, 
                              const QPointF &p3, const QPointF &p4)
 {

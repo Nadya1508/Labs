@@ -1,12 +1,12 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'Rhombus.h'
+** Meta object code from reading C++ file 'Polygon.h'
 **
 ** Created by: The Qt Meta Object Compiler version 69 (Qt 6.10.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "Rhombus.h"
+#include "Polygon.h"
 #include <QtCore/qmetatype.h>
 
 #include <QtCore/qtmochelpers.h>
@@ -16,7 +16,7 @@
 
 #include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'Rhombus.h' doesn't include <QObject>."
+#error "The header file 'Polygon.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 69
 #error "This file was generated using the moc from 6.10.1. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -31,14 +31,14 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 QT_WARNING_DISABLE_GCC("-Wuseless-cast")
 namespace {
-struct qt_meta_tag_ZN7RhombusE_t {};
+struct qt_meta_tag_ZN7PolygonE_t {};
 } // unnamed namespace
 
-template <> constexpr inline auto Rhombus::qt_create_metaobjectdata<qt_meta_tag_ZN7RhombusE_t>()
+template <> constexpr inline auto Polygon::qt_create_metaobjectdata<qt_meta_tag_ZN7PolygonE_t>()
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "Rhombus"
+        "Polygon"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -47,42 +47,42 @@ template <> constexpr inline auto Rhombus::qt_create_metaobjectdata<qt_meta_tag_
     };
     QtMocHelpers::UintData qt_enums {
     };
-    return QtMocHelpers::metaObjectData<Rhombus, qt_meta_tag_ZN7RhombusE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+    return QtMocHelpers::metaObjectData<Polygon, qt_meta_tag_ZN7PolygonE_t>(QMC::MetaObjectFlag{}, qt_stringData,
             qt_methods, qt_properties, qt_enums);
 }
-Q_CONSTINIT const QMetaObject Rhombus::staticMetaObject = { {
+Q_CONSTINIT const QMetaObject Polygon::staticMetaObject = { {
     QMetaObject::SuperData::link<PolygonFigure::staticMetaObject>(),
-    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7RhombusE_t>.stringdata,
-    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7RhombusE_t>.data,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7PolygonE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7PolygonE_t>.data,
     qt_static_metacall,
     nullptr,
-    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN7RhombusE_t>.metaTypes,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN7PolygonE_t>.metaTypes,
     nullptr
 } };
 
-void Rhombus::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void Polygon::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    auto *_t = static_cast<Rhombus *>(_o);
+    auto *_t = static_cast<Polygon *>(_o);
     (void)_t;
     (void)_c;
     (void)_id;
     (void)_a;
 }
 
-const QMetaObject *Rhombus::metaObject() const
+const QMetaObject *Polygon::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *Rhombus::qt_metacast(const char *_clname)
+void *Polygon::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7RhombusE_t>.strings))
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN7PolygonE_t>.strings))
         return static_cast<void*>(this);
     return PolygonFigure::qt_metacast(_clname);
 }
 
-int Rhombus::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int Polygon::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = PolygonFigure::qt_metacall(_c, _id, _a);
     return _id;
