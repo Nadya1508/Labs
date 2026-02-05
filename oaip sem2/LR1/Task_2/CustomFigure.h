@@ -24,4 +24,4 @@ private:
     int m_sides;
 };
 
-#endif // CUSTOMFIGURE_H
+#endif 

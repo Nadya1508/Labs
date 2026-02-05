@@ -1,0 +1,66 @@
+{
+    "configurations": [
+        {
+            "name": "Mac Qt6 Homebrew",
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks",
+                "/opt/homebrew/Frameworks"
+            ],
+            "includePath": [
+                "${workspaceFolder}/**",
+                
+                // Основные пути к Qt6
+                "/opt/homebrew/include",
+                "/opt/homebrew/opt/qt@6/include",
+                
+                // Конкретные пути к основным модулям Qt
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtCore",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtGui",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtWidgets",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtNetwork",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtConcurrent",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtSql",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtTest",
+                
+                // Пути для версионных заголовков
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtCore/6.10.1",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtCore/6.10.1/QtCore",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtGui/6.10.1",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/include/QtGui/6.10.1/QtGui",
+                
+                // Другие модули Qt (если используете)
+                "/opt/homebrew/Cellar/qtserialport/6.10.1/include",
+                "/opt/homebrew/Cellar/qtsvg/6.10.1/include",
+                "/opt/homebrew/Cellar/qtdeclarative/6.10.1/include"
+            ],
+            "defines": [
+                "QT_CORE_LIB",
+                "QT_GUI_LIB", 
+                "QT_WIDGETS_LIB",
+                "QT_NETWORK_LIB",
+                "QT_CONCURRENT_LIB",
+                "QT_SQL_LIB",
+                "QT_TEST_LIB",
+                "QT_VERSION=0x060A01",
+                "QT_VERSION_STR=\"6.10.1\""
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/opt/homebrew/Cellar/qtbase/6.10.1/include",
+                    "/opt/homebrew/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}

@@ -17,4 +17,4 @@ public:
     QList<QPointF> getPoints() const;
 };
 
-#endif // TRIANGLE_H
+#endif 

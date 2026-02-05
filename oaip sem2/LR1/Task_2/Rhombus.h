@@ -21,4 +21,4 @@ public:
     void setDiagonal2(double d2);
 };
 
-#endif // RHOMBUS_H
+#endif 

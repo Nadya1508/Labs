@@ -59,7 +59,6 @@ QPointF PolygonFigure::centerOfMass() const
     if (m_vertices.size() == 2)
         return (m_vertices[0] + m_vertices[1]) / 2;
     
-    // Используем формулу для центра масс многоугольника через триангуляцию
     double totalArea = 0.0;
     double cx = 0.0;
     double cy = 0.0;
@@ -81,7 +80,6 @@ QPointF PolygonFigure::centerOfMass() const
     
     if (totalArea == 0.0)
     {
-        // Если площадь нулевая (все точки на одной линии), возвращаем среднее арифметическое
         double sumX = 0.0, sumY = 0.0;
         for (const QPointF &vertex : m_vertices)
         {
@@ -109,7 +107,6 @@ QRectF PolygonFigure::boundingRect() const
         rect.setBottom(qMax(rect.bottom(), point.y()));
     }
     
-    // Добавим небольшой отступ
     rect.adjust(-5, -5, 5, 5);
     return rect;
 }
@@ -147,7 +144,6 @@ QList<QList<QPointF>> PolygonFigure::triangulate() const
     if (m_vertices.size() < 3)
         return triangles;
     
-    // Простая триангуляция для выпуклых полигонов (метод веера)
     QPointF center;
     for (const QPointF &vertex : m_vertices)
     {

@@ -18,4 +18,4 @@ public:
     void setSide(double side);
 };
 
-#endif // SQUARE_H
+#endif 

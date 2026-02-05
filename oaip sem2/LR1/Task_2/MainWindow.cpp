@@ -17,7 +17,6 @@
 #include <QApplication>
 #include <QPainter>
 
-// Включаем все классы фигур
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "Square.h"
@@ -42,20 +41,17 @@ MainWindow::MainWindow(QWidget *parent)
     setupStatusBar();
     createConnections();
     
-    // Создаем несколько тестовых фигур
     createFigureByType("Triangle", QPointF(200, 200));
     createFigureByType("Circle", QPointF(400, 300));
     createFigureByType("Square", QPointF(300, 500));
     createFigureByType("Ellipse", QPointF(500, 400));
     
-    // Обновляем UI
     updateFigureList();
     if (m_figureList->count() > 0)
     {
         m_figureList->setCurrentRow(0);
     }
     
-    // Таймер обновления
     m_updateTimer = new QTimer(this);
     m_updateTimer->setInterval(100);
     connect(m_updateTimer, &QTimer::timeout, m_canvas, qOverload<>(&FigureCanvas::update));
@@ -76,7 +72,6 @@ void MainWindow::setupUI()
 
 void MainWindow::setupMenuBar()
 {
-    // File menu
     m_fileMenu = menuBar()->addMenu("&File");
     
     QAction *newAction = new QAction("&New Project", this);
@@ -112,7 +107,6 @@ void MainWindow::setupMenuBar()
     connect(exitAction, &QAction::triggered, this, &MainWindow::exitApplication);
     m_fileMenu->addAction(exitAction);
     
-    // Edit menu
     m_editMenu = menuBar()->addMenu("&Edit");
     
     QAction *copyAction = new QAction("&Copy", this);
@@ -142,7 +136,6 @@ void MainWindow::setupMenuBar()
     connect(deselectAllAction, &QAction::triggered, this, &MainWindow::deselectAll);
     m_editMenu->addAction(deselectAllAction);
     
-    // View menu
     m_viewMenu = menuBar()->addMenu("&View");
     
     QAction *zoomInAction = new QAction("Zoom &In", this);
@@ -216,7 +209,6 @@ void MainWindow::setupMenuBar()
     connect(fullScreenAction, &QAction::triggered, this, &MainWindow::showFullScreen);
     m_viewMenu->addAction(fullScreenAction);
     
-    // Figure menu
     m_figureMenu = menuBar()->addMenu("&Figure");
     
     QStringList figureTypes = {"Triangle", "Rectangle", "Square", "Rhombus", 
@@ -237,7 +229,6 @@ void MainWindow::setupMenuBar()
     connect(clearAction, &QAction::triggered, this, &MainWindow::clearAllFigures);
     m_figureMenu->addAction(clearAction);
     
-    // Drawing menu
     m_drawingMenu = menuBar()->addMenu("&Drawing");
     
     m_drawTriangleAction = new QAction("Draw &Triangle", this);
@@ -301,7 +292,6 @@ void MainWindow::setupMenuBar()
     connect(m_stopDrawingAction, &QAction::triggered, this, &MainWindow::stopDrawingMode);
     m_drawingMenu->addAction(m_stopDrawingAction);
     
-    // Transform menu
     m_transformMenu = menuBar()->addMenu("&Transform");
     
     QAction *applyTransformAction = new QAction("&Apply Transformations", this);
@@ -324,7 +314,6 @@ void MainWindow::setupMenuBar()
     connect(calculatePerimeterAction, &QAction::triggered, this, &MainWindow::calculateTotalPerimeter);
     m_transformMenu->addAction(calculatePerimeterAction);
     
-    // Help menu
     m_helpMenu = menuBar()->addMenu("&Help");
     
     QAction *helpAction = new QAction("&Help Contents", this);
@@ -346,11 +335,9 @@ void MainWindow::setupMenuBar()
 
 void MainWindow::setupToolBar()
 {
-    // Main toolbar
     m_mainToolBar = addToolBar("Main Toolbar");
     m_mainToolBar->setMovable(false);
     
-    // Кнопки трансформации
     QAction *moveAction = new QAction("Move", this);
     moveAction->setToolTip("Move selected figure");
     connect(moveAction, &QAction::triggered, this, [this]() {
@@ -388,7 +375,6 @@ void MainWindow::setupToolBar()
     
     m_mainToolBar->addSeparator();
     
-    // Кнопки управления
     QAction *zoomInAction = new QAction("Zoom In", this);
     connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn);
     m_mainToolBar->addAction(zoomInAction);
@@ -401,11 +387,9 @@ void MainWindow::setupToolBar()
     connect(resetViewAction, &QAction::triggered, this, &MainWindow::resetView);
     m_mainToolBar->addAction(resetViewAction);
     
-    // Drawing toolbar
     m_drawingToolBar = addToolBar("Drawing Tools");
     m_drawingToolBar->setMovable(false);
     
-    // Drawing mode buttons
     m_drawTriangleAction->setToolTip("Draw Triangle (Alt+T)");
     m_drawingToolBar->addAction(m_drawTriangleAction);
     
@@ -438,7 +422,6 @@ void MainWindow::setupToolBar()
     m_stopDrawingAction->setToolTip("Stop Drawing (Esc)");
     m_drawingToolBar->addAction(m_stopDrawingAction);
     
-    // Create action group for exclusive drawing modes
     QActionGroup *drawingGroup = new QActionGroup(this);
     drawingGroup->addAction(m_drawTriangleAction);
     drawingGroup->addAction(m_drawRectangleAction);
@@ -468,14 +451,12 @@ void MainWindow::setupStatusBar()
 
 void MainWindow::setupDockWidgets()
 {
-    // Figures dock (left)
     m_figuresDock = new QDockWidget("Figures", this);
     m_figuresDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     
     QWidget *figuresWidget = new QWidget();
     QVBoxLayout *figuresLayout = new QVBoxLayout(figuresWidget);
     
-    // Figure creation controls
     QGroupBox *creationGroup = new QGroupBox("Create Figure");
     QVBoxLayout *creationLayout = new QVBoxLayout();
     
@@ -492,7 +473,6 @@ void MainWindow::setupDockWidgets()
     creationGroup->setLayout(creationLayout);
     figuresLayout->addWidget(creationGroup);
     
-    // Drawing controls
     m_drawingControlsGroup = new QGroupBox("Drawing Mode");
     QVBoxLayout *drawingLayout = new QVBoxLayout();
     
@@ -539,7 +519,6 @@ void MainWindow::setupDockWidgets()
     m_drawingButtonGroup->addButton(m_drawPolygonRadio, 9);
     drawingLayout->addWidget(m_drawPolygonRadio);
     
-    // Подключение сигнала
     connect(m_drawingButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
             this, [this](QAbstractButton *button) {
         int id = m_drawingButtonGroup->id(button);
@@ -561,7 +540,6 @@ void MainWindow::setupDockWidgets()
     m_drawingControlsGroup->setLayout(drawingLayout);
     figuresLayout->addWidget(m_drawingControlsGroup);
     
-    // Figure list
     QGroupBox *listGroup = new QGroupBox("Figure List");
     QVBoxLayout *listLayout = new QVBoxLayout();
     
@@ -593,14 +571,12 @@ void MainWindow::setupDockWidgets()
     m_figuresDock->setWidget(figuresWidget);
     addDockWidget(Qt::LeftDockWidgetArea, m_figuresDock);
     
-    // Properties dock (right)
     m_propertiesDock = new QDockWidget("Properties", this);
     m_propertiesDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     
     QWidget *propertiesWidget = new QWidget();
     QVBoxLayout *propertiesLayout = new QVBoxLayout(propertiesWidget);
     
-    // Style properties
     QGroupBox *styleGroup = new QGroupBox("Style");
     QFormLayout *styleLayout = new QFormLayout();
     
@@ -624,13 +600,11 @@ void MainWindow::setupDockWidgets()
     styleGroup->setLayout(styleLayout);
     propertiesLayout->addWidget(styleGroup);
     
-    // Specific parameters (tabbed)
     QGroupBox *paramsGroup = new QGroupBox("Figure Parameters");
     QVBoxLayout *paramsLayout = new QVBoxLayout();
     
     m_paramTabs = new QTabWidget();
     
-    // Circle parameters
     m_circleParams = new QWidget();
     QFormLayout *circleLayout = new QFormLayout(m_circleParams);
     m_radiusSpinBox = new QDoubleSpinBox();
@@ -640,7 +614,6 @@ void MainWindow::setupDockWidgets()
     circleLayout->addRow("Radius:", m_radiusSpinBox);
     m_paramTabs->addTab(m_circleParams, "Circle");
     
-    // Ellipse parameters
     m_ellipseParams = new QWidget();
     QFormLayout *ellipseLayout = new QFormLayout(m_ellipseParams);
     QDoubleSpinBox *ellipseRadiusXSpinBox = new QDoubleSpinBox();
@@ -656,7 +629,6 @@ void MainWindow::setupDockWidgets()
     ellipseLayout->addRow("Radius Y:", ellipseRadiusYSpinBox);
     m_paramTabs->addTab(m_ellipseParams, "Ellipse");
     
-    // Rectangle parameters
     m_rectangleParams = new QWidget();
     QFormLayout *rectLayout = new QFormLayout(m_rectangleParams);
     m_widthSpinBox = new QDoubleSpinBox();
@@ -672,7 +644,6 @@ void MainWindow::setupDockWidgets()
     rectLayout->addRow("Height:", m_heightSpinBox);
     m_paramTabs->addTab(m_rectangleParams, "Rectangle");
     
-    // Square parameters
     m_squareParams = new QWidget();
     QFormLayout *squareLayout = new QFormLayout(m_squareParams);
     m_sideSpinBox = new QDoubleSpinBox();
@@ -682,7 +653,6 @@ void MainWindow::setupDockWidgets()
     squareLayout->addRow("Side:", m_sideSpinBox);
     m_paramTabs->addTab(m_squareParams, "Square");
     
-    // Rhombus parameters
     m_rhombusParams = new QWidget();
     QFormLayout *rhombusLayout = new QFormLayout(m_rhombusParams);
     m_diag1SpinBox = new QDoubleSpinBox();
@@ -698,7 +668,6 @@ void MainWindow::setupDockWidgets()
     rhombusLayout->addRow("Diagonal 2:", m_diag2SpinBox);
     m_paramTabs->addTab(m_rhombusParams, "Rhombus");
     
-    // Polygon parameters
     m_polygonParams = new QWidget();
     QFormLayout *polygonLayout = new QFormLayout(m_polygonParams);
     m_sidesSpinBox = new QSpinBox();
@@ -707,7 +676,6 @@ void MainWindow::setupDockWidgets()
     polygonLayout->addRow("Sides:", m_sidesSpinBox);
     m_paramTabs->addTab(m_polygonParams, "Polygon");
     
-    // Star parameters
     m_starParams = new QWidget();
     QFormLayout *starLayout = new QFormLayout(m_starParams);
     m_starTypeCombo = new QComboBox();
@@ -727,7 +695,6 @@ void MainWindow::setupDockWidgets()
     starLayout->addRow("Inner Radius:", m_innerRadiusSpinBox);
     m_paramTabs->addTab(m_starParams, "Star");
     
-    // Triangle parameters
     m_triangleParams = new QWidget();
     QFormLayout *triangleLayout = new QFormLayout(m_triangleParams);
     m_triangleBaseSpinBox = new QDoubleSpinBox();
@@ -743,7 +710,6 @@ void MainWindow::setupDockWidgets()
     triangleLayout->addRow("Height:", m_triangleHeightSpinBox);
     m_paramTabs->addTab(m_triangleParams, "Triangle");
     
-    // Hexagon parameters
     m_hexagonParams = new QWidget();
     QFormLayout *hexagonLayout = new QFormLayout(m_hexagonParams);
     QDoubleSpinBox *hexagonRadiusSpinBox = new QDoubleSpinBox();
@@ -763,7 +729,6 @@ void MainWindow::setupDockWidgets()
     paramsGroup->setLayout(paramsLayout);
     propertiesLayout->addWidget(paramsGroup);
     
-    // Vertex control
     m_vertexGroup = new QGroupBox("Vertex Control");
     QFormLayout *vertexLayout = new QFormLayout();
     
@@ -789,7 +754,6 @@ void MainWindow::setupDockWidgets()
     m_vertexGroup->setLayout(vertexLayout);
     propertiesLayout->addWidget(m_vertexGroup);
     
-    // Center control
     QGroupBox *centerGroup = new QGroupBox("Center Control");
     QFormLayout *centerLayout = new QFormLayout();
     
@@ -814,14 +778,12 @@ void MainWindow::setupDockWidgets()
     m_propertiesDock->setWidget(propertiesWidget);
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
     
-    // Transformations dock (right, below properties)
     m_transformationsDock = new QDockWidget("Transformations", this);
     m_transformationsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     
     QWidget *transformWidget = new QWidget();
     QVBoxLayout *transformLayout = new QVBoxLayout(transformWidget);
     
-    // Move transformation
     QGroupBox *moveGroup = new QGroupBox("Move");
     QFormLayout *moveForm = new QFormLayout();
     m_moveXSpinBox = new QDoubleSpinBox();
@@ -838,7 +800,6 @@ void MainWindow::setupDockWidgets()
     moveGroup->setLayout(moveForm);
     transformLayout->addWidget(moveGroup);
     
-    // Rotate transformation
     QGroupBox *rotateGroup = new QGroupBox("Rotate");
     QFormLayout *rotateForm = new QFormLayout();
     m_rotateAngleSpinBox = new QDoubleSpinBox();
@@ -857,7 +818,6 @@ void MainWindow::setupDockWidgets()
     rotateGroup->setLayout(rotateForm);
     transformLayout->addWidget(rotateGroup);
     
-    // Scale transformation
     QGroupBox *scaleGroup = new QGroupBox("Scale");
     QFormLayout *scaleForm = new QFormLayout();
     m_scaleFactorSpinBox = new QDoubleSpinBox();
@@ -876,7 +836,6 @@ void MainWindow::setupDockWidgets()
     scaleGroup->setLayout(scaleForm);
     transformLayout->addWidget(scaleGroup);
     
-    // Transformation buttons
     QHBoxLayout *transformButtonsLayout = new QHBoxLayout();
     QPushButton *applyButton = new QPushButton("Apply");
     applyButton->setStyleSheet("QPushButton { padding: 8px; font-weight: bold; }");
@@ -889,7 +848,6 @@ void MainWindow::setupDockWidgets()
     
     transformLayout->addLayout(transformButtonsLayout);
     
-    // Animation progress
     m_animationProgressBar = new QProgressBar();
     m_animationProgressBar->setRange(0, 100);
     m_animationProgressBar->setValue(0);
@@ -905,7 +863,6 @@ void MainWindow::setupDockWidgets()
     m_transformationsDock->setWidget(transformWidget);
     addDockWidget(Qt::RightDockWidgetArea, m_transformationsDock);
     
-    // Info dock (bottom)
     m_infoDock = new QDockWidget("Figure Information", this);
     m_infoDock->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
     
@@ -940,19 +897,16 @@ void MainWindow::setupDockWidgets()
     m_infoDock->setWidget(infoWidget);
     addDockWidget(Qt::BottomDockWidgetArea, m_infoDock);
     
-    // Set initial sizes
     m_figuresDock->setMinimumWidth(250);
     m_propertiesDock->setMinimumWidth(300);
     m_transformationsDock->setMinimumWidth(300);
     m_infoDock->setMaximumHeight(200);
     
-    // Tabify docks
     tabifyDockWidget(m_propertiesDock, m_transformationsDock);
 }
 
 void MainWindow::createConnections()
 {
-    // Connect canvas signals
     connect(m_canvas, &FigureCanvas::figureSelected, this, &MainWindow::updateSelectedFigure);
     connect(m_canvas, &FigureCanvas::figureCreated, this, [this](Figure *figure) {
         Q_UNUSED(figure);
@@ -961,12 +915,10 @@ void MainWindow::createConnections()
         statusBar()->showMessage("Figure created", 2000);
     });
     
-    // Connect mouse position tracking
     connect(m_canvas, &FigureCanvas::viewChanged, this, [this]() {
         updateDrawingControls();
     });
     
-    // Connect drawing mode changes
     connect(m_canvas, &FigureCanvas::viewChanged, this, [this]() {
         m_canvas->update();
     });
@@ -976,7 +928,6 @@ void MainWindow::updateDrawingControls()
 {
     DrawingTool::DrawingMode mode = m_canvas->drawingMode();
     
-    // Update radio buttons
     switch(mode) {
         case DrawingTool::NoDrawing:
             m_noDrawingRadio->setChecked(true);
@@ -1024,7 +975,6 @@ void MainWindow::updateDrawingControls()
             break;
     }
     
-    // Update toolbar actions
     m_drawTriangleAction->setChecked(mode == DrawingTool::DrawTriangle);
     m_drawRectangleAction->setChecked(mode == DrawingTool::DrawRectangle);
     m_drawSquareAction->setChecked(mode == DrawingTool::DrawSquare);
@@ -1048,8 +998,6 @@ void MainWindow::uncheckDrawingActions()
     m_drawStarAction->setChecked(false);
     m_drawPolygonAction->setChecked(false);
 }
-
-// ============ FILE OPERATIONS ============
 
 void MainWindow::newFile()
 {
@@ -1100,8 +1048,6 @@ void MainWindow::exitApplication()
     }
 }
 
-// ============ EDIT OPERATIONS ============
-
 void MainWindow::copyFigure()
 {
     if (m_currentFigure)
@@ -1138,8 +1084,6 @@ void MainWindow::deselectAll()
     updateFigureInfo();
 }
 
-// ============ FIGURE METHODS ============
-
 void MainWindow::createFigure()
 {
     QString type = m_figureTypeCombo->currentText();
@@ -1148,7 +1092,6 @@ void MainWindow::createFigure()
 
 void MainWindow::createFigureFromType(const QString &type)
 {
-    // Создаем фигуру в центре холста
     int x = m_canvas->width() / 2;
     int y = m_canvas->height() / 2;
     
@@ -1158,7 +1101,6 @@ void MainWindow::createFigureFromType(const QString &type)
     {
         m_canvas->addFigure(figure);
         
-        // Подключаем сигналы
         connect(figure, &Figure::figureChanged, this, &MainWindow::updateFigureInfo);
         connect(figure, &Figure::animationProgress, this, &MainWindow::updateAnimationProgress);
         connect(figure, &Figure::animationFinished, this, [this]() {
@@ -1225,7 +1167,6 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
     
     if (figure)
     {
-        // Устанавливаем начальные свойства
         figure->setColor(m_currentLineColor);
         figure->setFillColor(m_currentFillColor);
         figure->setLineWidth(m_lineWidthSpinBox->value());
@@ -1240,20 +1181,15 @@ void MainWindow::removeSelectedFigure()
     {
         qDebug() << "Removing figure:" << m_currentFigure->type();
         
-        // Сохраняем текущий индекс
         int row = m_figureList->currentRow();
         
-        // Удаляем фигуру из canvas
         m_canvas->removeFigure(m_currentFigure);
         
-        // Сбрасываем указатель
         m_currentFigure = nullptr;
         
-        // Обновляем интерфейс
         updateFigureInfo();
         updateFigureList();
         
-        // Выбираем следующую фигуру, если есть
         if (m_figureList->count() > 0)
         {
             int newIndex = qMin(row, m_figureList->count() - 1);
@@ -1264,7 +1200,6 @@ void MainWindow::removeSelectedFigure()
         }
         else
         {
-            // Если фигур не осталось, очищаем параметры
             updateParameterControls();
         }
         
@@ -1368,7 +1303,6 @@ void MainWindow::updateParameterControls()
 {
     if (!m_currentFigure)
     {
-        // Disable all controls
         m_lineColorButton->setEnabled(false);
         m_fillColorButton->setEnabled(false);
         m_lineWidthSpinBox->setEnabled(false);
@@ -1377,21 +1311,17 @@ void MainWindow::updateParameterControls()
         return;
     }
     
-    // Enable basic controls
     m_lineColorButton->setEnabled(true);
     m_fillColorButton->setEnabled(true);
     m_lineWidthSpinBox->setEnabled(true);
     
-    // Update color buttons
     m_lineColorButton->setStyleSheet(
         QString("background-color: %1; color: white; padding: 5px;").arg(m_currentFigure->getColor().name()));
     m_fillColorButton->setStyleSheet(
         QString("background-color: %1; padding: 5px;").arg(m_currentFigure->fillColor().name()));
     
-    // Update line width
     m_lineWidthSpinBox->setValue(m_currentFigure->lineWidth());
     
-    // Update specific parameters based on figure type
     m_paramTabs->setEnabled(true);
     
     Circle *circle = dynamic_cast<Circle*>(m_currentFigure);
@@ -1477,7 +1407,6 @@ void MainWindow::updateParameterControls()
         m_sidesSpinBox->setValue(polygonFigure->sides());
     }
     
-    // Update vertex control
     PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(m_currentFigure);
     if (polygon)
     {
@@ -1501,7 +1430,6 @@ void MainWindow::updateParameterControls()
         m_vertexGroup->setEnabled(false);
     }
     
-    // Update center position
     if (m_currentFigure)
     {
         QPointF center = m_currentFigure->centerOfMass();
@@ -1515,7 +1443,6 @@ void MainWindow::updateTransformationControls()
     if (!m_currentFigure)
         return;
     
-    // Set current center as transformation center
     QPointF center = m_currentFigure->centerOfMass();
     m_rotateCenterXSpinBox->setValue(center.x());
     m_rotateCenterYSpinBox->setValue(center.y());
@@ -1536,8 +1463,6 @@ void MainWindow::showCenterInfo()
                 .arg(m_currentFigure->perimeter(), 0, 'f', 2));
     }
 }
-
-// ============ DRAWING MODES ============
 
 void MainWindow::setDrawTriangleMode()
 {
@@ -1619,8 +1544,6 @@ void MainWindow::stopDrawingMode()
     statusBar()->showMessage("Drawing stopped", 2000);
 }
 
-// ============ TRANSFORMATIONS ============
-
 void MainWindow::applyTransformation()
 {
     if (!m_currentFigure)
@@ -1631,7 +1554,6 @@ void MainWindow::applyTransformation()
     
     bool transformed = false;
     
-    // 1. Move
     QPointF moveOffset(m_moveXSpinBox->value(), m_moveYSpinBox->value());
     if (!moveOffset.isNull())
     {
@@ -1639,7 +1561,6 @@ void MainWindow::applyTransformation()
         transformed = true;
     }
     
-    // 2. Rotate
     double angle = m_rotateAngleSpinBox->value();
     if (qAbs(angle) > 0.001)
     {
@@ -1648,7 +1569,6 @@ void MainWindow::applyTransformation()
         transformed = true;
     }
     
-    // 3. Scale
     double factor = m_scaleFactorSpinBox->value();
     if (qAbs(factor - 1.0) > 0.001)
     {
@@ -1736,8 +1656,6 @@ void MainWindow::updateAnimationProgress(double progress)
     m_animationProgressBar->setValue(static_cast<int>(progress * 100));
 }
 
-// ============ PARAMETER MANAGEMENT ============
-
 void MainWindow::chooseLineColor()
 {
     QColor color = QColorDialog::getColor(m_currentLineColor, this, "Choose Line Color");
@@ -1751,7 +1669,6 @@ void MainWindow::chooseLineColor()
             m_currentFigure->setColor(color);
             m_canvas->update();
         }
-        // Also update drawing color
         m_canvas->setDrawingColor(color);
     }
 }
@@ -1769,7 +1686,6 @@ void MainWindow::chooseFillColor()
             m_currentFigure->setFillColor(color);
             m_canvas->update();
         }
-        // Also update drawing fill color
         m_canvas->setDrawingFillColor(color);
     }
 }
@@ -1781,7 +1697,6 @@ void MainWindow::updateLineWidth()
         m_currentFigure->setLineWidth(m_lineWidthSpinBox->value());
         m_canvas->update();
     }
-    // Also update drawing line width
     m_canvas->setDrawingLineWidth(m_lineWidthSpinBox->value());
 }
 
@@ -1911,8 +1826,6 @@ void MainWindow::moveCenterToPoint()
     statusBar()->showMessage("Center moved", 2000);
 }
 
-// ============ VIEW OPERATIONS ============
-
 void MainWindow::toggleGrid(bool enabled)
 {
     m_canvas->setGridEnabled(enabled);
@@ -1945,7 +1858,6 @@ void MainWindow::toggleBoundingBox(bool enabled)
 
 void MainWindow::toggleSnapToGrid(bool enabled)
 {
-    // TODO: Implement snap to grid
     statusBar()->showMessage(enabled ? "Snap to grid enabled" : "Snap to grid disabled", 1000);
 }
 
@@ -1992,8 +1904,6 @@ void MainWindow::showFullScreen()
         statusBar()->showMessage("Entered full screen", 1000);
     }
 }
-
-// ============ CALCULATIONS ============
 
 void MainWindow::calculateTotalArea()
 {
@@ -2074,8 +1984,6 @@ void MainWindow::showFigureStatistics()
     
     QMessageBox::information(this, "Figure Statistics", stats);
 }
-
-// ============ HELP ============
 
 void MainWindow::about()
 {

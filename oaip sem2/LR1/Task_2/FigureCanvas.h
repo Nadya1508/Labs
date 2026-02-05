@@ -18,11 +18,9 @@ public:
     explicit FigureCanvas(QWidget *parent = nullptr);
     ~FigureCanvas();
 
-    // Drawing mode
     void setDrawingMode(DrawingTool::DrawingMode mode);
     DrawingTool::DrawingMode drawingMode() const;
     
-    // View controls
     void zoomIn();
     void zoomOut();
     void zoom(double factor, const QPointF &center = QPointF());
@@ -30,17 +28,14 @@ public:
     void resetView();
     void fitToView();
 
-    // Figure management
     void addFigure(Figure *figure);
     void removeFigure(Figure *figure);
     void clearFigures();
     QList<Figure*> getFigures() const;
 
-    // Selection
     void setSelectedFigure(Figure *figure);
     Figure* selectedFigure() const;
 
-    // Canvas settings
     void setGridEnabled(bool enabled);
     bool isGridEnabled() const;
     void setShowCenters(bool show);
@@ -52,12 +47,10 @@ public:
     void setShowBoundingBox(bool show);
     bool isShowBoundingBox() const;
 
-    // Drawing properties
     void setDrawingColor(const QColor &color);
     void setDrawingFillColor(const QColor &color);
     void setDrawingLineWidth(int width);
 
-    // View parameters
     double scale() const;
     QPointF offset() const;
     void setScale(double scale);
@@ -92,23 +85,20 @@ private:
     DrawingTool *m_drawingTool;
     QList<QPointF> m_currentDrawingPoints;
 
-    // View parameters
     double m_scale;
     QPointF m_offset;
     QRectF m_viewport;
 
-    // Canvas settings
     bool m_gridEnabled;
     bool m_showCenters;
     bool m_showTriangulation;
     bool m_showVertices;
     bool m_showBoundingBox;
 
-    // Interaction state
     bool m_isDragging;
     bool m_isPanning;
     QPointF m_lastMousePos;
     QPointF m_panStartPos;
 };
 
-#endif // FIGURECANVAS_H
+#endif 

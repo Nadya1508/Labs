@@ -60,5 +60,5 @@ void Polygon::setRegularPolygon(const QPointF &center, double radius, int sides)
         m_vertices.append(QPointF(x, y));
     }
     
-    emit figureChanged(); // Используем правильный сигнал
+    emit figureChanged(); 
 }

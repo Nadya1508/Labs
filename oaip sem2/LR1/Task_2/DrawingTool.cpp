@@ -3,7 +3,7 @@
 #include "Rectangle.h"
 #include "Square.h"
 #include "Circle.h"
-#include "Ellipse.h"  // ДОБАВЛЕНО
+#include "Ellipse.h"  
 #include "Rhombus.h"
 #include "Hexagon.h"
 #include "Star.h"

@@ -17,7 +17,7 @@ public:
         DrawRectangle,
         DrawSquare,
         DrawCircle,
-        DrawEllipse,  // ДОБАВЛЕНО
+        DrawEllipse,  
         DrawPolygon,
         DrawStar,
         DrawRhombus,
@@ -59,4 +59,4 @@ private:
     int m_currentLineWidth;
 };
 
-#endif // DRAWINGTOOL_H
+#endif 

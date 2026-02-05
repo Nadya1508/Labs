@@ -12,7 +12,6 @@ class PolygonFigure : public Figure
 public:
     explicit PolygonFigure(QObject *parent = nullptr);
     
-    // Добавляем виртуальный метод type() в базовый класс
     QString type() const override { return "PolygonFigure"; }
     
     double area() const override;
@@ -28,7 +27,6 @@ public:
     QList<QPointF> getVertices() const;
     int vertexCount() const;
     
-    // Сделаем эту функцию виртуальной без реализации по умолчанию
     virtual void updateFromVertices() { emit figureChanged(); }
 
 protected:
@@ -41,4 +39,4 @@ private:
     double triangleArea(const QPointF &a, const QPointF &b, const QPointF &c) const;
 };
 
-#endif // POLYGONFIGURE_H
+#endif 

@@ -30,7 +30,7 @@ void Star::setStar(const QPointF &center, double outerRadius, double innerRadius
     for (int i = 0; i < points * 2; i++)
     {
         double radius = (i % 2 == 0) ? outerRadius : innerRadius;
-        double angle = 2 * M_PI * i / (points * 2) - M_PI/2; // Поворачиваем на 90 градусов
+        double angle = 2 * M_PI * i / (points * 2) - M_PI/2; 
         double x = center.x() + radius * std::cos(angle);
         double y = center.y() + radius * std::sin(angle);
         m_vertices.append(QPointF(x, y));

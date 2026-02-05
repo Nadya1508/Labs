@@ -16,7 +16,7 @@ SOURCES += \
     Rectangle.cpp \
     Square.cpp \
     Circle.cpp \
-    Ellipse.cpp \  # ДОБАВЛЕНО
+    Ellipse.cpp \  
     Polygon.cpp \
     Star.cpp \
     Hexagon.cpp \
@@ -34,7 +34,7 @@ HEADERS += \
     Rectangle.h \
     Square.h \
     Circle.h \
-    Ellipse.h \  # ДОБАВЛЕНО
+    Ellipse.h \  
     Polygon.h \
     Star.h \
     Hexagon.h \
@@ -42,7 +42,6 @@ HEADERS += \
     Quadrilateral.h \
     CustomFigure.h
 
-# Для Mac
 macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
     QMAKE_APPLE_DEVICE_ARCHS = arm64

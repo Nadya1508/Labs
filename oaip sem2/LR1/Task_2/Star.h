@@ -29,4 +29,4 @@ private:
     StarType m_type;
 };
 
-#endif // STAR_H
+#endif 

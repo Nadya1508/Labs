@@ -25,4 +25,4 @@ private:
     int m_sides;
 };
 
-#endif // SIMPLEPOLYGON_H
+#endif 

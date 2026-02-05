@@ -27,13 +27,11 @@ FigureCanvas::FigureCanvas(QWidget *parent)
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
     
-    // Set background
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, QColor(250, 250, 250));
     setPalette(palette);
     setAutoFillBackground(true);
     
-    // Connect drawing tool signals
     connect(m_drawingTool, &DrawingTool::figureCreated, this, [this](Figure *figure) {
         addFigure(figure);
         emit figureCreated(figure);
@@ -44,7 +42,7 @@ FigureCanvas::FigureCanvas(QWidget *parent)
 
 FigureCanvas::~FigureCanvas()
 {
-    // QObject parent автоматически удалит m_drawingTool
+    
 }
 
 DrawingTool::DrawingMode FigureCanvas::drawingMode() const
@@ -129,7 +127,6 @@ void FigureCanvas::zoom(double factor, const QPointF &center)
     m_scale *= factor;
     m_scale = qMax(0.1, qMin(20.0, m_scale));
     
-    // Adjust offset so that the point under the mouse stays in the same place
     QPointF newScenePos = (mousePos - m_offset) / m_scale;
     QPointF delta = scenePos - newScenePos;
     m_offset -= delta * m_scale;
@@ -161,7 +158,6 @@ void FigureCanvas::fitToView()
     if (m_figures.empty())
         return;
         
-    // Calculate bounding box of all figures
     QRectF totalBounds;
     for (Figure *figure : m_figures)
     {
@@ -171,15 +167,12 @@ void FigureCanvas::fitToView()
     if (totalBounds.isEmpty())
         return;
     
-    // Add padding
     totalBounds.adjust(-50, -50, 50, 50);
     
-    // Calculate scale to fit
     double widthScale = width() / totalBounds.width();
     double heightScale = height() / totalBounds.height();
     m_scale = qMin(widthScale, heightScale) * 0.9;
     
-    // Center the view
     m_offset = QPointF(
         width()/2.0 - totalBounds.center().x() * m_scale,
         height()/2.0 - totalBounds.center().y() * m_scale
@@ -204,29 +197,23 @@ void FigureCanvas::removeFigure(Figure *figure)
 {
     if (figure)
     {
-        // Находим индекс фигуры
         int index = m_figures.indexOf(figure);
         if (index >= 0)
         {
             qDebug() << "Removing figure at index:" << index << "Type:" << figure->type();
             
-            // Отключаем все соединения
             disconnect(figure, nullptr, this, nullptr);
             
-            // Удаляем из списка
             m_figures.removeAt(index);
             
-            // Если это выбранная фигура - сбрасываем выбор
             if (m_selectedFigure == figure)
             {
                 m_selectedFigure = nullptr;
                 emit figureSelected(nullptr);
             }
             
-            // Удаляем объект (он имеет родителя, поэтому deleteLater безопасен)
             figure->deleteLater();
             
-            // Обновляем отображение
             update();
         }
     }
@@ -234,7 +221,6 @@ void FigureCanvas::removeFigure(Figure *figure)
 
 void FigureCanvas::clearFigures()
 {
-    // Отключаем все соединения
     for (Figure *figure : m_figures)
     {
         disconnect(figure, nullptr, this, nullptr);
@@ -331,10 +317,8 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
     
     painter.save();
     
-    // Рисуем точки и линии текущего рисунка
     if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
     {
-        // Для полигона рисуем пунктирные линии
         painter.setPen(QPen(QColor(100, 100, 255, 200), 2, Qt::DashLine));
         painter.setBrush(QBrush(QColor(200, 200, 255, 100)));
         
@@ -350,7 +334,6 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
             
             painter.drawPath(path);
             
-            // Если точек больше 2, рисуем предварительный полигон
             if (m_currentDrawingPoints.size() > 2)
             {
                 QPainterPath polygonPath;
@@ -361,7 +344,6 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
                     polygonPath.lineTo(m_currentDrawingPoints[i]);
                 }
                 
-                // Замыкаем полигон
                 polygonPath.closeSubpath();
                 
                 painter.setBrush(QBrush(QColor(200, 200, 255, 50)));
@@ -369,7 +351,6 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
             }
         }
         
-        // Рисуем точки полигона
         painter.setPen(QPen(Qt::blue, 3));
         painter.setBrush(QBrush(Qt::white));
         
@@ -378,7 +359,6 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
             painter.drawEllipse(point, 4, 4);
         }
         
-        // Рисуем последнюю точку другим цветом
         if (!m_currentDrawingPoints.isEmpty())
         {
             painter.setBrush(QBrush(Qt::red));
@@ -387,11 +367,9 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
     }
     else
     {
-        // Для обычных фигур рисуем как раньше
         painter.setPen(QPen(Qt::blue, 2, Qt::DashLine));
         painter.setBrush(Qt::NoBrush);
         
-        // Draw the current drawing path
         QPainterPath path;
         path.moveTo(m_currentDrawingPoints.first());
         
@@ -402,7 +380,6 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
         
         painter.drawPath(path);
         
-        // Draw temporary figure based on drawing mode
         if (m_currentDrawingPoints.size() >= 2)
         {
             QPointF start = m_currentDrawingPoints.first();
@@ -441,7 +418,7 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
                 painter.drawEllipse(start, radius, radius);
                 break;
             }
-            case DrawingTool::DrawEllipse:  // ДОБАВЛЕНО
+            case DrawingTool::DrawEllipse:  
             {
                 QRectF rect(start, current);
                 painter.drawEllipse(rect.normalized());
@@ -511,32 +488,26 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     
-    // Draw background
     painter.fillRect(rect(), QColor(245, 245, 245));
     
-    // Apply transformation
     painter.save();
     painter.translate(m_offset);
     painter.scale(m_scale, m_scale);
     
-    // Draw grid if enabled
     if (m_gridEnabled)
     {
         drawGrid(painter);
     }
     
-    // Draw all figures
     for (Figure *figure : m_figures)
     {
         figure->draw(&painter);
         
-        // Draw triangulation if enabled
         if (m_showTriangulation)
         {
             drawTriangulation(painter, figure);
         }
         
-        // Draw center of mass if enabled
         if (m_showCenters)
         {
             painter.save();
@@ -545,13 +516,11 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
             QPointF center = figure->centerOfMass();
             painter.drawEllipse(center, 4, 4);
             
-            // Draw cross at center
             painter.drawLine(center - QPointF(8, 0), center + QPointF(8, 0));
             painter.drawLine(center - QPointF(0, 8), center + QPointF(0, 8));
             painter.restore();
         }
         
-        // Draw bounding box if enabled
         if (m_showBoundingBox)
         {
             painter.save();
@@ -561,7 +530,6 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
             painter.restore();
         }
         
-        // Draw vertices if enabled and figure is polygon
         if (m_showVertices)
         {
             PolygonFigure *polygon = dynamic_cast<PolygonFigure*>(figure);
@@ -581,10 +549,8 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
         }
     }
     
-    // Draw current drawing
     drawCurrentDrawing(painter);
     
-    // Draw selection highlight
     if (m_selectedFigure)
     {
         drawSelection(painter, m_selectedFigure);
@@ -592,7 +558,6 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     
     painter.restore();
     
-    // Draw info overlay
     painter.save();
     painter.setPen(Qt::black);
     painter.setBrush(QColor(255, 255, 255, 200));
@@ -606,7 +571,6 @@ void FigureCanvas::paintEvent(QPaintEvent *event)
     {
         painter.drawText(20, 90, QString("Drawing: %1 points").arg(m_currentDrawingPoints.size()));
         
-        // Подсказка для полигона
         if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
         {
             painter.drawText(20, 110, "Left click: add point, Right click: finish");
@@ -620,7 +584,6 @@ void FigureCanvas::drawGrid(QPainter &painter)
 {
     painter.save();
     
-    // Draw major grid lines (every 100 units)
     painter.setPen(QPen(QColor(200, 200, 200), 1, Qt::SolidLine));
     
     int gridSize = 100;
@@ -639,7 +602,6 @@ void FigureCanvas::drawGrid(QPainter &painter)
         painter.drawLine(QPointF(m_viewport.left(), y), QPointF(m_viewport.right(), y));
     }
     
-    // Draw minor grid lines (every 25 units)
     painter.setPen(QPen(QColor(230, 230, 230), 0.5, Qt::SolidLine));
     gridSize = 25;
     startX = std::floor(m_viewport.left() / gridSize) * gridSize;
@@ -655,12 +617,10 @@ void FigureCanvas::drawGrid(QPainter &painter)
         painter.drawLine(QPointF(m_viewport.left(), y), QPointF(m_viewport.right(), y));
     }
     
-    // Draw axes
     painter.setPen(QPen(Qt::gray, 2, Qt::SolidLine));
     painter.drawLine(QPointF(m_viewport.left(), 0), QPointF(m_viewport.right(), 0));
     painter.drawLine(QPointF(0, m_viewport.top()), QPointF(0, m_viewport.bottom()));
     
-    // Draw axis labels
     painter.setPen(Qt::darkGray);
     gridSize = 100;
     startX = std::floor(m_viewport.left() / gridSize) * gridSize;
@@ -708,13 +668,11 @@ void FigureCanvas::drawSelection(QPainter &painter, Figure *figure)
 {
     painter.save();
     
-    // Draw bounding box with selection color
     QRectF bounds = figure->boundingRect();
     painter.setPen(QPen(QColor(255, 100, 0, 200), 2, Qt::DashLine));
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(bounds);
     
-    // Draw resize handles
     painter.setBrush(QColor(255, 100, 0));
     painter.setPen(Qt::black);
     
@@ -734,7 +692,6 @@ void FigureCanvas::drawSelection(QPainter &painter, Figure *figure)
         painter.drawEllipse(handle, 4, 4);
     }
     
-    // Draw center of mass for selected figure
     painter.setBrush(Qt::green);
     painter.setPen(QPen(Qt::darkGreen, 1));
     QPointF center = figure->centerOfMass();
@@ -747,19 +704,16 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
 {
     QPointF pos = (event->position() - m_offset) / m_scale;
     
-    // Check if we're in drawing mode
     if (m_drawingTool->drawingMode() != DrawingTool::NoDrawing)
     {
         if (event->button() == Qt::LeftButton)
         {
             if (!m_drawingTool->isDrawing())
             {
-                // Начинаем рисование
                 m_drawingTool->startDrawing(pos);
                 m_currentDrawingPoints.clear();
                 m_currentDrawingPoints.append(pos);
                 
-                // Для полигона добавляем вторую точку
                 if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
                 {
                     m_currentDrawingPoints.append(pos);
@@ -769,13 +723,11 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
             {
                 if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
                 {
-                    // Для полигона добавляем точку
                     m_drawingTool->addPointToPolygon(pos);
                     m_currentDrawingPoints.append(pos);
                 }
                 else
                 {
-                    // Для других фигур обновляем последнюю точку
                     if (m_currentDrawingPoints.size() < 2)
                     {
                         m_currentDrawingPoints.append(pos);
@@ -791,7 +743,6 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
         }
         else if (event->button() == Qt::RightButton && m_drawingTool->isDrawing())
         {
-            // Правый клик - завершение рисования
             Figure *figure = m_drawingTool->finishDrawing();
             if (figure)
             {
@@ -803,7 +754,6 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
         }
         else if (event->button() == Qt::MiddleButton && m_drawingTool->isDrawing())
         {
-            // Средний клик - отмена рисования
             m_drawingTool->cancelDrawing();
             m_currentDrawingPoints.clear();
             update();
@@ -811,10 +761,8 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
         return;
     }
     
-    // Если не в режиме рисования - обычный выбор
     if (event->button() == Qt::LeftButton)
     {
-        // Check if clicking on a figure
         for (Figure *figure : m_figures)
         {
             if (figure->boundingRect().contains(pos))
@@ -829,14 +777,12 @@ void FigureCanvas::mousePressEvent(QMouseEvent *event)
             }
         }
         
-        // If no figure clicked, start panning
         m_isPanning = true;
         m_panStartPos = event->position();
         setCursor(Qt::OpenHandCursor);
     }
     else if (event->button() == Qt::RightButton)
     {
-        // Deselect figure on right click
         if (m_selectedFigure)
         {
             m_selectedFigure = nullptr;
@@ -852,10 +798,8 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
     
     if (m_drawingTool->isDrawing())
     {
-        // Update current drawing
         if (m_drawingTool->drawingMode() == DrawingTool::DrawPolygon)
         {
-            // Для полигона обновляем последнюю точку
             if (m_currentDrawingPoints.size() > 1)
             {
                 m_currentDrawingPoints.last() = pos;
@@ -863,7 +807,6 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         }
         else
         {
-            // Для обычных фигур обновляем последнюю точку
             if (m_currentDrawingPoints.size() < 2)
             {
                 m_currentDrawingPoints.append(pos);
@@ -877,7 +820,6 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         m_drawingTool->updateDrawing(pos);
         update();
         
-        // Update mouse position in status bar
         emit mouseMoved(pos);
         return;
     }
@@ -901,7 +843,6 @@ void FigureCanvas::mouseMoveEvent(QMouseEvent *event)
         update();
     }
     
-    // Update mouse position in status bar
     emit mouseMoved(pos);
 }
 
@@ -913,7 +854,6 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
         {
             if (m_drawingTool->drawingMode() != DrawingTool::DrawPolygon)
             {
-                // Для обычных фигур завершаем при отпускании мыши
                 Figure *figure = m_drawingTool->finishDrawing();
                 if (figure)
                 {
@@ -923,7 +863,6 @@ void FigureCanvas::mouseReleaseEvent(QMouseEvent *event)
                 m_currentDrawingPoints.clear();
                 update();
             }
-            // Для полигона ждем правый клик
         }
         else
         {
@@ -969,7 +908,6 @@ void FigureCanvas::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape && m_drawingTool->isDrawing())
     {
-        // Отмена рисования по Esc
         m_drawingTool->cancelDrawing();
         m_currentDrawingPoints.clear();
         update();

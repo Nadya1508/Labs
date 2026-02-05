@@ -13,7 +13,6 @@ public:
     
     QString type() const override;
     
-    // Специфичные параметры
     int sides() const;
     double radius() const;
     
@@ -25,4 +24,4 @@ private:
     int m_sides;
 };
 
-#endif // POLYGON_H
+#endif 

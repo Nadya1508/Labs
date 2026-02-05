@@ -1,0 +1,17 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_PREFIX_PATH": "/opt/homebrew/opt/qt@6"
+    },
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "files.associations": {
+        "*.ui": "xml",
+        "*.qrc": "xml",
+        "*.ts": "xml",
+        "qglobal.h": "c",
+        "qobjectdefs.h": "c",
+        "qmetatype.h": "c"
+    },
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
+}

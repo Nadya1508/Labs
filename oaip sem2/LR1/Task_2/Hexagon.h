@@ -18,4 +18,4 @@ public:
     void setRadius(double radius);
 };
 
-#endif // HEXAGON_H
+#endif 

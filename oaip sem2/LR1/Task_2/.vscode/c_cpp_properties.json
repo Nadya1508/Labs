@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Mac Qt6 Framework",
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks",
+                "/opt/homebrew/Frameworks",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib"
+            ],
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/homebrew/include",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtCore.framework/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtGui.framework/Headers",
+                "/opt/homebrew/Cellar/qtbase/6.10.1/lib/QtWidgets.framework/Headers"
+            ],
+            "defines": [
+                "QT_CORE_LIB",
+                "QT_GUI_LIB",
+                "QT_WIDGETS_LIB"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64"
+        }
+    ],
+    "version": 4
+}

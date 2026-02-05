@@ -17,4 +17,4 @@ public:
     QList<QPointF> getPoints() const;
 };
 
-#endif // QUADRILATERAL_H
+#endif 

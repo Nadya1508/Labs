@@ -34,4 +34,4 @@ private:
     double m_radiusY;
 };
 
-#endif // ELLIPSE_H
+#endif 

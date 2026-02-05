@@ -31,7 +31,7 @@ double Ellipse::area() const
 
 double Ellipse::perimeter() const
 {
-    // Приближенная формула периметра эллипса (формула Рамануджана)
+    // Приближенная формула периметра эллипса 
     double h = pow((m_radiusX - m_radiusY) / (m_radiusX + m_radiusY), 2);
     return M_PI * (m_radiusX + m_radiusY) * (1 + (3 * h) / (10 + sqrt(4 - 3 * h)));
 }

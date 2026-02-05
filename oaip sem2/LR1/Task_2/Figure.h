@@ -83,4 +83,4 @@ protected:
     } m_currentAnimation;
 };
 
-#endif // FIGURE_H
+#endif 
