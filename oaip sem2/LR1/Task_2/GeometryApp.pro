@@ -16,13 +16,13 @@ SOURCES += \
     Rectangle.cpp \
     Square.cpp \
     Circle.cpp \
+    Ellipse.cpp \  # ДОБАВЛЕНО
     Polygon.cpp \
     Star.cpp \
     Hexagon.cpp \
     Rhombus.cpp \
     Quadrilateral.cpp \
-    CustomFigure.cpp \
-    Ellipse.cpp 
+    CustomFigure.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -34,13 +34,13 @@ HEADERS += \
     Rectangle.h \
     Square.h \
     Circle.h \
+    Ellipse.h \  # ДОБАВЛЕНО
     Polygon.h \
     Star.h \
     Hexagon.h \
     Rhombus.h \
     Quadrilateral.h \
-    CustomFigure.h \
-    Ellipse.h
+    CustomFigure.h
 
 # Для Mac
 macx {

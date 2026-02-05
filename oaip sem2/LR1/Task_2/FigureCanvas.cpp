@@ -441,6 +441,12 @@ void FigureCanvas::drawCurrentDrawing(QPainter &painter)
                 painter.drawEllipse(start, radius, radius);
                 break;
             }
+            case DrawingTool::DrawEllipse:  // ДОБАВЛЕНО
+            {
+                QRectF rect(start, current);
+                painter.drawEllipse(rect.normalized());
+                break;
+            }
             case DrawingTool::DrawRhombus:
             {
                 QPointF center = (start + current) / 2;

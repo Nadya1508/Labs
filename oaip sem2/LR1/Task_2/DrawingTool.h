@@ -17,6 +17,7 @@ public:
         DrawRectangle,
         DrawSquare,
         DrawCircle,
+        DrawEllipse,  // ДОБАВЛЕНО
         DrawPolygon,
         DrawStar,
         DrawRhombus,
@@ -30,7 +31,7 @@ public:
     
     void startDrawing(const QPointF &startPoint);
     void updateDrawing(const QPointF &currentPoint);
-    void addPointToPolygon(const QPointF &point); // Новая функция
+    void addPointToPolygon(const QPointF &point);
     Figure* finishDrawing();
     void cancelDrawing();
     

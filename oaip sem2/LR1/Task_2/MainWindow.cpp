@@ -26,6 +26,7 @@
 #include "Star.h"
 #include "Circle.h"
 #include "Polygon.h"
+#include "Ellipse.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     createFigureByType("Triangle", QPointF(200, 200));
     createFigureByType("Circle", QPointF(400, 300));
     createFigureByType("Square", QPointF(300, 500));
+    createFigureByType("Ellipse", QPointF(500, 400));
     
     // Обновляем UI
     updateFigureList();
@@ -218,7 +220,7 @@ void MainWindow::setupMenuBar()
     m_figureMenu = menuBar()->addMenu("&Figure");
     
     QStringList figureTypes = {"Triangle", "Rectangle", "Square", "Rhombus", 
-                              "Hexagon", "Star", "Circle", "Polygon"};
+                              "Hexagon", "Star", "Circle", "Ellipse", "Polygon"};
     
     for (const QString &type : figureTypes)
     {
@@ -261,6 +263,12 @@ void MainWindow::setupMenuBar()
     m_drawCircleAction->setShortcut(QKeySequence("Alt+C"));
     connect(m_drawCircleAction, &QAction::triggered, this, &MainWindow::setDrawCircleMode);
     m_drawingMenu->addAction(m_drawCircleAction);
+    
+    m_drawEllipseAction = new QAction("Draw &Ellipse", this);
+    m_drawEllipseAction->setCheckable(true);
+    m_drawEllipseAction->setShortcut(QKeySequence("Alt+E"));
+    connect(m_drawEllipseAction, &QAction::triggered, this, &MainWindow::setDrawEllipseMode);
+    m_drawingMenu->addAction(m_drawEllipseAction);
     
     m_drawRhombusAction = new QAction("Draw Rh&ombus", this);
     m_drawRhombusAction->setCheckable(true);
@@ -410,6 +418,9 @@ void MainWindow::setupToolBar()
     m_drawCircleAction->setToolTip("Draw Circle (Alt+C)");
     m_drawingToolBar->addAction(m_drawCircleAction);
     
+    m_drawEllipseAction->setToolTip("Draw Ellipse (Alt+E)");
+    m_drawingToolBar->addAction(m_drawEllipseAction);
+    
     m_drawRhombusAction->setToolTip("Draw Rhombus (Alt+O)");
     m_drawingToolBar->addAction(m_drawRhombusAction);
     
@@ -433,6 +444,7 @@ void MainWindow::setupToolBar()
     drawingGroup->addAction(m_drawRectangleAction);
     drawingGroup->addAction(m_drawSquareAction);
     drawingGroup->addAction(m_drawCircleAction);
+    drawingGroup->addAction(m_drawEllipseAction);
     drawingGroup->addAction(m_drawRhombusAction);
     drawingGroup->addAction(m_drawHexagonAction);
     drawingGroup->addAction(m_drawStarAction);
@@ -469,7 +481,7 @@ void MainWindow::setupDockWidgets()
     
     m_figureTypeCombo = new QComboBox();
     m_figureTypeCombo->addItems({"Triangle", "Rectangle", "Square", "Rhombus", 
-                                 "Hexagon", "Star", "Circle", "Polygon"});
+                                 "Hexagon", "Star", "Circle", "Ellipse", "Polygon"});
     creationLayout->addWidget(m_figureTypeCombo);
     
     QPushButton *createButton = new QPushButton("Create Figure");
@@ -507,20 +519,24 @@ void MainWindow::setupDockWidgets()
     m_drawingButtonGroup->addButton(m_drawCircleRadio, 4);
     drawingLayout->addWidget(m_drawCircleRadio);
     
+    m_drawEllipseRadio = new QRadioButton("Draw Ellipse");
+    m_drawingButtonGroup->addButton(m_drawEllipseRadio, 5);
+    drawingLayout->addWidget(m_drawEllipseRadio);
+    
     m_drawRhombusRadio = new QRadioButton("Draw Rhombus");
-    m_drawingButtonGroup->addButton(m_drawRhombusRadio, 5);
+    m_drawingButtonGroup->addButton(m_drawRhombusRadio, 6);
     drawingLayout->addWidget(m_drawRhombusRadio);
     
     m_drawHexagonRadio = new QRadioButton("Draw Hexagon");
-    m_drawingButtonGroup->addButton(m_drawHexagonRadio, 6);
+    m_drawingButtonGroup->addButton(m_drawHexagonRadio, 7);
     drawingLayout->addWidget(m_drawHexagonRadio);
     
     m_drawStarRadio = new QRadioButton("Draw Star");
-    m_drawingButtonGroup->addButton(m_drawStarRadio, 7);
+    m_drawingButtonGroup->addButton(m_drawStarRadio, 8);
     drawingLayout->addWidget(m_drawStarRadio);
     
     m_drawPolygonRadio = new QRadioButton("Draw Polygon");
-    m_drawingButtonGroup->addButton(m_drawPolygonRadio, 8);
+    m_drawingButtonGroup->addButton(m_drawPolygonRadio, 9);
     drawingLayout->addWidget(m_drawPolygonRadio);
     
     // Подключение сигнала
@@ -533,10 +549,11 @@ void MainWindow::setupDockWidgets()
             case 2: m_canvas->setDrawingMode(DrawingTool::DrawRectangle); break;
             case 3: m_canvas->setDrawingMode(DrawingTool::DrawSquare); break;
             case 4: m_canvas->setDrawingMode(DrawingTool::DrawCircle); break;
-            case 5: m_canvas->setDrawingMode(DrawingTool::DrawRhombus); break;
-            case 6: m_canvas->setDrawingMode(DrawingTool::DrawHexagon); break;
-            case 7: m_canvas->setDrawingMode(DrawingTool::DrawStar); break;
-            case 8: m_canvas->setDrawingMode(DrawingTool::DrawPolygon); break;
+            case 5: m_canvas->setDrawingMode(DrawingTool::DrawEllipse); break;
+            case 6: m_canvas->setDrawingMode(DrawingTool::DrawRhombus); break;
+            case 7: m_canvas->setDrawingMode(DrawingTool::DrawHexagon); break;
+            case 8: m_canvas->setDrawingMode(DrawingTool::DrawStar); break;
+            case 9: m_canvas->setDrawingMode(DrawingTool::DrawPolygon); break;
         }
         updateDrawingControls();
     });
@@ -622,6 +639,22 @@ void MainWindow::setupDockWidgets()
     m_radiusSpinBox->setSuffix(" px");
     circleLayout->addRow("Radius:", m_radiusSpinBox);
     m_paramTabs->addTab(m_circleParams, "Circle");
+    
+    // Ellipse parameters
+    m_ellipseParams = new QWidget();
+    QFormLayout *ellipseLayout = new QFormLayout(m_ellipseParams);
+    QDoubleSpinBox *ellipseRadiusXSpinBox = new QDoubleSpinBox();
+    ellipseRadiusXSpinBox->setRange(10, 500);
+    ellipseRadiusXSpinBox->setValue(80);
+    ellipseRadiusXSpinBox->setSuffix(" px");
+    ellipseLayout->addRow("Radius X:", ellipseRadiusXSpinBox);
+    
+    QDoubleSpinBox *ellipseRadiusYSpinBox = new QDoubleSpinBox();
+    ellipseRadiusYSpinBox->setRange(10, 500);
+    ellipseRadiusYSpinBox->setValue(50);
+    ellipseRadiusYSpinBox->setSuffix(" px");
+    ellipseLayout->addRow("Radius Y:", ellipseRadiusYSpinBox);
+    m_paramTabs->addTab(m_ellipseParams, "Ellipse");
     
     // Rectangle parameters
     m_rectangleParams = new QWidget();
@@ -965,6 +998,10 @@ void MainWindow::updateDrawingControls()
             m_drawCircleRadio->setChecked(true);
             m_drawingModeLabel->setText("Mode: Drawing Circle");
             break;
+        case DrawingTool::DrawEllipse:
+            m_drawEllipseRadio->setChecked(true);
+            m_drawingModeLabel->setText("Mode: Drawing Ellipse");
+            break;
         case DrawingTool::DrawRhombus:
             m_drawRhombusRadio->setChecked(true);
             m_drawingModeLabel->setText("Mode: Drawing Rhombus");
@@ -992,6 +1029,7 @@ void MainWindow::updateDrawingControls()
     m_drawRectangleAction->setChecked(mode == DrawingTool::DrawRectangle);
     m_drawSquareAction->setChecked(mode == DrawingTool::DrawSquare);
     m_drawCircleAction->setChecked(mode == DrawingTool::DrawCircle);
+    m_drawEllipseAction->setChecked(mode == DrawingTool::DrawEllipse);
     m_drawRhombusAction->setChecked(mode == DrawingTool::DrawRhombus);
     m_drawHexagonAction->setChecked(mode == DrawingTool::DrawHexagon);
     m_drawStarAction->setChecked(mode == DrawingTool::DrawStar);
@@ -1004,6 +1042,7 @@ void MainWindow::uncheckDrawingActions()
     m_drawRectangleAction->setChecked(false);
     m_drawSquareAction->setChecked(false);
     m_drawCircleAction->setChecked(false);
+    m_drawEllipseAction->setChecked(false);
     m_drawRhombusAction->setChecked(false);
     m_drawHexagonAction->setChecked(false);
     m_drawStarAction->setChecked(false);
@@ -1175,9 +1214,13 @@ Figure* MainWindow::createFigureByType(const QString &type, const QPointF &cente
     {
         figure = new Circle(center, 60, this);
     }
+    else if (type == "Ellipse")
+    {
+        figure = new Ellipse(center, 80, 50, this);
+    }
     else if (type == "Polygon")
     {
-        figure = new Polygon(center, 65, 7, this);  // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
+        figure = new Polygon(center, 65, 7, this);
     }
     
     if (figure)
@@ -1358,6 +1401,18 @@ void MainWindow::updateParameterControls()
         m_radiusSpinBox->setValue(circle->radius());
     }
     
+    Ellipse *ellipse = dynamic_cast<Ellipse*>(m_currentFigure);
+    if (ellipse)
+    {
+        m_paramTabs->setCurrentWidget(m_ellipseParams);
+        QList<QDoubleSpinBox*> spinBoxes = m_ellipseParams->findChildren<QDoubleSpinBox*>();
+        if (spinBoxes.size() >= 2)
+        {
+            spinBoxes[0]->setValue(ellipse->radiusX());
+            spinBoxes[1]->setValue(ellipse->radiusY());
+        }
+    }
+    
     Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure);
     if (rect)
     {
@@ -1415,7 +1470,6 @@ void MainWindow::updateParameterControls()
         }
     }
     
-    // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
     Polygon *polygonFigure = dynamic_cast<Polygon*>(m_currentFigure);
     if (polygonFigure)
     {
@@ -1515,6 +1569,14 @@ void MainWindow::setDrawCircleMode()
     uncheckDrawingActions();
     m_drawCircleAction->setChecked(true);
     statusBar()->showMessage("Drawing mode: Circle", 2000);
+}
+
+void MainWindow::setDrawEllipseMode()
+{
+    m_canvas->setDrawingMode(DrawingTool::DrawEllipse);
+    uncheckDrawingActions();
+    m_drawEllipseAction->setChecked(true);
+    statusBar()->showMessage("Drawing mode: Ellipse", 2000);
 }
 
 void MainWindow::setDrawRhombusMode()
@@ -1733,6 +1795,17 @@ void MainWindow::updateSpecificParameter()
         circle->setRadius(m_radiusSpinBox->value());
     }
     
+    Ellipse *ellipse = dynamic_cast<Ellipse*>(m_currentFigure);
+    if (ellipse)
+    {
+        QList<QDoubleSpinBox*> spinBoxes = m_ellipseParams->findChildren<QDoubleSpinBox*>();
+        if (spinBoxes.size() >= 2)
+        {
+            ellipse->setRadiusX(spinBoxes[0]->value());
+            ellipse->setRadiusY(spinBoxes[1]->value());
+        }
+    }
+    
     Rectangle *rect = dynamic_cast<Rectangle*>(m_currentFigure);
     if (rect)
     {
@@ -1792,7 +1865,6 @@ void MainWindow::updateSpecificParameter()
         }
     }
     
-    // ИЗМЕНЕНИЕ: Используем Polygon вместо CustomFigure
     Polygon *polygonFigure = dynamic_cast<Polygon*>(m_currentFigure);
     if (polygonFigure)
     {
@@ -1953,6 +2025,7 @@ void MainWindow::showFigureStatistics()
     int rectangleCount = 0;
     int squareCount = 0;
     int circleCount = 0;
+    int ellipseCount = 0;
     int rhombusCount = 0;
     int hexagonCount = 0;
     int starCount = 0;
@@ -1971,10 +2044,11 @@ void MainWindow::showFigureStatistics()
         else if (type == "Rectangle") rectangleCount++;
         else if (type == "Square") squareCount++;
         else if (type == "Circle") circleCount++;
+        else if (type == "Ellipse") ellipseCount++;
         else if (type == "Rhombus") rhombusCount++;
         else if (type == "Hexagon") hexagonCount++;
         else if (type == "Star") starCount++;
-        else if (type == "Polygon") polygonCount++;  // ИЗМЕНЕНИЕ: Убрали CustomFigure
+        else if (type == "Polygon") polygonCount++;
     }
     
     QString stats = QString(
@@ -1984,15 +2058,16 @@ void MainWindow::showFigureStatistics()
         "Rectangles: %3\n"
         "Squares: %4\n"
         "Circles: %5\n"
-        "Rhombuses: %6\n"
-        "Hexagons: %7\n"
-        "Stars: %8\n"
-        "Polygons: %9\n\n"
-        "Total Area: %10\n"
-        "Total Perimeter: %11"
+        "Ellipses: %6\n"
+        "Rhombuses: %7\n"
+        "Hexagons: %8\n"
+        "Stars: %9\n"
+        "Polygons: %10\n\n"
+        "Total Area: %11\n"
+        "Total Perimeter: %12"
     ).arg(m_canvas->getFigures().size())
      .arg(triangleCount).arg(rectangleCount).arg(squareCount)
-     .arg(circleCount).arg(rhombusCount).arg(hexagonCount)
+     .arg(circleCount).arg(ellipseCount).arg(rhombusCount).arg(hexagonCount)
      .arg(starCount).arg(polygonCount)
      .arg(totalArea, 0, 'f', 2)
      .arg(totalPerimeter, 0, 'f', 2);
@@ -2033,6 +2108,7 @@ void MainWindow::showHelp()
         "- Rectangle: Click and drag to draw<br>"
         "- Square: Click and drag (hold Shift for perfect square)<br>"
         "- Circle: Click and drag to draw<br>"
+        "- Ellipse: Click and drag to draw<br>"
         "- Polygon: Click to add vertices, right-click to finish</p>"
         "<p><b>Selecting Figures:</b><br>"
         "Click on a figure to select it or select from the list.</p>"
@@ -2069,5 +2145,6 @@ void MainWindow::showShortcuts()
         "Alt+R - Draw Rectangle<br>"
         "Alt+Q - Draw Square<br>"
         "Alt+C - Draw Circle<br>"
+        "Alt+E - Draw Ellipse<br>"
         "Esc - Stop Drawing</p>");
 }

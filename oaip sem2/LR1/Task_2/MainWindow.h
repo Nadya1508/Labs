@@ -28,7 +28,6 @@
 #include <QButtonGroup>
 #include <QShortcut>
 
-// ВАЖНО: Добавьте этот include
 #include "FigureCanvas.h"
 
 // Forward declarations для всех фигур
@@ -39,7 +38,8 @@ class Rhombus;
 class Hexagon;
 class Star;
 class Circle;
-class CustomFigure;
+class Ellipse;
+class Polygon;
 class PolygonFigure;
 
 class MainWindow : public QMainWindow
@@ -80,6 +80,7 @@ private slots:
     void setDrawRectangleMode();
     void setDrawSquareMode();
     void setDrawCircleMode();
+    void setDrawEllipseMode();  // ДОБАВЛЕНО
     void setDrawRhombusMode();
     void setDrawHexagonMode();
     void setDrawStarMode();
@@ -198,6 +199,7 @@ private:
     // Specific parameters
     QTabWidget *m_paramTabs;
     QWidget *m_circleParams;
+    QWidget *m_ellipseParams;  // ДОБАВЛЕНО
     QWidget *m_rectangleParams;
     QWidget *m_squareParams;
     QWidget *m_rhombusParams;
@@ -240,6 +242,7 @@ private:
     QRadioButton *m_drawRectangleRadio;
     QRadioButton *m_drawSquareRadio;
     QRadioButton *m_drawCircleRadio;
+    QRadioButton *m_drawEllipseRadio;  // ДОБАВЛЕНО
     QRadioButton *m_drawRhombusRadio;
     QRadioButton *m_drawHexagonRadio;
     QRadioButton *m_drawStarRadio;
@@ -263,6 +266,7 @@ private:
     QAction *m_drawRectangleAction;
     QAction *m_drawSquareAction;
     QAction *m_drawCircleAction;
+    QAction *m_drawEllipseAction;  // ДОБАВЛЕНО
     QAction *m_drawRhombusAction;
     QAction *m_drawHexagonAction;
     QAction *m_drawStarAction;

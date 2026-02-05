@@ -3,6 +3,7 @@
 #include "Rectangle.h"
 #include "Square.h"
 #include "Circle.h"
+#include "Ellipse.h"  // ДОБАВЛЕНО
 #include "Rhombus.h"
 #include "Hexagon.h"
 #include "Star.h"
@@ -184,6 +185,14 @@ Figure* DrawingTool::createFigureFromPoints(const QList<QPointF> &points)
         QPointF center = (start + end) / 2;
         double radius = QLineF(center, start).length();
         return new Circle(center, radius, this);
+    }
+    
+    case DrawEllipse:  // ДОБАВЛЕНО
+    {
+        QPointF center = (start + end) / 2;
+        double radiusX = qAbs(end.x() - start.x()) / 2;
+        double radiusY = qAbs(end.y() - start.y()) / 2;
+        return new Ellipse(center, radiusX, radiusY, this);
     }
     
     case DrawRhombus:

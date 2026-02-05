@@ -64,6 +64,7 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "setDrawRectangleMode",
         "setDrawSquareMode",
         "setDrawCircleMode",
+        "setDrawEllipseMode",
         "setDrawRhombusMode",
         "setDrawHexagonMode",
         "setDrawStarMode",
@@ -148,86 +149,88 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(23, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'setDrawCircleMode'
         QtMocHelpers::SlotData<void()>(24, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'setDrawRhombusMode'
+        // Slot 'setDrawEllipseMode'
         QtMocHelpers::SlotData<void()>(25, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'setDrawHexagonMode'
+        // Slot 'setDrawRhombusMode'
         QtMocHelpers::SlotData<void()>(26, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'setDrawStarMode'
+        // Slot 'setDrawHexagonMode'
         QtMocHelpers::SlotData<void()>(27, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'setDrawPolygonMode'
+        // Slot 'setDrawStarMode'
         QtMocHelpers::SlotData<void()>(28, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'stopDrawingMode'
+        // Slot 'setDrawPolygonMode'
         QtMocHelpers::SlotData<void()>(29, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'applyTransformation'
+        // Slot 'stopDrawingMode'
         QtMocHelpers::SlotData<void()>(30, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'animateTransformation'
+        // Slot 'applyTransformation'
         QtMocHelpers::SlotData<void()>(31, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'stopAnimation'
+        // Slot 'animateTransformation'
         QtMocHelpers::SlotData<void()>(32, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'stopAnimation'
+        QtMocHelpers::SlotData<void()>(33, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'updateAnimationProgress'
-        QtMocHelpers::SlotData<void(double)>(33, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Double, 34 },
+        QtMocHelpers::SlotData<void(double)>(34, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Double, 35 },
         }}),
         // Slot 'chooseLineColor'
-        QtMocHelpers::SlotData<void()>(35, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'chooseFillColor'
         QtMocHelpers::SlotData<void()>(36, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'updateLineWidth'
+        // Slot 'chooseFillColor'
         QtMocHelpers::SlotData<void()>(37, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'updateSpecificParameter'
+        // Slot 'updateLineWidth'
         QtMocHelpers::SlotData<void()>(38, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'updateVertex'
+        // Slot 'updateSpecificParameter'
         QtMocHelpers::SlotData<void()>(39, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'moveCenterToPoint'
+        // Slot 'updateVertex'
         QtMocHelpers::SlotData<void()>(40, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showCenterInfo'
+        // Slot 'moveCenterToPoint'
         QtMocHelpers::SlotData<void()>(41, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'showCenterInfo'
+        QtMocHelpers::SlotData<void()>(42, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'toggleGrid'
-        QtMocHelpers::SlotData<void(bool)>(42, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(43, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'toggleCenters'
-        QtMocHelpers::SlotData<void(bool)>(44, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(45, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'toggleTriangulation'
-        QtMocHelpers::SlotData<void(bool)>(45, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(46, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'toggleVertices'
-        QtMocHelpers::SlotData<void(bool)>(46, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(47, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'toggleBoundingBox'
-        QtMocHelpers::SlotData<void(bool)>(47, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(48, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'toggleSnapToGrid'
-        QtMocHelpers::SlotData<void(bool)>(48, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 43 },
+        QtMocHelpers::SlotData<void(bool)>(49, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 44 },
         }}),
         // Slot 'zoomIn'
-        QtMocHelpers::SlotData<void()>(49, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'zoomOut'
         QtMocHelpers::SlotData<void()>(50, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'resetView'
+        // Slot 'zoomOut'
         QtMocHelpers::SlotData<void()>(51, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'fitToView'
+        // Slot 'resetView'
         QtMocHelpers::SlotData<void()>(52, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showFullScreen'
+        // Slot 'fitToView'
         QtMocHelpers::SlotData<void()>(53, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'calculateTotalArea'
+        // Slot 'showFullScreen'
         QtMocHelpers::SlotData<void()>(54, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'calculateTotalPerimeter'
+        // Slot 'calculateTotalArea'
         QtMocHelpers::SlotData<void()>(55, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showFigureStatistics'
+        // Slot 'calculateTotalPerimeter'
         QtMocHelpers::SlotData<void()>(56, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'about'
+        // Slot 'showFigureStatistics'
         QtMocHelpers::SlotData<void()>(57, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showHelp'
+        // Slot 'about'
         QtMocHelpers::SlotData<void()>(58, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showShortcuts'
+        // Slot 'showHelp'
         QtMocHelpers::SlotData<void()>(59, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'showShortcuts'
+        QtMocHelpers::SlotData<void()>(60, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -273,39 +276,40 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 19: _t->setDrawRectangleMode(); break;
         case 20: _t->setDrawSquareMode(); break;
         case 21: _t->setDrawCircleMode(); break;
-        case 22: _t->setDrawRhombusMode(); break;
-        case 23: _t->setDrawHexagonMode(); break;
-        case 24: _t->setDrawStarMode(); break;
-        case 25: _t->setDrawPolygonMode(); break;
-        case 26: _t->stopDrawingMode(); break;
-        case 27: _t->applyTransformation(); break;
-        case 28: _t->animateTransformation(); break;
-        case 29: _t->stopAnimation(); break;
-        case 30: _t->updateAnimationProgress((*reinterpret_cast<std::add_pointer_t<double>>(_a[1]))); break;
-        case 31: _t->chooseLineColor(); break;
-        case 32: _t->chooseFillColor(); break;
-        case 33: _t->updateLineWidth(); break;
-        case 34: _t->updateSpecificParameter(); break;
-        case 35: _t->updateVertex(); break;
-        case 36: _t->moveCenterToPoint(); break;
-        case 37: _t->showCenterInfo(); break;
-        case 38: _t->toggleGrid((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 39: _t->toggleCenters((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 40: _t->toggleTriangulation((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 41: _t->toggleVertices((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 42: _t->toggleBoundingBox((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 43: _t->toggleSnapToGrid((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 44: _t->zoomIn(); break;
-        case 45: _t->zoomOut(); break;
-        case 46: _t->resetView(); break;
-        case 47: _t->fitToView(); break;
-        case 48: _t->showFullScreen(); break;
-        case 49: _t->calculateTotalArea(); break;
-        case 50: _t->calculateTotalPerimeter(); break;
-        case 51: _t->showFigureStatistics(); break;
-        case 52: _t->about(); break;
-        case 53: _t->showHelp(); break;
-        case 54: _t->showShortcuts(); break;
+        case 22: _t->setDrawEllipseMode(); break;
+        case 23: _t->setDrawRhombusMode(); break;
+        case 24: _t->setDrawHexagonMode(); break;
+        case 25: _t->setDrawStarMode(); break;
+        case 26: _t->setDrawPolygonMode(); break;
+        case 27: _t->stopDrawingMode(); break;
+        case 28: _t->applyTransformation(); break;
+        case 29: _t->animateTransformation(); break;
+        case 30: _t->stopAnimation(); break;
+        case 31: _t->updateAnimationProgress((*reinterpret_cast<std::add_pointer_t<double>>(_a[1]))); break;
+        case 32: _t->chooseLineColor(); break;
+        case 33: _t->chooseFillColor(); break;
+        case 34: _t->updateLineWidth(); break;
+        case 35: _t->updateSpecificParameter(); break;
+        case 36: _t->updateVertex(); break;
+        case 37: _t->moveCenterToPoint(); break;
+        case 38: _t->showCenterInfo(); break;
+        case 39: _t->toggleGrid((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 40: _t->toggleCenters((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 41: _t->toggleTriangulation((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 42: _t->toggleVertices((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 43: _t->toggleBoundingBox((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 44: _t->toggleSnapToGrid((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 45: _t->zoomIn(); break;
+        case 46: _t->zoomOut(); break;
+        case 47: _t->resetView(); break;
+        case 48: _t->fitToView(); break;
+        case 49: _t->showFullScreen(); break;
+        case 50: _t->calculateTotalArea(); break;
+        case 51: _t->calculateTotalPerimeter(); break;
+        case 52: _t->showFigureStatistics(); break;
+        case 53: _t->about(); break;
+        case 54: _t->showHelp(); break;
+        case 55: _t->showShortcuts(); break;
         default: ;
         }
     }
@@ -330,14 +334,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 55)
+        if (_id < 56)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 55;
+        _id -= 56;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 55)
+        if (_id < 56)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 55;
+        _id -= 56;
     }
     return _id;
 }
